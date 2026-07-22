@@ -137,11 +137,25 @@ async function updateFirebaseScore() {
 
 async function loadLeaderboard() {
     try {
-        const leaderboardRef = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(10));
+        // Проверка на существование данных
+        const leaderboardRef = ref(db, 'leaderboard');
         const snapshot = await get(leaderboardRef);
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            // Firebase limitToLast возвращает данные в порядке возрастания, нам нужно убывание
+        
+        if (!snapshot.exists()) {
+            renderLeaderboard([]);
+            return;
+        }
+        
+        // Запрос с сортировкой
+        const q = query(
+            ref(db, 'leaderboard'),
+            orderByChild('score'),
+            limitToLast(10)
+        );
+        
+        const querySnapshot = await get(q);
+        if (querySnapshot.exists()) {
+            const data = querySnapshot.val();
             const sorted = Object.values(data).sort((a, b) => b.score - a.score);
             renderLeaderboard(sorted);
         } else {
@@ -176,7 +190,7 @@ function renderLeaderboard(players) {
     players.forEach((player, index) => {
         const item = document.createElement('div');
         item.className = 'leaderboard-item';
-        if (player.name === userName && player.score === clicks) { // Простая проверка на текущего пользователя
+        if (player.name === userName && player.score === clicks) {
             item.classList.add('current-user');
         }
         
@@ -234,7 +248,7 @@ function scheduleSave() {
     if (saveTimeout) clearTimeout(saveTimeout);
     saveTimeout = setTimeout(async () => {
         await saveLocalGame();
-        await updateFirebaseScore(); // Сохраняем и в глобальную таблицу
+        await updateFirebaseScore();
     }, 500);
 }
 
@@ -278,7 +292,7 @@ function initGame() {
     }
     updateCounterDisplay();
     scheduleNextBoost();
-    setInterval(() => { saveLocalGame(); updateFirebaseScore(); }, 10000); // Автосохранение каждые 10 сек
+    setInterval(() => { saveLocalGame(); updateFirebaseScore(); }, 10000);
 }
 
 function updateCounterDisplay() {
@@ -400,7 +414,7 @@ document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper => {
         currentModalType = wrapper.dataset.modal;
         
         if (currentModalType === 'achv') {
-            loadLeaderboard(); // Загружаем свежие данные из Firebase
+            loadLeaderboard();
         }
         openModal();
     });

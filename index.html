@@ -1,1 +1,450 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>FUMOCLICK</title><link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/favicon.ico"><script src="https://telegram.org/js/telegram-web-app.js"></script><!-- Подключение Firebase (добавь это, когда будешь готов) --><!-- <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script> --><!-- <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script> --><style>*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}body{width:100vw;height:100vh;overflow:hidden;display:flex;justify-content:center;align-items:center;background:var(--tg-theme-bg-color,#fff);color:var(--tg-theme-text-color,#000);font-family:Arial,Helvetica,sans-serif;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),auto;overscroll-behavior:none;touch-action:manipulation}#assetCache{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1}#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10000;transition:opacity .5s ease}#loadingScreen.hidden{opacity:0;pointer-events:none}.loader{border:5px solid rgba(128,128,128,.2);border-top:5px solid var(--tg-theme-text-color,#000);border-radius:50%;width:38px;height:38px;animation:spin 1s linear infinite;margin-bottom:20px}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}#loadingText{font-size:18px;font-weight:bold;color:var(--tg-theme-text-color,#000)}.game{display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;opacity:0;transition:opacity .5s ease;margin-top:-135px}.game.visible{opacity:1}#boostIndicator{position:absolute;top:calc(65% + 121px);left:calc(60% + 54px);transform:translate(-50%,-50%) rotate(-45deg);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:20}#boostIndicator.active{opacity:1}.x2-img{width:120px;height:auto;animation:x2Pulse .3s ease-in-out infinite alternate;pointer-events:none;-webkit-user-drag:none}@keyframes x2Pulse{0%{transform:scale(.8)}100%{transform:scale(1.2)}}#counter{display:flex;justify-content:center;align-items:center;gap:3px;animation:counterFloat 2.1s ease-in-out infinite}#counter.pop{animation:counterFloat 2.1s ease-in-out infinite,counterPop .18s ease}.digit-img{height:72px;width:auto;display:block;-webkit-user-drag:none;pointer-events:none}#clickArea{margin-top:20px;animation:idle 3.5s ease-in-out infinite;transform-origin:center bottom;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer;-webkit-touch-callout:none;touch-action:none}#clickImage{height:60vh;width:auto;display:block;pointer-events:none;transform:scale(1);transition:transform .15s ease-out;-webkit-user-drag:none}@keyframes idle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}@keyframes counterFloat{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}@keyframes counterPop{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.12)}}.boost-container{position:absolute;width:150px;height:150px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer;z-index:1000;touch-action:none}.boost-spring{width:100%;height:100%}.boost-spring.spawning{animation:boostSpawn 1s ease-out forwards}.boost-spring.despawning{animation:boostDespawn .15s ease-in forwards;pointer-events:none}.boost-sway{width:100%;height:100%;animation:boostSway 2s ease-in-out infinite}.boost-image{width:100%;height:100%;object-fit:contain;animation:boostPulse .25s ease-in-out infinite alternate;-webkit-user-drag:none;pointer-events:none}@keyframes boostSpawn{0%{transform:scale(0)}40%{transform:scale(1.35)}60%{transform:scale(.85)}80%{transform:scale(1.1)}100%{transform:scale(1)}}@keyframes boostDespawn{0%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.8}100%{transform:scale(0);opacity:0}}@keyframes boostSway{0%,100%{transform:translateX(0) rotate(-6deg)}50%{transform:translateX(15px) rotate(6deg)}}@keyframes boostPulse{0%{transform:scale(.85)}100%{transform:scale(1.15)}}.ui-container{position:fixed;bottom:45px;left:calc(50% + 2px);transform:translateX(-50%);display:flex;align-items:flex-start;gap:0;z-index:100}.ui-left{display:flex;flex-direction:column;justify-content:space-between;height:107px;margin-left:-15px}.ui-btn-wrapper{pointer-events:auto;touch-action:manipulation;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer;-webkit-touch-callout:none}.ui-btn-img{pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.ui-btn-small{width:65px;height:49px}.ui-btn-large{width:148px;height:107px;margin-left:15px}.ui-btn-achv{animation:uiFloat1 3s ease-in-out infinite}.ui-btn-settings{animation:uiFloat2 3.5s ease-in-out infinite}.ui-btn-shop{animation:uiFloat3 4s ease-in-out infinite}@keyframes uiFloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,-3px)}}@keyframes uiFloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(3px,-3px)}}@keyframes uiFloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,3px)}}.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);z-index:10000;display:none;opacity:0;transition:opacity .3s ease}.modal.active{display:block;opacity:1}.modal-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:400px;max-height:80%;overflow-y:auto;background:var(--tg-theme-secondary-bg-color,#f0f0f0);border-radius:12px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,.2)}.modal-close-wrapper{position:absolute;top:20px;right:20px;width:40px;height:40px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none}.modal-close-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.leaderboard-item{display:flex;justify-content:space-between;align-items:center;padding:12px;margin:8px 0;background:var(--tg-theme-bg-color,#fff);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1)}.leaderboard-rank{font-size:20px;font-weight:bold;width:40px;color:var(--tg-theme-link-color,#0088cc)}.leaderboard-name{flex:1;font-size:16px;margin-left:10px;color:var(--tg-theme-text-color,#000)}.leaderboard-score{display:flex;gap:1px;align-items:center}.leaderboard-score img{height:20px;width:auto;-webkit-user-drag:none;pointer-events:none;-webkit-touch-callout:none}.current-user{background:var(--tg-theme-link-color,#0088cc);color:#fff}.current-user .leaderboard-name,.current-user .leaderboard-score img{filter:brightness(0) invert(1)}</style></head><body><div id="assetCache"></div><div id="loadingScreen"><div class="loader"></div><div id="loadingText">ЗАГРУЗКА...</div></div><div class="game" id="gameContainer"><div id="boostIndicator"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="x2-img" draggable="false"></div><div id="counter"></div><div id="clickArea"><img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" draggable="false" alt="Click"></div></div><div class="ui-container"><div class="ui-left"><div class="ui-btn-wrapper" data-modal="achv"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png" class="ui-btn-img ui-btn-small ui-btn-achv" draggable="false"></div><div class="ui-btn-wrapper" data-modal="settings"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png" class="ui-btn-img ui-btn-small ui-btn-settings" draggable="false"></div></div><div class="ui-btn-wrapper" data-modal="shop"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png" class="ui-btn-img ui-btn-large ui-btn-shop" draggable="false"></div></div><div class="modal" id="modal"><div class="modal-content" id="modalContent"><div id="leaderboardList"></div></div><div class="modal-close-wrapper"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img" draggable="false"></div></div><script>const tg=window.Telegram?.WebApp;let tgUserId=null,userName='Unknown';if(tg){tg.ready();tg.expand();if(tg.disableVerticalSwipes)tg.disableVerticalSwipes();if(tg.initDataUnsafe?.user){tgUserId=tg.initDataUnsafe.user.id;userName=tg.initDataUnsafe.user.username||`User${tgUserId}`;}}function triggerHaptic(t='light'){if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred(t);}// --- ЗАЩИТА ОТ DEVTOOLS ---let devtoolsOpen=false;const threshold=160;setInterval(()=>{const widthThreshold=window.outerWidth-window.innerWidth>threshold;const heightThreshold=window.outerHeight-window.innerHeight>threshold;if(widthThreshold||heightThreshold){if(!devtoolsOpen){devtoolsOpen=true;console.log("%cСТОП!","color:red;font-size:40px;font-weight:bold;");if(tg)tg.close();else window.location.href="about:blank";}},else{devtoolsOpen=false;}},1000);const originalConsoleLog=console.log;console.log=function(...args){if(args.length>0&&typeof args[0]==='string'&&args[0].includes('%c')){return;}originalConsoleLog.apply(console,args);};Object.defineProperty(window,'console',{get:function(){devtoolsOpen=true;if(tg)tg.close();return{};}});// --------------------------const imageUrls=['https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png','https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png','https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png','https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png','https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png','https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png','https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png','https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png',...Array.from({length:10},(_,i)=>`https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`)];const soundUrls={pop:'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/pop.ogg',monster:'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/monsterenergy.ogg',bonus:'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/bonus.ogg',bonusdelete:'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/bonusdelete.ogg',menuopen:'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuopen.ogg',menuclose:'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuclose.ogg'};let clicks=0,clickMultiplier=1;const counter=document.getElementById("counter"),clickArea=document.getElementById("clickArea"),image=document.getElementById("clickImage"),boostIndicator=document.getElementById("boostIndicator"),loadingScreen=document.getElementById("loadingScreen"),gameContainer=document.getElementById("gameContainer"),assetCache=document.getElementById("assetCache"),modal=document.getElementById("modal"),modalCloseWrapper=modal.querySelector('.modal-close-wrapper'),leaderboardList=document.getElementById("leaderboardList");let boostTimeout,multiplierTimeout;let audioCtx=null,buffers={};let menuOpenPlaying=false,menuClosePlaying=false;let saveTimeout=null;const gameState={score:0,selectedCharacter:1,upgrades:{clickPower:1,autoClick:0,critChance:0},settings:{soundEnabled:true,hapticEnabled:true,theme:'default'},achievements:[],leaderboard:[{name:'Player1',score:10000,userId:111},{name:'Player2',score:7500,userId:222},{name:'Player3',score:5000,userId:333}]};function initAudioContext(){if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}}function playSound(buffer,volume=0.5){if(!audioCtx||!buffer)return;if(audioCtx.state==='suspended')audioCtx.resume();const source=audioCtx.createBufferSource();const gain=audioCtx.createGain();gain.gain.value=volume;source.buffer=buffer;source.connect(gain);gain.connect(audioCtx.destination);source.start(0);}function cloudStorageGetItem(key){return new Promise((resolve,reject)=>{if(!tg||!tg.CloudStorage){resolve(null);return;}tg.CloudStorage.getItem(key,(err,value)=>{if(err){reject(err);}else{resolve(value);}});});}function cloudStorageSetItem(key,value){return new Promise((resolve,reject)=>{if(!tg||!tg.CloudStorage){resolve(false);return;}tg.CloudStorage.setItem(key,value,(err)=>{if(err){reject(err);}else{resolve(true);}});});}async function loadGame(){try{const data=await cloudStorageGetItem('gameData');if(data){let parsed;if(typeof data==='string'){try{parsed=JSON.parse(data);}catch(e){parsed=null;}}else if(typeof data==='object'){parsed=data;}else{parsed=null;}if(parsed){Object.assign(gameState,parsed);clicks=gameState.score||0;}}else{console.log('CloudStorage returned null');}}catch(e){console.error('Load error:',e);}}async function saveGame(){gameState.score=clicks;try{await cloudStorageSetItem('gameData',JSON.stringify(gameState));}catch(e){console.error('Save error:',e);}}function scheduleSave(){if(saveTimeout)clearTimeout(saveTimeout);saveTimeout=setTimeout(saveGame,500);}async function saveGameSync(){gameState.score=clicks;try{await cloudStorageSetItem('gameData',JSON.stringify(gameState));}catch(e){}}function updateLeaderboard(){gameState.leaderboard.sort((a,b)=>b.score-a.score);gameState.leaderboard=gameState.leaderboard.slice(0,10);const currentUserIndex=gameState.leaderboard.findIndex(p=>p.userId===tgUserId);if(currentUserIndex===-1){gameState.leaderboard.push({name:userName,score:clicks,userId:tgUserId});gameState.leaderboard.sort((a,b)=>b.score-a.score);gameState.leaderboard=gameState.leaderboard.slice(0,10);}}function createScoreImages(score){const container=document.createElement('div');container.className='leaderboard-score';const scoreStr=score.toString();for(const digit of scoreStr){const img=document.createElement('img');img.src=`https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;img.alt=digit;img.draggable=false;container.appendChild(img);}return container;}function renderLeaderboard(){leaderboardList.innerHTML='';const sorted=[...gameState.leaderboard].sort((a,b)=>b.score-a.score);sorted.forEach((player,index)=>{const item=document.createElement('div');item.className='leaderboard-item';if(player.userId===tgUserId){item.classList.add('current-user');}const rank=document.createElement('div');rank.className='leaderboard-rank';rank.textContent=`#${index+1}`;const name=document.createElement('div');name.className='leaderboard-name';name.textContent=player.name;const scoreContainer=createScoreImages(player.score);item.appendChild(rank);item.appendChild(name);item.appendChild(scoreContainer);leaderboardList.appendChild(item);});}async function preloadResources(){initAudioContext();await loadGame();const imgPromises=imageUrls.map(url=>new Promise(resolve=>{let done=false;const finish=()=>{if(!done){done=true;resolve();}};const img=new Image();img.addEventListener('load',finish,{once:true});img.addEventListener('error',finish,{once:true});img.src=url;setTimeout(finish,3000);}));const soundPromises=Object.entries(soundUrls).map(async([key,url])=>{try{const r=await fetch(url);const ab=await r.arrayBuffer();buffers[key]=await audioCtx.decodeAudioData(ab);}catch(e){}});const globalTimeout=new Promise(resolve=>setTimeout(resolve,5000));await Promise.race([Promise.all([...imgPromises,...soundPromises]),globalTimeout]);await new Promise(r=>setTimeout(r,300));loadingScreen.classList.add('hidden');gameContainer.classList.add('visible');initGame();}function initGame(){for(let i=0;i<=9;i++){const img=document.createElement("img");img.src=`https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`;img.className="digit-img";assetCache.appendChild(img);}updateCounterDisplay();scheduleNextBoost();setInterval(saveGame,5000);}function updateCounterDisplay(){const s=clicks.toString(),imgs=Array.from(counter.querySelectorAll('.digit-img'));for(let i=imgs.length;i<s.length;i++){const img=document.createElement("img");img.className="digit-img";img.draggable=false;counter.appendChild(img);imgs.push(img);}while(imgs.length>s.length)counter.removeChild(imgs.pop());for(let i=0;i<s.length;i++){const src=`https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${s[i]}.png`;if(!imgs[i].src.includes(`${s[i]}.png`))imgs[i].src=src;}}function processClick(e){if(e&&e.cancelable)e.preventDefault();clicks+=(1*clickMultiplier*gameState.upgrades.clickPower);updateCounterDisplay();playSound(buffers.pop,0.5);triggerHaptic('light');image.style.transform="scale(1.1)";counter.classList.remove("pop");void counter.offsetWidth;counter.classList.add("pop");scheduleSave();}function resetClickAnimation(e){if(e&&e.cancelable)e.preventDefault();image.style.transform="scale(1)";}clickArea.addEventListener("touchstart",processClick,{passive:false});clickArea.addEventListener("touchend",resetClickAnimation,{passive:false});clickArea.addEventListener("touchcancel",resetClickAnimation,{passive:false});clickArea.addEventListener("mousedown",processClick);clickArea.addEventListener("mouseup",resetClickAnimation);clickArea.addEventListener("mouseleave",resetClickAnimation);clickArea.addEventListener("contextmenu",e=>e.preventDefault());function setAnimSpeed(mult){const a=clickArea.getAnimations();if(a.length>0)a[0].playbackRate=mult;}function spawnBoost(){const container=document.createElement("div");container.className="boost-container";const spring=document.createElement("div");spring.className="boost-spring spawning";const sway=document.createElement("div");sway.className="boost-sway";const img=document.createElement("img");img.src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png";img.className="boost-image";img.draggable=false;sway.appendChild(img);spring.appendChild(sway);container.appendChild(spring);document.body.appendChild(container);playSound(buffers.bonus,0.5);const boostSize=150,maxX=window.innerWidth-boostSize-20,maxY=window.innerHeight-boostSize-20;container.style.left=Math.max(20,Math.random()*maxX)+"px";container.style.top=Math.max(20,Math.random()*maxY)+"px";let boostActivated=false;const activateBoost=e=>{if(boostActivated)return;if(e&&e.cancelable)e.preventDefault();e.stopPropagation();boostActivated=true;playSound(buffers.monster,0.5);triggerHaptic('medium');clickMultiplier=2;boostIndicator.classList.add("active");setAnimSpeed(4);spring.className="boost-spring despawning";setTimeout(()=>{if(document.body.contains(container))container.remove();},150);clearTimeout(boostTimeout);clearTimeout(multiplierTimeout);multiplierTimeout=setTimeout(()=>{clickMultiplier=1;boostIndicator.classList.remove("active");setAnimSpeed(1);scheduleNextBoost();},10000);};container.addEventListener("touchstart",activateBoost,{passive:false});container.addEventListener("mousedown",activateBoost);container.addEventListener("contextmenu",e=>e.preventDefault());boostTimeout=setTimeout(()=>{if(!boostActivated&&document.body.contains(container)){playSound(buffers.bonusdelete,0.5);spring.className="boost-spring despawning";setTimeout(()=>{if(document.body.contains(container))container.remove();},150);setTimeout(()=>scheduleNextBoost(),150);}},5000);}function scheduleNextBoost(){const delay=Math.floor(Math.random()*(40000-15000+1))+15000;setTimeout(spawnBoost,delay);}let currentModalType='';document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper=>{wrapper.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();triggerHaptic('light');currentModalType=wrapper.dataset.modal;if(currentModalType==='achv'){updateLeaderboard();renderLeaderboard();}openModal();});wrapper.addEventListener("contextmenu",e=>e.preventDefault());});modalCloseWrapper.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();triggerHaptic('light');closeModal();});modalCloseWrapper.addEventListener("contextmenu",e=>e.preventDefault());function openModal(){if(modal.classList.contains('active')||menuOpenPlaying)return;menuOpenPlaying=true;playSound(buffers.menuopen,0.5);modal.classList.add('active');setTimeout(()=>{menuOpenPlaying=false;},500);}function closeModal(){if(!modal.classList.contains('active')||menuClosePlaying)return;menuClosePlaying=true;playSound(buffers.menuclose,0.5);modal.classList.remove('active');setTimeout(()=>{menuClosePlaying=false;},500);}document.addEventListener('visibilitychange',()=>{if(document.hidden){saveGameSync();}});window.addEventListener('beforeunload',()=>{saveGameSync();});window.addEventListener('pagehide',()=>{saveGameSync();});preloadResources();</script></body></html>
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>FUMOCLICK</title><link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/favicon.ico"><script src="https://telegram.org/js/telegram-web-app.js"></script><style>*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}body{width:100vw;height:100vh;overflow:hidden;display:flex;justify-content:center;align-items:center;background:var(--tg-theme-bg-color,#fff);color:var(--tg-theme-text-color,#000);font-family:Arial,Helvetica,sans-serif;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),auto;overscroll-behavior:none;touch-action:manipulation}#assetCache{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1}#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10000;transition:opacity .5s ease}#loadingScreen.hidden{opacity:0;pointer-events:none}.loader{border:5px solid rgba(128,128,128,.2);border-top:5px solid var(--tg-theme-text-color,#000);border-radius:50%;width:38px;height:38px;animation:spin 1s linear infinite;margin-bottom:20px}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}#loadingText{font-size:18px;font-weight:bold;color:var(--tg-theme-text-color,#000)}.game{display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;opacity:0;transition:opacity .5s ease;margin-top:-135px}.game.visible{opacity:1}#boostIndicator{position:absolute;top:calc(65% + 121px);left:calc(60% + 54px);transform:translate(-50%,-50%) rotate(-45deg);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:20}#boostIndicator.active{opacity:1}.x2-img{width:120px;height:auto;animation:x2Pulse .3s ease-in-out infinite alternate;pointer-events:none;-webkit-user-drag:none}@keyframes x2Pulse{0%{transform:scale(.8)}100%{transform:scale(1.2)}}#counter{display:flex;justify-content:center;align-items:center;gap:3px;animation:counterFloat 2.1s ease-in-out infinite}#counter.pop{animation:counterFloat 2.1s ease-in-out infinite,counterPop .18s ease}.digit-img{height:72px;width:auto;display:block;-webkit-user-drag:none;pointer-events:none}#clickArea{margin-top:20px;animation:idle 3.5s ease-in-out infinite;transform-origin:center bottom;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer;-webkit-touch-callout:none;touch-action:none}#clickImage{height:60vh;width:auto;display:block;pointer-events:none;transform:scale(1);transition:transform .15s ease-out;-webkit-user-drag:none}@keyframes idle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}@keyframes counterFloat{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}@keyframes counterPop{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.12)}}.boost-container{position:absolute;width:150px;height:150px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer;z-index:1000;touch-action:none}.boost-spring{width:100%;height:100%}.boost-spring.spawning{animation:boostSpawn 1s ease-out forwards}.boost-spring.despawning{animation:boostDespawn .15s ease-in forwards;pointer-events:none}.boost-sway{width:100%;height:100%;animation:boostSway 2s ease-in-out infinite}.boost-image{width:100%;height:100%;object-fit:contain;animation:boostPulse .25s ease-in-out infinite alternate;-webkit-user-drag:none;pointer-events:none}@keyframes boostSpawn{0%{transform:scale(0)}40%{transform:scale(1.35)}60%{transform:scale(.85)}80%{transform:scale(1.1)}100%{transform:scale(1)}}@keyframes boostDespawn{0%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.8}100%{transform:scale(0);opacity:0}}@keyframes boostSway{0%,100%{transform:translateX(0) rotate(-6deg)}50%{transform:translateX(15px) rotate(6deg)}}@keyframes boostPulse{0%{transform:scale(.85)}100%{transform:scale(1.15)}}.ui-container{position:fixed;bottom:45px;left:calc(50% + 2px);transform:translateX(-50%);display:flex;align-items:flex-start;gap:0;z-index:100}.ui-left{display:flex;flex-direction:column;justify-content:space-between;height:107px;margin-left:-15px}.ui-btn-wrapper{pointer-events:auto;touch-action:manipulation;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer;-webkit-touch-callout:none}.ui-btn-img{pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.ui-btn-small{width:65px;height:49px}.ui-btn-large{width:148px;height:107px;margin-left:15px}.ui-btn-achv{animation:uiFloat1 3s ease-in-out infinite}.ui-btn-settings{animation:uiFloat2 3.5s ease-in-out infinite}.ui-btn-shop{animation:uiFloat3 4s ease-in-out infinite}@keyframes uiFloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,-3px)}}@keyframes uiFloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(3px,-3px)}}@keyframes uiFloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,3px)}}.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);z-index:10000;display:none;opacity:0;transition:opacity .3s ease}.modal.active{display:block;opacity:1}.modal-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:400px;max-height:80%;overflow-y:auto;background:var(--tg-theme-secondary-bg-color,#f0f0f0);border-radius:12px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,.2)}.modal-close-wrapper{position:absolute;top:20px;right:20px;width:40px;height:40px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none}.modal-close-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.leaderboard-item{display:flex;justify-content:space-between;align-items:center;padding:12px;margin:8px 0;background:var(--tg-theme-bg-color,#fff);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1)}.leaderboard-rank{font-size:20px;font-weight:bold;width:40px;color:var(--tg-theme-link-color,#0088cc)}.leaderboard-name{flex:1;font-size:16px;margin-left:10px;color:var(--tg-theme-text-color,#000);word-break:break-all}.leaderboard-score{display:flex;gap:1px;align-items:center}.leaderboard-score img{height:20px;width:auto;-webkit-user-drag:none;pointer-events:none;-webkit-touch-callout:none}.current-user{background:var(--tg-theme-link-color,#0088cc);color:#fff}.current-user .leaderboard-name,.current-user .leaderboard-score img{filter:brightness(0) invert(1)}</style></head><body><div id="assetCache"></div><div id="loadingScreen"><div class="loader"></div><div id="loadingText">ЗАГРУЗКА...</div></div><div class="game" id="gameContainer"><div id="boostIndicator"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="x2-img" draggable="false"></div><div id="counter"></div><div id="clickArea"><img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" draggable="false" alt="Click"></div></div><div class="ui-container"><div class="ui-left"><div class="ui-btn-wrapper" data-modal="achv"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png" class="ui-btn-img ui-btn-small ui-btn-achv" draggable="false"></div><div class="ui-btn-wrapper" data-modal="settings"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png" class="ui-btn-img ui-btn-small ui-btn-settings" draggable="false"></div></div><div class="ui-btn-wrapper" data-modal="shop"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png" class="ui-btn-img ui-btn-large ui-btn-shop" draggable="false"></div></div><div class="modal" id="modal"><div class="modal-content" id="modalContent"><div id="leaderboardList"></div></div><div class="modal-close-wrapper"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img" draggable="false"></div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, get, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const tg = window.Telegram?.WebApp;
+let tgUserId = null, userName = 'Unknown';
+
+if (tg) {
+    tg.ready();
+    tg.expand();
+    if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+    if (tg.initDataUnsafe?.user) {
+        tgUserId = tg.initDataUnsafe.user.id;
+        userName = tg.initDataUnsafe.user.username || `User${tgUserId}`;
+    }
+}
+
+function triggerHaptic(t = 'light') {
+    if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(t);
+}
+
+// --- FIREBASE CONFIGURATION ---
+const firebaseConfig = {
+    apiKey: "AIzaSyB80zGKePJfaO5UQHThDAdHieY6E3AzRJE",
+    authDomain: "fumoclickbot.firebaseapp.com",
+    databaseURL: "https://fumoclickbot-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "fumoclickbot",
+    storageBucket: "fumoclickbot.firebasestorage.app",
+    messagingSenderId: "354246810410",
+    appId: "1:354246810410:web:9989e29eae8e865c185c53"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// --- ЗАЩИТА ОТ DEVTOOLS (ОТКЛЮЧЕНА ДЛЯ ОТЛАДКИ) ---
+/*
+let devtoolsOpen = false;
+const threshold = 160;
+setInterval(() => {
+    const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+    const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+    if (widthThreshold || heightThreshold) {
+        if (!devtoolsOpen) {
+            devtoolsOpen = true;
+            console.log("%cСТОП!", "color:red;font-size:40px;font-weight:bold;");
+            if (tg) tg.close();
+        }
+    } else {
+        devtoolsOpen = false;
+    }
+}, 1000);
+*/
+// -----------------------------------------------
+
+const imageUrls = [
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png',
+    ...Array.from({ length: 10 }, (_, i) => `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`)
+];
+
+const soundUrls = {
+    pop: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/pop.ogg',
+    monster: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/monsterenergy.ogg',
+    bonus: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/bonus.ogg',
+    bonusdelete: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/bonusdelete.ogg',
+    menuopen: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuopen.ogg',
+    menuclose: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuclose.ogg'
+};
+
+let clicks = 0, clickMultiplier = 1;
+const counter = document.getElementById("counter"),
+      clickArea = document.getElementById("clickArea"),
+      image = document.getElementById("clickImage"),
+      boostIndicator = document.getElementById("boostIndicator"),
+      loadingScreen = document.getElementById("loadingScreen"),
+      gameContainer = document.getElementById("gameContainer"),
+      assetCache = document.getElementById("assetCache"),
+      modal = document.getElementById("modal"),
+      modalCloseWrapper = modal.querySelector('.modal-close-wrapper'),
+      leaderboardList = document.getElementById("leaderboardList");
+
+let boostTimeout, multiplierTimeout;
+let audioCtx = null, buffers = {};
+let menuOpenPlaying = false, menuClosePlaying = false;
+let saveTimeout = null;
+
+const gameState = {
+    score: 0,
+    selectedCharacter: 1,
+    upgrades: { clickPower: 1, autoClick: 0, critChance: 0 },
+    settings: { soundEnabled: true, hapticEnabled: true, theme: 'default' },
+    achievements: []
+};
+
+function initAudioContext() {
+    if (!audioCtx) {
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+    }
+}
+
+function playSound(buffer, volume = 0.5) {
+    if (!audioCtx || !buffer) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const source = audioCtx.createBufferSource();
+    const gain = audioCtx.createGain();
+    gain.gain.value = volume;
+    source.buffer = buffer;
+    source.connect(gain);
+    gain.connect(audioCtx.destination);
+    source.start(0);
+}
+
+// --- FIREBASE LEADERBOARD FUNCTIONS ---
+async function updateFirebaseScore() {
+    if (!tgUserId) return;
+    try {
+        const userRef = ref(db, 'leaderboard/' + tgUserId);
+        await set(userRef, {
+            name: userName,
+            score: clicks,
+            lastUpdated: Date.now()
+        });
+        console.log("Firebase: Score updated");
+    } catch (e) {
+        console.error("Firebase update error:", e);
+    }
+}
+
+async function loadLeaderboard() {
+    try {
+        const leaderboardRef = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(10));
+        const snapshot = await get(leaderboardRef);
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            // Firebase limitToLast возвращает данные в порядке возрастания, нам нужно убывание
+            const sorted = Object.values(data).sort((a, b) => b.score - a.score);
+            renderLeaderboard(sorted);
+        } else {
+            renderLeaderboard([]);
+        }
+    } catch (e) {
+        console.error("Firebase load error:", e);
+        renderLeaderboard([]);
+    }
+}
+
+function createScoreImages(score) {
+    const container = document.createElement('div');
+    container.className = 'leaderboard-score';
+    const scoreStr = score.toString();
+    for (const digit of scoreStr) {
+        const img = document.createElement('img');
+        img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
+        img.alt = digit;
+        img.draggable = false;
+        container.appendChild(img);
+    }
+    return container;
+}
+
+function renderLeaderboard(players) {
+    leaderboardList.innerHTML = '';
+    if (players.length === 0) {
+        leaderboardList.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Пока нет записей</div>';
+        return;
+    }
+    players.forEach((player, index) => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        if (player.name === userName && player.score === clicks) { // Простая проверка на текущего пользователя
+            item.classList.add('current-user');
+        }
+        
+        const rank = document.createElement('div');
+        rank.className = 'leaderboard-rank';
+        rank.textContent = `#${index + 1}`;
+        
+        const name = document.createElement('div');
+        name.className = 'leaderboard-name';
+        name.textContent = player.name;
+        
+        const scoreContainer = createScoreImages(player.score);
+        
+        item.appendChild(rank);
+        item.appendChild(name);
+        item.appendChild(scoreContainer);
+        leaderboardList.appendChild(item);
+    });
+}
+// --------------------------------------
+
+async function loadLocalGame() {
+    try {
+        if (tg && tg.CloudStorage) {
+            const data = await new Promise((resolve, reject) => {
+                tg.CloudStorage.getItem('gameData', (err, value) => err ? reject(err) : resolve(value));
+            });
+            if (data) {
+                let parsed = typeof data === 'string' ? JSON.parse(data) : (typeof data === 'object' ? data : null);
+                if (parsed) {
+                    Object.assign(gameState, parsed);
+                    clicks = gameState.score || 0;
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Local load error:', e);
+    }
+}
+
+async function saveLocalGame() {
+    gameState.score = clicks;
+    try {
+        if (tg && tg.CloudStorage) {
+            await new Promise((resolve, reject) => {
+                tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true));
+            });
+        }
+    } catch (e) {
+        console.error('Local save error:', e);
+    }
+}
+
+function scheduleSave() {
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(async () => {
+        await saveLocalGame();
+        await updateFirebaseScore(); // Сохраняем и в глобальную таблицу
+    }, 500);
+}
+
+async function preloadResources() {
+    initAudioContext();
+    await loadLocalGame();
+    
+    const imgPromises = imageUrls.map(url => new Promise(resolve => {
+        let done = false;
+        const finish = () => { if (!done) { done = true; resolve(); } };
+        const img = new Image();
+        img.addEventListener('load', finish, { once: true });
+        img.addEventListener('error', finish, { once: true });
+        img.src = url;
+        setTimeout(finish, 3000);
+    }));
+
+    const soundPromises = Object.entries(soundUrls).map(async ([key, url]) => {
+        try {
+            const r = await fetch(url);
+            const ab = await r.arrayBuffer();
+            buffers[key] = await audioCtx.decodeAudioData(ab);
+        } catch (e) {}
+    });
+
+    const globalTimeout = new Promise(resolve => setTimeout(resolve, 5000));
+    await Promise.race([Promise.all([...imgPromises, ...soundPromises]), globalTimeout]);
+    
+    await new Promise(r => setTimeout(r, 300));
+    loadingScreen.classList.add('hidden');
+    gameContainer.classList.add('visible');
+    initGame();
+}
+
+function initGame() {
+    for (let i = 0; i <= 9; i++) {
+        const img = document.createElement("img");
+        img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`;
+        img.className = "digit-img";
+        assetCache.appendChild(img);
+    }
+    updateCounterDisplay();
+    scheduleNextBoost();
+    setInterval(() => { saveLocalGame(); updateFirebaseScore(); }, 10000); // Автосохранение каждые 10 сек
+}
+
+function updateCounterDisplay() {
+    const s = clicks.toString(), imgs = Array.from(counter.querySelectorAll('.digit-img'));
+    for (let i = imgs.length; i < s.length; i++) {
+        const img = document.createElement("img");
+        img.className = "digit-img";
+        img.draggable = false;
+        counter.appendChild(img);
+        imgs.push(img);
+    }
+    while (imgs.length > s.length) counter.removeChild(imgs.pop());
+    for (let i = 0; i < s.length; i++) {
+        const src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${s[i]}.png`;
+        if (!imgs[i].src.includes(`${s[i]}.png`)) imgs[i].src = src;
+    }
+}
+
+function processClick(e) {
+    if (e && e.cancelable) e.preventDefault();
+    clicks += (1 * clickMultiplier * gameState.upgrades.clickPower);
+    updateCounterDisplay();
+    playSound(buffers.pop, 0.5);
+    triggerHaptic('light');
+    image.style.transform = "scale(1.1)";
+    counter.classList.remove("pop");
+    void counter.offsetWidth;
+    counter.classList.add("pop");
+    scheduleSave();
+}
+
+function resetClickAnimation(e) {
+    if (e && e.cancelable) e.preventDefault();
+    image.style.transform = "scale(1)";
+}
+
+clickArea.addEventListener("touchstart", processClick, { passive: false });
+clickArea.addEventListener("touchend", resetClickAnimation, { passive: false });
+clickArea.addEventListener("touchcancel", resetClickAnimation, { passive: false });
+clickArea.addEventListener("mousedown", processClick);
+clickArea.addEventListener("mouseup", resetClickAnimation);
+clickArea.addEventListener("mouseleave", resetClickAnimation);
+clickArea.addEventListener("contextmenu", e => e.preventDefault());
+
+function setAnimSpeed(mult) {
+    const a = clickArea.getAnimations();
+    if (a.length > 0) a[0].playbackRate = mult;
+}
+
+function spawnBoost() {
+    const container = document.createElement("div");
+    container.className = "boost-container";
+    const spring = document.createElement("div");
+    spring.className = "boost-spring spawning";
+    const sway = document.createElement("div");
+    sway.className = "boost-sway";
+    const img = document.createElement("img");
+    img.src = "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png";
+    img.className = "boost-image";
+    img.draggable = false;
+    sway.appendChild(img);
+    spring.appendChild(sway);
+    container.appendChild(spring);
+    document.body.appendChild(container);
+    playSound(buffers.bonus, 0.5);
+    
+    const boostSize = 150, maxX = window.innerWidth - boostSize - 20, maxY = window.innerHeight - boostSize - 20;
+    container.style.left = Math.max(20, Math.random() * maxX) + "px";
+    container.style.top = Math.max(20, Math.random() * maxY) + "px";
+    
+    let boostActivated = false;
+    const activateBoost = e => {
+        if (boostActivated) return;
+        if (e && e.cancelable) e.preventDefault();
+        e.stopPropagation();
+        boostActivated = true;
+        playSound(buffers.monster, 0.5);
+        triggerHaptic('medium');
+        clickMultiplier = 2;
+        boostIndicator.classList.add("active");
+        setAnimSpeed(4);
+        spring.className = "boost-spring despawning";
+        setTimeout(() => { if (document.body.contains(container)) container.remove(); }, 150);
+        clearTimeout(boostTimeout);
+        clearTimeout(multiplierTimeout);
+        multiplierTimeout = setTimeout(() => {
+            clickMultiplier = 1;
+            boostIndicator.classList.remove("active");
+            setAnimSpeed(1);
+            scheduleNextBoost();
+        }, 10000);
+    };
+    
+    container.addEventListener("touchstart", activateBoost, { passive: false });
+    container.addEventListener("mousedown", activateBoost);
+    container.addEventListener("contextmenu", e => e.preventDefault());
+    
+    boostTimeout = setTimeout(() => {
+        if (!boostActivated && document.body.contains(container)) {
+            playSound(buffers.bonusdelete, 0.5);
+            spring.className = "boost-spring despawning";
+            setTimeout(() => { if (document.body.contains(container)) container.remove(); }, 150);
+            setTimeout(() => scheduleNextBoost(), 150);
+        }
+    }, 5000);
+}
+
+function scheduleNextBoost() {
+    const delay = Math.floor(Math.random() * (40000 - 15000 + 1)) + 15000;
+    setTimeout(spawnBoost, delay);
+}
+
+let currentModalType = '';
+document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper => {
+    wrapper.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerHaptic('light');
+        currentModalType = wrapper.dataset.modal;
+        
+        if (currentModalType === 'achv') {
+            loadLeaderboard(); // Загружаем свежие данные из Firebase
+        }
+        openModal();
+    });
+    wrapper.addEventListener("contextmenu", e => e.preventDefault());
+});
+
+modalCloseWrapper.addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    triggerHaptic('light');
+    closeModal();
+});
+modalCloseWrapper.addEventListener("contextmenu", e => e.preventDefault());
+
+function openModal() {
+    if (modal.classList.contains('active') || menuOpenPlaying) return;
+    menuOpenPlaying = true;
+    playSound(buffers.menuopen, 0.5);
+    modal.classList.add('active');
+    setTimeout(() => { menuOpenPlaying = false; }, 500);
+}
+
+function closeModal() {
+    if (!modal.classList.contains('active') || menuClosePlaying) return;
+    menuClosePlaying = true;
+    playSound(buffers.menuclose, 0.5);
+    modal.classList.remove('active');
+    setTimeout(() => { menuClosePlaying = false; }, 500);
+}
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        saveLocalGame();
+        updateFirebaseScore();
+    }
+});
+window.addEventListener('beforeunload', () => {
+    saveLocalGame();
+    updateFirebaseScore();
+});
+window.addEventListener('pagehide', () => {
+    saveLocalGame();
+    updateFirebaseScore();
+});
+
+preloadResources();
+</script></body></html>

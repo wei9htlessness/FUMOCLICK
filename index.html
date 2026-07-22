@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>FUMOCLICK</title><link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/favicon.ico"><script src="https://telegram.org/js/telegram-web-app.js"></script><style>*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}html,body{width:100vw;height:100vh;min-width:100vw;min-height:100vh;overflow:hidden;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),auto !important}body{display:flex;justify-content:center;align-items:center;background:var(--tg-theme-bg-color,#fff);color:var(--tg-theme-text-color,#000);font-family:Arial,Helvetica,sans-serif;overscroll-behavior:none;touch-action:manipulation}#assetCache{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1}#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10000;transition:opacity .5s ease}#loadingScreen.hidden{opacity:0;pointer-events:none}.loader{border:5px solid rgba(128,128,128,.2);border-top:5px solid var(--tg-theme-text-color,#000);border-radius:50%;width:38px;height:38px;animation:spin 1s linear infinite;margin-bottom:20px}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}#loadingText{font-size:18px;font-weight:bold;color:var(--tg-theme-text-color,#000)}.game{display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;opacity:0;transition:opacity .5s ease;margin-top:-135px}.game.visible{opacity:1}#boostIndicator{position:absolute;top:calc(65% + 121px);left:calc(60% + 54px);transform:translate(-50%,-50%) rotate(-45deg);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:20}#boostIndicator.active{opacity:1}.x2-img{width:120px;height:auto;animation:x2Pulse .3s ease-in-out infinite alternate;pointer-events:none;-webkit-user-drag:none}@keyframes x2Pulse{0%{transform:scale(.8)}100%{transform:scale(1.2)}}#counter{display:flex;justify-content:center;align-items:center;gap:3px;animation:counterFloat 2.1s ease-in-out infinite}#counter.pop{animation:counterFloat 2.1s ease-in-out infinite,counterPop .18s ease}.digit-img{height:72px;width:auto;display:block;-webkit-user-drag:none;pointer-events:none}#clickArea{margin-top:20px;animation:idle 3.5s ease-in-out infinite;transform-origin:center bottom;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;-webkit-touch-callout:none;touch-action:none}#clickImage{height:60vh;width:auto;display:block;pointer-events:none;transform:scale(1);transition:transform .15s ease-out;-webkit-user-drag:none;transform-origin:center bottom}@keyframes idle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}@keyframes counterFloat{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}@keyframes counterPop{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.12)}}.boost-container{position:absolute;width:150px;height:150px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;z-index:1000;touch-action:none}.boost-spring{width:100%;height:100%}.boost-spring.spawning{animation:boostSpawn 1s ease-out forwards}.boost-spring.despawning{animation:boostDespawn .15s ease-in forwards;pointer-events:none}.boost-sway{width:100%;height:100%;animation:boostSway 2s ease-in-out infinite}.boost-image{width:100%;height:100%;object-fit:contain;animation:boostPulse .25s ease-in-out infinite alternate;-webkit-user-drag:none;pointer-events:none}@keyframes boostSpawn{0%{transform:scale(0)}40%{transform:scale(1.35)}60%{transform:scale(.85)}80%{transform:scale(1.1)}100%{transform:scale(1)}}@keyframes boostDespawn{0%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.8}100%{transform:scale(0);opacity:0}}@keyframes boostSway{0%,100%{transform:translateX(0) rotate(-6deg)}50%{transform:translateX(15px) rotate(6deg)}}@keyframes boostPulse{0%{transform:scale(.85)}100%{transform:scale(1.15)}}.ui-container{position:fixed;bottom:45px;left:calc(50% + 2px);transform:translateX(-50%);display:flex;align-items:flex-start;gap:0;z-index:100}.ui-left{display:flex;flex-direction:column;justify-content:space-between;height:107px;margin-left:-15px}.ui-btn-wrapper{pointer-events:auto;touch-action:manipulation;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;-webkit-touch-callout:none}.ui-btn-img{pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.ui-btn-small{width:65px;height:49px}.ui-btn-large{width:148px;height:107px;margin-left:15px}.ui-btn-achv{animation:uiFloat1 3s ease-in-out infinite}.ui-btn-settings{animation:uiFloat2 3.5s ease-in-out infinite}.ui-btn-shop{animation:uiFloat3 4s ease-in-out infinite}@keyframes uiFloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,-3px)}}@keyframes uiFloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(3px,-3px)}}@keyframes uiFloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,3px)}}.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);z-index:10000;display:none;opacity:0;transition:opacity .3s ease}.modal.active{display:block;opacity:1}.modal-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:400px;max-height:80%;overflow-y:auto;padding:20px;text-align:center}.modal-close-wrapper{position:absolute;top:20px;right:20px;width:40px;height:40px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none}.modal-close-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.modal-section{display:none;width:100%}.modal-section.active{display:block}.leaderboard-wrapper{position:relative;min-height:300px}.leaderboard-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px}.leaderboard-loading-img{width:200px;height:200px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.leaderboard-refresh-top{display:flex;align-items:center;gap:5px;margin-bottom:15px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:leaderboardFloat 4s ease-in-out infinite}.leaderboard-refresh-img{width:40px;height:40px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.leaderboard-timer{display:flex;gap:1px}.leaderboard-timer img{height:20px;width:auto;-webkit-user-drag:none;pointer-events:none;-webkit-touch-callout:none}.leaderboard-list{display:flex;flex-direction:column;gap:8px;animation:leaderboardFloat 4s ease-in-out infinite}@keyframes leaderboardFloat{0%,100%{transform:translate(0,0)}25%{transform:translate(2px,-2px)}50%{transform:translate(-2px,2px)}75%{transform:translate(2px,2px)}}.leaderboard-item{display:flex;align-items:center;padding:12px;background:var(--tg-theme-bg-color,#fff);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1)}.leaderboard-rank-name{display:flex;gap:10px;align-items:center;flex:1}.leaderboard-rank{font-size:20px;font-weight:bold;width:40px;text-align:left;color:var(--tg-theme-link-color,#0088cc)}.leaderboard-name{font-size:16px;text-align:left;color:var(--tg-theme-text-color,#000);word-break:break-all}.leaderboard-score{display:flex;gap:1px;align-items:center;margin-left:auto}.leaderboard-score img{height:20px;width:auto;-webkit-user-drag:none;pointer-events:none;-webkit-touch-callout:none}.hard-reset-wrapper{display:flex;justify-content:center;align-items:center;margin-top:40px;width:100%}.hard-reset-btn{width:148px;height:107px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:hardResetFloat 3.5s ease-in-out infinite}@keyframes hardResetFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.hard-reset-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.radio-wrapper{display:flex;flex-direction:column;align-items:center;margin-top:30px;width:100%;gap:15px}.radio-btn{width:150px;height:150px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:radioFloat 3.5s ease-in-out infinite}@keyframes radioFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.radio-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.volume-slider{width:80%;accent-color:var(--tg-theme-link-color,#0088cc);cursor:pointer}.reset-gif{width:150px;height:auto;margin-bottom:30px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;animation:resetFloat 3s ease-in-out infinite}@keyframes resetFloat{0%,100%{transform:translate(0,0)}33%{transform:translate(-2px,-3px)}66%{transform:translate(2px,2px)}}.reset-buttons{display:flex;justify-content:center;gap:100px;margin-top:20px}.reset-btn-wrapper{width:40px;height:40px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none}.reset-btn-check{animation:checkFloat 3.5s ease-in-out infinite}.reset-btn-cancel{animation:cancelFloat 4s ease-in-out infinite}@keyframes checkFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-2px,-2px)}}@keyframes cancelFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.reset-btn-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}</style></head><body><div id="assetCache"></div><div id="loadingScreen"><div class="loader"></div><div id="loadingText">ЗАГРУЗКА...</div></div><div class="game" id="gameContainer"><div id="boostIndicator"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="x2-img" draggable="false"></div><div id="counter"></div><div id="clickArea"><img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" draggable="false" alt="Click"></div></div><div class="ui-container"><div class="ui-left"><div class="ui-btn-wrapper" data-modal="achv"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png" class="ui-btn-img ui-btn-small ui-btn-achv" draggable="false"></div><div class="ui-btn-wrapper" data-modal="settings"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png" class="ui-btn-img ui-btn-small ui-btn-settings" draggable="false"></div></div><div class="ui-btn-wrapper" data-modal="shop"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png" class="ui-btn-img ui-btn-large ui-btn-shop" draggable="false"></div></div><div class="modal" id="modal"><div class="modal-content" id="modalContent"><div id="achvSection" class="modal-section"><div class="leaderboard-wrapper"><div id="leaderboardLoading" class="leaderboard-loading"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-loading-img" draggable="false"></div><div id="leaderboardRefreshTop" class="leaderboard-refresh-top" style="display:none"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-refresh-img" draggable="false"><div id="leaderboardTimer" class="leaderboard-timer"></div></div><div id="leaderboardList" class="leaderboard-list" style="display:none"></div></div></div><div id="settingsSection" class="modal-section"><div class="hard-reset-wrapper"><div class="hard-reset-btn" id="hardResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardreset.png" class="hard-reset-img" draggable="false"></div></div><div class="radio-wrapper"><div class="radio-btn" id="radioBtn"><img id="radioBtnImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png" class="radio-img" draggable="false"></div><input type="range" min="0" max="100" value="50" class="volume-slider" id="volumeSlider"></div></div><div id="shopSection" class="modal-section"><div style="color:#888;font-size:18px;">Скоро...</div></div></div><div class="modal-close-wrapper" id="modalCloseWrapper"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img" draggable="false"></div></div><div class="modal" id="confirmResetModal"><div class="modal-content" style="padding:40px 20px;"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif" class="reset-gif" draggable="false"><div class="reset-buttons"><div class="reset-btn-wrapper reset-btn-check" id="confirmResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png" class="reset-btn-img" draggable="false"></div><div class="reset-btn-wrapper reset-btn-cancel" id="cancelResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png" class="reset-btn-img" draggable="false"></div></div></div></div>
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>FUMOCLICK</title><link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/favicon.ico"><script src="https://telegram.org/js/telegram-web-app.js"></script><style>*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}html,body{width:100vw;height:100vh;min-width:100vw;min-height:100vh;overflow:hidden;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),auto !important}body{display:flex;justify-content:center;align-items:center;background:var(--tg-theme-bg-color,#fff);color:var(--tg-theme-text-color,#000);font-family:Arial,Helvetica,sans-serif;overscroll-behavior:none;touch-action:manipulation}#assetCache{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1}#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10000;transition:opacity .5s ease}#loadingScreen.hidden{opacity:0;pointer-events:none}.loader{border:5px solid rgba(128,128,128,.2);border-top:5px solid var(--tg-theme-text-color,#000);border-radius:50%;width:38px;height:38px;animation:spin 1s linear infinite;margin-bottom:20px}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}#loadingText{font-size:18px;font-weight:bold;color:var(--tg-theme-text-color,#000)}.game{display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;opacity:0;transition:opacity .5s ease;margin-top:-135px}.game.visible{opacity:1}#boostIndicator{position:absolute;top:calc(65% + 121px);left:calc(60% + 54px);transform:translate(-50%,-50%) rotate(-45deg);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:20}#boostIndicator.active{opacity:1}.x2-img{width:120px;height:auto;animation:x2Pulse .3s ease-in-out infinite alternate;pointer-events:none;-webkit-user-drag:none}@keyframes x2Pulse{0%{transform:scale(.8)}100%{transform:scale(1.2)}}#counter{display:flex;justify-content:center;align-items:center;gap:3px;animation:counterFloat 2.1s ease-in-out infinite}#counter.pop{animation:counterFloat 2.1s ease-in-out infinite,counterPop .18s ease}.digit-img{height:72px;width:auto;display:block;-webkit-user-drag:none;pointer-events:none}#clickArea{margin-top:20px;animation:idle 3.5s ease-in-out infinite;transform-origin:center bottom;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;-webkit-touch-callout:none;touch-action:none}#clickImage{height:60vh;width:auto;display:block;pointer-events:none;transform:scale(1);transition:transform .15s ease-out;-webkit-user-drag:none;transform-origin:center bottom}@keyframes idle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}@keyframes counterFloat{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}@keyframes counterPop{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.12)}}.boost-container{position:absolute;width:150px;height:150px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;z-index:1000;touch-action:none}.boost-spring{width:100%;height:100%}.boost-spring.spawning{animation:boostSpawn 1s ease-out forwards}.boost-spring.despawning{animation:boostDespawn .15s ease-in forwards;pointer-events:none}.boost-sway{width:100%;height:100%;animation:boostSway 2s ease-in-out infinite}.boost-image{width:100%;height:100%;object-fit:contain;animation:boostPulse .25s ease-in-out infinite alternate;-webkit-user-drag:none;pointer-events:none}@keyframes boostSpawn{0%{transform:scale(0)}40%{transform:scale(1.35)}60%{transform:scale(.85)}80%{transform:scale(1.1)}100%{transform:scale(1)}}@keyframes boostDespawn{0%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.8}100%{transform:scale(0);opacity:0}}@keyframes boostSway{0%,100%{transform:translateX(0) rotate(-6deg)}50%{transform:translateX(15px) rotate(6deg)}}@keyframes boostPulse{0%{transform:scale(.85)}100%{transform:scale(1.15)}}.ui-container{position:fixed;bottom:45px;left:calc(50% + 2px);transform:translateX(-50%);display:flex;align-items:flex-start;gap:0;z-index:100}.ui-left{display:flex;flex-direction:column;justify-content:space-between;height:107px;margin-left:-15px}.ui-btn-wrapper{pointer-events:auto;touch-action:manipulation;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;-webkit-touch-callout:none}.ui-btn-img{pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.ui-btn-small{width:65px;height:49px}.ui-btn-large{width:148px;height:107px;margin-left:15px}.ui-btn-achv{animation:uiFloat1 3s ease-in-out infinite}.ui-btn-settings{animation:uiFloat2 3.5s ease-in-out infinite}.ui-btn-shop{animation:uiFloat3 4s ease-in-out infinite}@keyframes uiFloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,-3px)}}@keyframes uiFloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(3px,-3px)}}@keyframes uiFloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,3px)}}.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);z-index:10000;display:none;opacity:0;transition:opacity .3s ease}.modal.active{display:block;opacity:1}.modal-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:400px;max-height:80%;overflow-y:auto;padding:20px;text-align:center}.modal-close-wrapper{position:absolute;top:20px;right:20px;width:40px;height:40px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none}.modal-close-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.modal-section{display:none;width:100%}.modal-section.active{display:block}.leaderboard-wrapper{position:relative;min-height:300px}.leaderboard-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px}.leaderboard-loading-img{width:200px;height:200px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.leaderboard-refresh-top{display:flex;align-items:center;gap:5px;margin-bottom:15px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:leaderboardFloat 4s ease-in-out infinite}.leaderboard-refresh-img{width:40px;height:40px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.leaderboard-timer{display:flex;gap:1px}.leaderboard-timer img{height:20px;width:auto;-webkit-user-drag:none;pointer-events:none;-webkit-touch-callout:none}.leaderboard-list{display:flex;flex-direction:column;gap:8px;animation:leaderboardFloat 4s ease-in-out infinite}@keyframes leaderboardFloat{0%,100%{transform:translate(0,0)}25%{transform:translate(2px,-2px)}50%{transform:translate(-2px,2px)}75%{transform:translate(2px,2px)}}.leaderboard-item{display:flex;align-items:center;padding:12px;background:var(--tg-theme-bg-color,#fff);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1)}.leaderboard-rank-name{display:flex;gap:10px;align-items:center;flex:1}.leaderboard-rank{font-size:20px;font-weight:bold;width:40px;text-align:left;color:var(--tg-theme-link-color,#0088cc)}.leaderboard-name{font-size:16px;text-align:left;color:var(--tg-theme-text-color,#000);word-break:break-all}.leaderboard-score{display:flex;gap:1px;align-items:center;margin-left:auto}.leaderboard-score img{height:20px;width:auto;-webkit-user-drag:none;pointer-events:none;-webkit-touch-callout:none}.hard-reset-wrapper{display:flex;justify-content:center;align-items:center;margin-top:40px;width:100%}.hard-reset-btn{width:148px;height:107px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:hardResetFloat 3.5s ease-in-out infinite}@keyframes hardResetFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.hard-reset-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.radio-wrapper{display:flex;flex-direction:row;align-items:center;justify-content:center;margin-top:30px;width:100%;gap:20px}.radio-btn{width:120px;height:120px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:radioFloat 3.5s ease-in-out infinite}@keyframes radioFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.radio-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.volume-control{display:flex;align-items:center;gap:15px}.vol-btn-wrapper{width:50px;height:50px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:volBtnFloat 3.5s ease-in-out infinite}@keyframes volBtnFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-2px,2px)}}.vol-btn-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.volume-display{display:flex;gap:2px;align-items:center}.volume-display img{height:24px;width:auto;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.reset-gif{width:150px;height:auto;margin-bottom:30px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;animation:resetFloat 3s ease-in-out infinite}@keyframes resetFloat{0%,100%{transform:translate(0,0)}33%{transform:translate(-2px,-3px)}66%{transform:translate(2px,2px)}}.reset-buttons{display:flex;justify-content:center;gap:100px;margin-top:20px}.reset-btn-wrapper{width:40px;height:40px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none}.reset-btn-check{animation:checkFloat 3.5s ease-in-out infinite}.reset-btn-cancel{animation:cancelFloat 4s ease-in-out infinite}@keyframes checkFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-2px,-2px)}}@keyframes cancelFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.reset-btn-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}</style></head><body><div id="assetCache"></div><div id="loadingScreen"><div class="loader"></div><div id="loadingText">ЗАГРУЗКА...</div></div><div class="game" id="gameContainer"><div id="boostIndicator"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="x2-img" draggable="false"></div><div id="counter"></div><div id="clickArea"><img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" draggable="false" alt="Click"></div></div><div class="ui-container"><div class="ui-left"><div class="ui-btn-wrapper" data-modal="achv"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png" class="ui-btn-img ui-btn-small ui-btn-achv" draggable="false"></div><div class="ui-btn-wrapper" data-modal="settings"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png" class="ui-btn-img ui-btn-small ui-btn-settings" draggable="false"></div></div><div class="ui-btn-wrapper" data-modal="shop"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png" class="ui-btn-img ui-btn-large ui-btn-shop" draggable="false"></div></div><div class="modal" id="modal"><div class="modal-content" id="modalContent"><div id="achvSection" class="modal-section"><div class="leaderboard-wrapper"><div id="leaderboardLoading" class="leaderboard-loading"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-loading-img" draggable="false"></div><div id="leaderboardRefreshTop" class="leaderboard-refresh-top" style="display:none"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-refresh-img" draggable="false"><div id="leaderboardTimer" class="leaderboard-timer"></div></div><div id="leaderboardList" class="leaderboard-list" style="display:none"></div></div></div><div id="settingsSection" class="modal-section"><div class="hard-reset-wrapper"><div class="hard-reset-btn" id="hardResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardreset.png" class="hard-reset-img" draggable="false"></div></div><div class="radio-wrapper"><div class="radio-btn" id="radioBtn"><img id="radioBtnImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png" class="radio-img" draggable="false"></div><div class="volume-control"><div class="vol-btn-wrapper" id="volMinus"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/minus.png" class="vol-btn-img" draggable="false"></div><div id="volumeDisplay" class="volume-display"></div><div class="vol-btn-wrapper" id="volPlus"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/plus.png" class="vol-btn-img" draggable="false"></div></div></div></div><div id="shopSection" class="modal-section"><div style="color:#888;font-size:18px;">Скоро...</div></div></div><div class="modal-close-wrapper" id="modalCloseWrapper"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img" draggable="false"></div></div><div class="modal" id="confirmResetModal"><div class="modal-content" style="padding:40px 20px;"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif" class="reset-gif" draggable="false"><div class="reset-buttons"><div class="reset-btn-wrapper reset-btn-check" id="confirmResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png" class="reset-btn-img" draggable="false"></div><div class="reset-btn-wrapper reset-btn-cancel" id="cancelResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png" class="reset-btn-img" draggable="false"></div></div></div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -39,6 +39,7 @@ const imageUrls = [
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png',
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png',
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/period.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png',
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png',
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png',
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png',
@@ -50,6 +51,8 @@ const imageUrls = [
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png',
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png',
     'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/minus.png',
+    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/plus.png',
     ...Array.from({ length: 10 }, (_, i) => `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`)
 ];
 
@@ -74,11 +77,12 @@ const counter = document.getElementById("counter"), clickArea = document.getElem
       hardResetBtn = document.getElementById("hardResetBtn"), confirmResetModal = document.getElementById("confirmResetModal"),
       confirmResetBtn = document.getElementById("confirmResetBtn"), cancelResetBtn = document.getElementById("cancelResetBtn"),
       radioBtn = document.getElementById("radioBtn"), radioBtnImg = document.getElementById("radioBtnImg"),
-      volumeSlider = document.getElementById("volumeSlider");
+      volMinus = document.getElementById("volMinus"), volPlus = document.getElementById("volPlus"),
+      volumeDisplay = document.getElementById("volumeDisplay");
 
 let boostTimeout, multiplierTimeout, audioCtx = null, buffers = {}, menuOpenPlaying = false, menuClosePlaying = false, saveTimeout = null;
 let leaderboardInterval = null, refreshCountdown = null, countdownValue = 10;
-let radioAudio = null, isRadioPlaying = false, hasLoadedLeaderboardOnce = false;
+let radioAudio = null, isRadioPlaying = false, hasLoadedLeaderboardOnce = false, pendingRadioPlay = false;
 
 const defaultGameState = {
     score: 0, selectedCharacter: 1, upgrades: { clickPower: 1, autoClick: 0, critChance: 0 },
@@ -124,13 +128,9 @@ async function loadLeaderboard() {
         leaderboardList.style.display = 'none';
         leaderboardRefreshTop.style.display = 'none';
     }
-    
     try {
         const snapshot = await get(ref(db, 'leaderboard'));
-        if (!snapshot.exists()) { 
-            renderLeaderboard([]); 
-            return; 
-        }
+        if (!snapshot.exists()) { renderLeaderboard([]); return; }
         const q = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(10));
         const querySnapshot = await get(q);
         if (querySnapshot.exists()) {
@@ -156,7 +156,6 @@ function renderTimer(seconds) {
             img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
             img.draggable = false; img.style.height = '20px';
             img.style.pointerEvents = 'none';
-            img.style.webkitUserDrag = 'none';
             leaderboardTimer.appendChild(img);
         }
         for (let i = 0; i < 3; i++) {
@@ -164,7 +163,6 @@ function renderTimer(seconds) {
             period.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/period.png`;
             period.draggable = false; period.style.height = '20px';
             period.style.pointerEvents = 'none';
-            period.style.webkitUserDrag = 'none';
             leaderboardTimer.appendChild(period);
         }
     }
@@ -215,10 +213,7 @@ async function loadLocalGame() {
             const data = await new Promise((resolve, reject) => tg.CloudStorage.getItem('gameData', (err, value) => err ? reject(err) : resolve(value)));
             if (data) {
                 const parsed = typeof data === 'string' ? JSON.parse(data) : (typeof data === 'object' ? data : null);
-                if (parsed) { 
-                    Object.assign(gameState, parsed); 
-                    clicks = gameState.score || 0; 
-                }
+                if (parsed) { Object.assign(gameState, parsed); clicks = gameState.score || 0; }
             }
         }
     } catch (e) { console.error('Local load error:', e); }
@@ -238,6 +233,44 @@ function scheduleSave() {
     saveTimeout = setTimeout(async () => { await saveLocalGame(); await updateFirebaseScore(); }, 500);
 }
 
+function updateVolumeDisplay(vol) {
+    volumeDisplay.innerHTML = '';
+    const digits = vol.toString().split('');
+    for (const digit of digits) {
+        const img = document.createElement('img');
+        img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
+        img.draggable = false;
+        volumeDisplay.appendChild(img);
+    }
+    const percent = document.createElement('img');
+    percent.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png`;
+    percent.draggable = false;
+    volumeDisplay.appendChild(percent);
+}
+
+function updateRadioUI() {
+    // Если играет, показываем кнопку ВЫКЛ (чтобы можно было выключить). Если выкл, показываем ВКЛ.
+    if (isRadioPlaying) {
+        radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png';
+    } else {
+        radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png';
+    }
+}
+
+function tryPlayRadio() {
+    if (!radioAudio) return;
+    radioAudio.play().then(() => {
+        pendingRadioPlay = false;
+        isRadioPlaying = true;
+        updateRadioUI();
+    }).catch(err => {
+        console.log("Autoplay blocked by mobile OS, waiting for user interaction");
+        pendingRadioPlay = true;
+        isRadioPlaying = true; // UI показывает что оно "должно" играть
+        updateRadioUI();
+    });
+}
+
 function initRadio() {
     if (!radioAudio) {
         radioAudio = new Audio('https://radio.loficafe.net/listen/japanese-lofi/radio.mp3');
@@ -245,19 +278,32 @@ function initRadio() {
     }
     
     const vol = gameState.settings.radioVolume !== undefined ? gameState.settings.radioVolume : 50;
-    volumeSlider.value = vol;
+    gameState.settings.radioVolume = vol;
     radioAudio.volume = vol / 100;
+    updateVolumeDisplay(vol);
 
     if (gameState.settings.radioEnabled === 1 && vol > 0) {
-        radioAudio.play().catch(err => console.log("Radio autoplay blocked:", err));
-        radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png';
-        isRadioPlaying = true;
+        tryPlayRadio();
     } else {
-        radioAudio.pause();
-        radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png';
         isRadioPlaying = false;
+        updateRadioUI();
     }
 }
+
+// Обход блокировки автовоспроизведения на мобильных: запускаем при первом касании
+function handleFirstInteraction() {
+    if (pendingRadioPlay && radioAudio) {
+        radioAudio.play().then(() => {
+            pendingRadioPlay = false;
+            isRadioPlaying = true;
+            updateRadioUI();
+        }).catch(e => {});
+    }
+    document.removeEventListener('touchstart', handleFirstInteraction);
+    document.removeEventListener('click', handleFirstInteraction);
+}
+document.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
+document.addEventListener('click', handleFirstInteraction, { once: true, passive: true });
 
 async function preloadResources() {
     initAudioContext(); await loadLocalGame();
@@ -401,50 +447,58 @@ cancelResetBtn.addEventListener("click", e => {
 });
 cancelResetBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-radioBtn.addEventListener("click", e => {
-    e.preventDefault(); e.stopPropagation(); triggerHaptic('light');
+function adjustVolume(delta) {
     playSound(buffers.click, 0.5);
+    triggerHaptic('light');
     
-    if (isRadioPlaying) {
-        radioAudio.pause();
-        radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png';
-        isRadioPlaying = false;
-        gameState.settings.radioEnabled = 0;
-    } else {
-        if (radioAudio.volume === 0) {
-            radioAudio.volume = 0.5;
-            volumeSlider.value = 50;
-            gameState.settings.radioVolume = 50;
-        }
-        radioAudio.play().catch(err => console.log("Radio play blocked:", err));
-        radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png';
-        isRadioPlaying = true;
-        gameState.settings.radioEnabled = 1;
-    }
-    scheduleSave();
-});
-radioBtn.addEventListener("contextmenu", e => e.preventDefault());
+    let newVol = Math.max(0, Math.min(100, gameState.settings.radioVolume + delta));
+    gameState.settings.radioVolume = newVol;
+    radioAudio.volume = newVol / 100;
 
-volumeSlider.addEventListener("input", e => {
-    const vol = parseInt(e.target.value);
-    gameState.settings.radioVolume = vol;
-    radioAudio.volume = vol / 100;
-    
-    if (vol === 0) {
+    if (newVol === 0) {
         radioAudio.pause();
-        radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png';
         isRadioPlaying = false;
         gameState.settings.radioEnabled = 0;
     } else {
         if (!isRadioPlaying) {
-            radioAudio.play().catch(err => console.log("Radio play blocked:", err));
-            radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png';
-            isRadioPlaying = true;
+            tryPlayRadio();
         }
         gameState.settings.radioEnabled = 1;
     }
+    
+    updateVolumeDisplay(newVol);
+    updateRadioUI();
+    scheduleSave();
+}
+
+volMinus.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); adjustVolume(-5); });
+volMinus.addEventListener("contextmenu", e => e.preventDefault());
+
+volPlus.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); adjustVolume(5); });
+volPlus.addEventListener("contextmenu", e => e.preventDefault());
+
+radioBtn.addEventListener("click", e => {
+    e.preventDefault(); e.stopPropagation();
+    playSound(buffers.click, 0.5);
+    triggerHaptic('light');
+    
+    if (isRadioPlaying) {
+        radioAudio.pause();
+        isRadioPlaying = false;
+        gameState.settings.radioEnabled = 0;
+    } else {
+        if (gameState.settings.radioVolume === 0) {
+            gameState.settings.radioVolume = 50;
+            radioAudio.volume = 0.5;
+            updateVolumeDisplay(50);
+        }
+        tryPlayRadio();
+        gameState.settings.radioEnabled = 1;
+    }
+    updateRadioUI();
     scheduleSave();
 });
+radioBtn.addEventListener("contextmenu", e => e.preventDefault());
 
 leaderboardRefreshTop.addEventListener("click", async e => {
     e.preventDefault(); e.stopPropagation(); triggerHaptic('light');

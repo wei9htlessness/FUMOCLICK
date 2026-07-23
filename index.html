@@ -1,595 +1,1726 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>FUMOCLICK</title><link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/favicon.ico"><script src="https://telegram.org/js/telegram-web-app.js"></script><style>*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}html,body{width:100vw;height:100vh;min-width:100vw;min-height:100vh;overflow:hidden;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),auto !important}body{display:flex;justify-content:center;align-items:center;background:var(--tg-theme-bg-color,#fff);color:var(--tg-theme-text-color,#000);font-family:Arial,Helvetica,sans-serif;overscroll-behavior:none;touch-action:manipulation}#assetCache{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1}#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10000;transition:opacity .5s ease}#loadingScreen.hidden{opacity:0;pointer-events:none}.loader{border:5px solid rgba(128,128,128,.2);border-top:5px solid var(--tg-theme-text-color,#000);border-radius:50%;width:38px;height:38px;animation:spin 1s linear infinite;margin-bottom:20px}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}#loadingText{font-size:18px;font-weight:bold;color:var(--tg-theme-text-color,#000)}.game{display:flex;flex-direction:column;align-items:center;position:relative;z-index:10;opacity:0;transition:opacity .5s ease;margin-top:-135px}.game.visible{opacity:1}#boostIndicator{position:absolute;top:calc(65% + 121px);left:calc(60% + 54px);transform:translate(-50%,-50%) rotate(-45deg);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:20}#boostIndicator.active{opacity:1}.x2-img{width:120px;height:auto;animation:x2Pulse .3s ease-in-out infinite alternate;pointer-events:none;-webkit-user-drag:none}@keyframes x2Pulse{0%{transform:scale(.8)}100%{transform:scale(1.2)}}#counter{display:flex;justify-content:center;align-items:center;gap:3px;animation:counterFloat 2.1s ease-in-out infinite}#counter.pop{animation:counterFloat 2.1s ease-in-out infinite,counterPop .18s ease}.digit-img{height:72px;width:auto;display:block;-webkit-user-drag:none;pointer-events:none}#clickArea{margin-top:20px;animation:idle 3.5s ease-in-out infinite;transform-origin:center bottom;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;-webkit-touch-callout:none;touch-action:none}#clickImage{height:60vh;width:auto;display:block;pointer-events:none;transform:scale(1);transition:transform .15s ease-out;-webkit-user-drag:none;transform-origin:center bottom}@keyframes idle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}@keyframes counterFloat{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}@keyframes counterPop{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.12)}}.boost-container{position:absolute;width:150px;height:150px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;z-index:1000;touch-action:none}.boost-spring{width:100%;height:100%}.boost-spring.spawning{animation:boostSpawn 1s ease-out forwards}.boost-spring.despawning{animation:boostDespawn .15s ease-in forwards;pointer-events:none}.boost-sway{width:100%;height:100%;animation:boostSway 2s ease-in-out infinite}.boost-image{width:100%;height:100%;object-fit:contain;animation:boostPulse .25s ease-in-out infinite alternate;-webkit-user-drag:none;pointer-events:none}@keyframes boostSpawn{0%{transform:scale(0)}40%{transform:scale(1.35)}60%{transform:scale(.85)}80%{transform:scale(1.1)}100%{transform:scale(1)}}@keyframes boostDespawn{0%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.8}100%{transform:scale(0);opacity:0}}@keyframes boostSway{0%,100%{transform:translateX(0) rotate(-6deg)}50%{transform:translateX(15px) rotate(6deg)}}@keyframes boostPulse{0%{transform:scale(.85)}100%{transform:scale(1.15)}}.ui-container{position:fixed;bottom:45px;left:calc(50% + 2px);transform:translateX(-50%);display:flex;align-items:flex-start;gap:0;z-index:100}.ui-left{display:flex;flex-direction:column;justify-content:space-between;height:107px;margin-left:-15px}.ui-btn-wrapper{pointer-events:auto;touch-action:manipulation;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;-webkit-touch-callout:none}.ui-btn-img{pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.ui-btn-small{width:65px;height:49px}.ui-btn-large{width:148px;height:107px;margin-left:15px}.ui-btn-achv{animation:uiFloat1 3s ease-in-out infinite}.ui-btn-settings{animation:uiFloat2 3.5s ease-in-out infinite}.ui-btn-shop{animation:uiFloat3 4s ease-in-out infinite}@keyframes uiFloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,-3px)}}@keyframes uiFloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(3px,-3px)}}@keyframes uiFloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,3px)}}.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--tg-theme-bg-color,#fff);z-index:10000;display:none;opacity:0;transition:opacity .3s ease}.modal.active{display:block;opacity:1}.modal-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:400px;max-height:80%;overflow-y:auto;padding:20px;text-align:center}.modal-close-wrapper{position:absolute;top:20px;right:20px;width:40px;height:40px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none}.modal-close-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.modal-section{display:none;width:100%}.modal-section.active{display:block}.leaderboard-wrapper{position:relative;min-height:300px}.leaderboard-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px}.leaderboard-loading-img{width:200px;height:200px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.leaderboard-refresh-top{display:flex;align-items:center;gap:5px;margin-bottom:15px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:leaderboardFloat 4s ease-in-out infinite}.leaderboard-refresh-img{width:40px;height:40px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.leaderboard-timer{display:flex;gap:1px}.leaderboard-timer img{height:20px;width:auto;-webkit-user-drag:none;pointer-events:none;-webkit-touch-callout:none}.leaderboard-list{display:flex;flex-direction:column;gap:8px;animation:leaderboardFloat 4s ease-in-out infinite}@keyframes leaderboardFloat{0%,100%{transform:translate(0,0)}25%{transform:translate(2px,-2px)}50%{transform:translate(-2px,2px)}75%{transform:translate(2px,2px)}}.leaderboard-item{display:flex;align-items:center;padding:12px;background:var(--tg-theme-bg-color,#fff);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1)}.leaderboard-rank-name{display:flex;gap:10px;align-items:center;flex:1}.leaderboard-rank{font-size:20px;font-weight:bold;width:40px;text-align:left;color:var(--tg-theme-link-color,#0088cc)}.leaderboard-name{font-size:16px;text-align:left;color:var(--tg-theme-text-color,#000);word-break:break-all}.leaderboard-score{display:flex;gap:1px;align-items:center;margin-left:auto}.leaderboard-score img{height:20px;width:auto;-webkit-user-drag:none;pointer-events:none;-webkit-touch-callout:none}.settings-controls{display:flex;flex-direction:column;align-items:center;gap:30px;margin-top:20px}.radio-wrapper{display:flex;flex-direction:row;align-items:center;justify-content:center;width:100%;gap:20px}.radio-btn{width:108px;height:108px;flex-shrink:0;aspect-ratio:1/1;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:radioFloat 3.5s ease-in-out infinite}@keyframes radioFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.radio-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.volume-control{display:flex;align-items:center;gap:15px}.vol-btn-wrapper{width:50px;height:50px;flex-shrink:0;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:volBtnFloat 3.5s ease-in-out infinite}@keyframes volBtnFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-2px,2px)}}.vol-btn-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.volume-display{display:flex;gap:2px;align-items:center;min-width:90px;justify-content:center;animation:volFloat 3.5s ease-in-out infinite}@keyframes volFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}.volume-display img{height:24px;width:auto;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none}.sound-toggle-wrapper{width:120px;height:120px;flex-shrink:0;aspect-ratio:1/1;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:soundFloat 3.5s ease-in-out infinite}@keyframes soundFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-2px,2px)}}.sound-toggle-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.hard-reset-wrapper{display:flex;justify-content:center;align-items:center;margin-top:40px;width:100%}.hard-reset-btn{width:148px;height:107px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none;animation:hardResetFloat 3.5s ease-in-out infinite}@keyframes hardResetFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.hard-reset-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}.reset-gif{width:150px;height:auto;margin-bottom:30px;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;animation:resetFloat 3s ease-in-out infinite}@keyframes resetFloat{0%,100%{transform:translate(0,0)}33%{transform:translate(-2px,-3px)}66%{transform:translate(2px,2px)}}.reset-buttons{display:flex;justify-content:center;gap:100px;margin-top:20px}.reset-btn-wrapper{width:40px;height:40px;cursor:url('https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png'),pointer !important;pointer-events:auto;touch-action:manipulation;-webkit-touch-callout:none}.reset-btn-check{animation:checkFloat 3.5s ease-in-out infinite}.reset-btn-cancel{animation:cancelFloat 4s ease-in-out infinite}@keyframes checkFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-2px,-2px)}}@keyframes cancelFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}.reset-btn-img{width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}</style></head><body><div id="assetCache"></div><div id="loadingScreen"><div class="loader"></div><div id="loadingText">ЗАГРУЗКА...</div></div><div class="game" id="gameContainer"><div id="boostIndicator"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="x2-img" draggable="false"></div><div id="counter"></div><div id="clickArea"><img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" draggable="false" alt="Click"></div></div><div class="ui-container"><div class="ui-left"><div class="ui-btn-wrapper" data-modal="achv"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png" class="ui-btn-img ui-btn-small ui-btn-achv" draggable="false"></div><div class="ui-btn-wrapper" data-modal="settings"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png" class="ui-btn-img ui-btn-small ui-btn-settings" draggable="false"></div></div><div class="ui-btn-wrapper" data-modal="shop"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png" class="ui-btn-img ui-btn-large ui-btn-shop" draggable="false"></div></div><div class="modal" id="modal"><div class="modal-content" id="modalContent"><div id="achvSection" class="modal-section"><div class="leaderboard-wrapper"><div id="leaderboardLoading" class="leaderboard-loading"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-loading-img" draggable="false"></div><div id="leaderboardRefreshTop" class="leaderboard-refresh-top" style="display:none"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-refresh-img" draggable="false"><div id="leaderboardTimer" class="leaderboard-timer"></div></div><div id="leaderboardList" class="leaderboard-list" style="display:none"></div></div></div><div id="settingsSection" class="modal-section"><div class="settings-controls"><div class="sound-toggle-wrapper" id="soundToggleBtn"><img id="soundToggleImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png" class="sound-toggle-img" draggable="false"></div><div class="radio-wrapper"><div class="radio-btn" id="radioBtn"><img id="radioBtnImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png" class="radio-img" draggable="false"></div><div class="volume-control"><div class="vol-btn-wrapper" id="volMinus"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/minus.png" class="vol-btn-img" draggable="false"></div><div id="volumeDisplay" class="volume-display"></div><div class="vol-btn-wrapper" id="volPlus"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/plus.png" class="vol-btn-img" draggable="false"></div></div></div><div class="hard-reset-wrapper"><div class="hard-reset-btn" id="hardResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardreset.png" class="hard-reset-img" draggable="false"></div></div></div></div><div id="shopSection" class="modal-section"><div style="color:#888;font-size:18px;">Скоро...</div></div></div><div class="modal-close-wrapper" id="modalCloseWrapper"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img" draggable="false"></div></div><div class="modal" id="confirmResetModal"><div class="modal-content" style="padding:40px 20px;"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif" class="reset-gif" draggable="false"><div class="reset-buttons"><div class="reset-btn-wrapper reset-btn-check" id="confirmResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png" class="reset-btn-img" draggable="false"></div><div class="reset-btn-wrapper reset-btn-cancel" id="cancelResetBtn"><img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png" class="reset-btn-img" draggable="false"></div></div></div></div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FUMOCLICK</title>
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/favicon.ico">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set, get, query, orderByChild, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-const tg = window.Telegram?.WebApp;
-let tgUserId = null, userName = 'Unknown';
-
-if (tg) {
-    tg.ready(); tg.expand();
-    if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
-    if (tg.initDataUnsafe?.user) {
-        tgUserId = tg.initDataUnsafe.user.id;
-        userName = tg.initDataUnsafe.user.username || `User${tgUserId}`;
-    }
-}
-
-function triggerHaptic(t = 'light') {
-    if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(t);
-}
-
-const firebaseConfig = {
-    apiKey: "AIzaSyB80zGKePJfaO5UQHThDAdHieY6E3AzRJE",
-    authDomain: "fumoclickbot.firebaseapp.com",
-    databaseURL: "https://fumoclickbot-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "fumoclickbot",
-    storageBucket: "fumoclickbot.firebasestorage.app",
-    messagingSenderId: "354246810410",
-    appId: "1:354246810410:web:9989e29eae8e865c185c53"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-const imageUrls = [
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/period.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/minus.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/plus.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardreset.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundson.png',
-    'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png',
-    ...Array.from({ length: 10 }, (_, i) => `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`)
-];
-
-const soundUrls = {
-    pop: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/pop.ogg',
-    monster: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/monsterenergy.ogg',
-    bonus: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/bonus.ogg',
-    bonusdelete: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/bonusdelete.ogg',
-    menuopen: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuopen.ogg',
-    menuclose: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuclose.ogg',
-    click: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/click.ogg'
-};
-
-let clicks = 0, clickMultiplier = 1;
-const counter = document.getElementById("counter"), clickArea = document.getElementById("clickArea"),
-      image = document.getElementById("clickImage"), boostIndicator = document.getElementById("boostIndicator"),
-      loadingScreen = document.getElementById("loadingScreen"), gameContainer = document.getElementById("gameContainer"),
-      assetCache = document.getElementById("assetCache"), modal = document.getElementById("modal"),
-      modalCloseWrapper = document.getElementById("modalCloseWrapper"), leaderboardList = document.getElementById("leaderboardList"),
-      leaderboardLoading = document.getElementById("leaderboardLoading"), leaderboardRefreshTop = document.getElementById("leaderboardRefreshTop"),
-      leaderboardTimer = document.getElementById("leaderboardTimer"),
-      hardResetBtn = document.getElementById("hardResetBtn"), confirmResetModal = document.getElementById("confirmResetModal"),
-      confirmResetBtn = document.getElementById("confirmResetBtn"), cancelResetBtn = document.getElementById("cancelResetBtn"),
-      radioBtn = document.getElementById("radioBtn"), radioBtnImg = document.getElementById("radioBtnImg"),
-      volMinus = document.getElementById("volMinus"), volPlus = document.getElementById("volPlus"),
-      volumeDisplay = document.getElementById("volumeDisplay"),
-      soundToggleBtn = document.getElementById("soundToggleBtn"), soundToggleImg = document.getElementById("soundToggleImg");
-
-let boostTimeout, multiplierTimeout, audioCtx = null, buffers = {}, menuOpenPlaying = false, menuClosePlaying = false, saveTimeout = null;
-let leaderboardInterval = null, refreshCountdown = null, countdownValue = 10;
-let radioAudio = null, isRadioPlaying = false, hasLoadedLeaderboardOnce = false, radioRetryCount = 0;
-
-const defaultGameState = {
-    score: 0, selectedCharacter: 1, upgrades: { clickPower: 1, autoClick: 0, critChance: 0 },
-    settings: { soundEnabled: true, hapticEnabled: true, theme: 'default', radioEnabled: 1, radioVolume: 50 },
-    achievements: []
-};
-let gameState = JSON.parse(JSON.stringify(defaultGameState));
-
-// Стек модальных окон для корректной работы свайпа назад
-const modalStack = [];
-
-function initAudioContext() {
-    if (!audioCtx) { 
-        try { 
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
-            // Разблокировка аудио через user gesture
-            const unlock = () => {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                document.removeEventListener('touchstart', unlock);
-                document.removeEventListener('click', unlock);
-            };
-            document.addEventListener('touchstart', unlock, { once: true });
-            document.addEventListener('click', unlock, { once: true });
-        } catch (e) {} 
-    }
-}
-
-function playSound(buffer, volume = 0.5) {
-    if (!gameState.settings.soundEnabled) return;
-    if (!audioCtx || !buffer) return;
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const source = audioCtx.createBufferSource(), gain = audioCtx.createGain();
-    gain.gain.value = volume; source.buffer = buffer; source.connect(gain); gain.connect(audioCtx.destination); source.start(0);
-}
-
-async function updateFirebaseScore() {
-    if (!tgUserId) return;
-    try {
-        const userRef = ref(db, 'leaderboard/' + tgUserId);
-        await runTransaction(userRef, (currentData) => {
-            if (currentData === null) return { name: userName, score: clicks, lastUpdated: Date.now() };
-            if (clicks > currentData.score) return { name: userName, score: clicks, lastUpdated: Date.now() };
-            clicks = currentData.score; updateCounterDisplay(); return currentData;
-        });
-    } catch (e) { console.error("Firebase update error:", e); }
-}
-
-async function loadLeaderboard() {
-    if (!hasLoadedLeaderboardOnce) {
-        leaderboardLoading.style.display = 'flex'; leaderboardList.style.display = 'none'; leaderboardRefreshTop.style.display = 'none';
-    }
-    try {
-        const snapshot = await get(ref(db, 'leaderboard'));
-        if (!snapshot.exists()) { renderLeaderboard([]); return; }
-        const q = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(10));
-        const querySnapshot = await get(q);
-        if (querySnapshot.exists()) renderLeaderboard(Object.values(querySnapshot.val()).sort((a, b) => b.score - a.score));
-        else renderLeaderboard([]);
-    } catch (e) { console.error("Firebase load error:", e); renderLeaderboard([]); }
-    finally {
-        if (!hasLoadedLeaderboardOnce) {
-            leaderboardLoading.style.display = 'none'; leaderboardList.style.display = 'flex'; leaderboardRefreshTop.style.display = 'flex';
-            hasLoadedLeaderboardOnce = true;
+    <style>
+        /* --- Базовые стили и сброс --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
         }
-    }
-}
 
-function renderTimer(seconds) {
-    leaderboardTimer.innerHTML = '';
-    if (seconds > 0) {
-        const digits = seconds.toString().split('');
-        for (const digit of digits) {
-            const img = document.createElement('img'); img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
-            img.draggable = false; img.style.height = '20px'; img.style.pointerEvents = 'none'; leaderboardTimer.appendChild(img);
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            min-width: 100vw;
+            min-height: 100vh;
+            overflow: hidden;
         }
-        for (let i = 0; i < 3; i++) {
-            const period = document.createElement('img'); period.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/period.png`;
-            period.draggable = false; period.style.height = '20px'; period.style.pointerEvents = 'none'; leaderboardTimer.appendChild(period);
-        }
-    }
-}
 
-function startRefreshTimer() {
-    countdownValue = 10; renderTimer(countdownValue);
-    if (refreshCountdown) clearInterval(refreshCountdown);
-    refreshCountdown = setInterval(() => {
-        countdownValue--; renderTimer(countdownValue);
-        if (countdownValue <= 0) {
-            clearInterval(refreshCountdown);
-            if (modal.classList.contains('active') && document.getElementById('achvSection').classList.contains('active')) {
-                loadLeaderboard(); startRefreshTimer();
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #000);
+            font-family: Arial, Helvetica, sans-serif;
+            overscroll-behavior: none;
+            touch-action: manipulation;
+        }
+
+        /* --- Экран загрузки --- */
+        #assetCache {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--tg-theme-bg-color, #fff);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity .5s ease;
+        }
+
+        #loadingScreen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            border: 5px solid rgba(128, 128, 128, .2);
+            border-top: 5px solid var(--tg-theme-text-color, #000);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loadingText {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--tg-theme-text-color, #000);
+        }
+
+        /* --- Игровая зона --- */
+        .game {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity .5s ease;
+            margin-top: -135px;
+        }
+
+        .game.visible {
+            opacity: 1;
+        }
+
+        #boostIndicator {
+            position: absolute;
+            top: 60px;
+            left: -45%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s ease;
+            z-index: 20;
+        }
+
+        #boostIndicator.active {
+            opacity: 1;
+        }
+
+        .x2-img {
+            width: 120px;
+            height: auto;
+            animation: x2Pulse .3s ease-in-out infinite alternate;
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+
+        @keyframes x2Pulse {
+            0% { transform: scale(.8); }
+            100% { transform: scale(1.2); }
+        }
+
+        #counter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            animation: counterFloat 2.1s ease-in-out infinite;
+        }
+
+        #counter.pop {
+            animation: counterFloat 2.1s ease-in-out infinite, counterPop .18s ease;
+        }
+
+        .digit-img {
+            height: 72px;
+            width: auto;
+            display: block;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        #clickArea {
+            margin-top: 20px;
+            animation: idle 3.5s ease-in-out infinite;
+            transform-origin: center bottom;
+            -webkit-touch-callout: none;
+            touch-action: none;
+        }
+
+        #clickImage {
+            height: 60vh;
+            width: auto;
+            display: block;
+            pointer-events: none;
+            transform: scale(1);
+            transition: transform .15s ease-out;
+            -webkit-user-drag: none;
+            transform-origin: center bottom;
+        }
+
+        @keyframes idle {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        @keyframes counterFloat {
+            0%, 100% { transform: translateY(-7px); }
+            50% { transform: translateY(7px); }
+        }
+
+        @keyframes counterPop {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.12); }
+        }
+
+        /* --- Бонус Monster Energy --- */
+        .boost-container {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            z-index: 1000;
+            touch-action: none;
+        }
+
+        .boost-spring {
+            width: 100%;
+            height: 100%;
+        }
+
+        .boost-spring.spawning {
+            animation: boostSpawn 1s ease-out forwards;
+        }
+
+        .boost-spring.despawning {
+            animation: boostDespawn .15s ease-in forwards;
+            pointer-events: none;
+        }
+
+        .boost-sway {
+            width: 100%;
+            height: 100%;
+            animation: boostSway 2s ease-in-out infinite;
+        }
+
+        .boost-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            animation: boostPulse .25s ease-in-out infinite alternate;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        @keyframes boostSpawn {
+            0% { transform: scale(0); }
+            40% { transform: scale(1.35); }
+            60% { transform: scale(.85); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes boostDespawn {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: .8; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        @keyframes boostSway {
+            0%, 100% { transform: translateX(0) rotate(-6deg); }
+            50% { transform: translateX(15px) rotate(6deg); }
+        }
+
+        @keyframes boostPulse {
+            0% { transform: scale(.85); }
+            100% { transform: scale(1.15); }
+        }
+
+        /* --- Нижние кнопки UI --- */
+        .ui-container {
+            position: fixed;
+            bottom: 45px;
+            left: calc(50% + 2px);
+            transform: translateX(-50%);
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            z-index: 100;
+        }
+
+        .ui-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 107px;
+            margin-left: -15px;
+        }
+
+        .ui-btn-wrapper {
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            transition: transform .1s ease;
+        }
+
+        .ui-btn-wrapper:active {
+            transform: scale(1.08);
+        }
+
+        .ui-btn-img {
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .ui-btn-small { width: 65px; height: 49px; }
+        .ui-btn-large { width: 148px; height: 107px; margin-left: 15px; }
+
+        .ui-btn-achv { animation: uiFloat1 3s ease-in-out infinite; }
+        .ui-btn-settings { animation: uiFloat2 3.5s ease-in-out infinite; }
+        .ui-btn-shop { animation: uiFloat3 4s ease-in-out infinite; }
+
+        @keyframes uiFloat1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-3px, -3px); } }
+        @keyframes uiFloat2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(3px, -3px); } }
+        @keyframes uiFloat3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-3px, 3px); } }
+
+        /* --- Модальные окна --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--tg-theme-bg-color, #fff);
+            z-index: 10000;
+            display: none;
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
+
+        .modal.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            max-height: 80%;
+            overflow-y: auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-close-wrapper {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            transition: transform .1s ease;
+            animation: exitFloat 3.5s ease-in-out infinite;
+        }
+
+        .modal-close-wrapper:active {
+            transform: scale(1.08);
+        }
+
+        @keyframes exitFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-2px, 2px); }
+        }
+
+        .modal-close-img {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        .modal-section {
+            display: none;
+            width: 100%;
+        }
+
+        .modal-section.active {
+            display: block;
+        }
+
+        /* --- Лидерборд --- */
+        .leaderboard-wrapper {
+            position: relative;
+            min-height: 300px;
+        }
+
+        .leaderboard-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .leaderboard-loading-img {
+            width: 200px;
+            height: 200px;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        .leaderboard-refresh-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            animation: leaderboardFloat 4s ease-in-out infinite;
+            transition: transform .1s ease;
+        }
+
+        .leaderboard-refresh-top:active {
+            transform: scale(1.08);
+        }
+
+        .leaderboard-refresh-img {
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            animation: leaderboardFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes leaderboardFloat {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(2px, -2px); }
+            50% { transform: translate(-2px, 2px); }
+            75% { transform: translate(2px, 2px); }
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--tg-theme-bg-color, #fff);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+        }
+
+        .leaderboard-rank-name {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .leaderboard-rank {
+            font-size: 20px;
+            font-weight: bold;
+            width: 40px;
+            text-align: left;
+            color: var(--tg-theme-link-color, #0088cc);
+        }
+
+        .leaderboard-name {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: left;
+            color: var(--tg-theme-text-color, #000);
+            word-break: break-all;
+        }
+
+        .leaderboard-score {
+            display: flex;
+            gap: 1px;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .leaderboard-score img {
+            height: 20px;
+            width: auto;
+            -webkit-user-drag: none;
+            pointer-events: none;
+            -webkit-touch-callout: none;
+        }
+
+        /* --- Настройки --- */
+        .settings-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .radio-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .radio-btn {
+            width: 108px;
+            height: 108px;
+            flex-shrink: 0;
+            aspect-ratio: 1/1;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            animation: radioFloat 3.5s ease-in-out infinite;
+            transition: transform .1s ease;
+        }
+
+        .radio-btn:active {
+            transform: scale(1.08);
+        }
+
+        @keyframes radioFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(2px, -2px); }
+        }
+
+        .radio-img {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .vol-btn-wrapper {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            animation: volBtnFloat 3.5s ease-in-out infinite;
+            transition: transform .1s ease;
+        }
+
+        .vol-btn-wrapper:active {
+            transform: scale(1.08);
+        }
+
+        @keyframes volBtnFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-2px, 2px); }
+        }
+
+        .vol-btn-img {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .volume-display {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+            min-width: 90px;
+            justify-content: center;
+            animation: volFloat 3.5s ease-in-out infinite;
+        }
+
+        @keyframes volFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+
+        .volume-display img {
+            height: 24px;
+            width: auto;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        .sound-toggle-wrapper {
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+            aspect-ratio: 1/1;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            animation: soundFloat 3.5s ease-in-out infinite;
+            transition: transform .1s ease;
+        }
+
+        .sound-toggle-wrapper:active {
+            transform: scale(1.08);
+        }
+
+        @keyframes soundFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-2px, 2px); }
+        }
+
+        .sound-toggle-img {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .hard-reset-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .hard-reset-btn {
+            width: 148px;
+            height: 107px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            animation: hardResetFloat 3.5s ease-in-out infinite;
+            transition: transform .1s ease;
+        }
+
+        .hard-reset-btn:active {
+            transform: scale(1.08);
+        }
+
+        @keyframes hardResetFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(2px, -2px); }
+        }
+
+        .hard-reset-img {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .reset-gif {
+            width: 150px;
+            height: auto;
+            margin-bottom: 30px;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            animation: resetFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes resetFloat {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(-2px, -3px); }
+            66% { transform: translate(2px, 2px); }
+        }
+
+        .reset-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+            margin-top: 20px;
+        }
+
+        .reset-btn-wrapper {
+            width: 40px;
+            height: 40px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            transition: transform .1s ease;
+        }
+
+        .reset-btn-wrapper:active {
+            transform: scale(1.08);
+        }
+
+        .reset-btn-check { animation: checkFloat 3.5s ease-in-out infinite; }
+        .reset-btn-cancel { animation: cancelFloat 4s ease-in-out infinite; }
+
+        @keyframes checkFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2px, -2px); } }
+        @keyframes cancelFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, -2px); } }
+
+        .reset-btn-img {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Кэш ресурсов -->
+    <div id="assetCache"></div>
+
+    <!-- Экран загрузки -->
+    <div id="loadingScreen">
+        <div class="loader"></div>
+        <div id="loadingText">ЗАГРУЗКА...</div>
+    </div>
+
+    <!-- Игровая зона -->
+    <div class="game" id="gameContainer">
+        <div id="boostIndicator">
+            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="x2-img" draggable="false">
+        </div>
+        <div id="counter"></div>
+        <div id="clickArea">
+            <img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" draggable="false" alt="Click">
+        </div>
+    </div>
+
+    <!-- Кнопки интерфейса -->
+    <div class="ui-container">
+        <div class="ui-left">
+            <div class="ui-btn-wrapper" data-modal="achv">
+                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png" class="ui-btn-img ui-btn-small ui-btn-achv" draggable="false">
+            </div>
+            <div class="ui-btn-wrapper" data-modal="settings">
+                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png" class="ui-btn-img ui-btn-small ui-btn-settings" draggable="false">
+            </div>
+        </div>
+        <div class="ui-btn-wrapper" data-modal="shop">
+            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png" class="ui-btn-img ui-btn-large ui-btn-shop" draggable="false">
+        </div>
+    </div>
+
+    <!-- Основное модальное окно -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- Секция Достижения / Лидерборд -->
+            <div id="achvSection" class="modal-section">
+                <div class="leaderboard-wrapper">
+                    <div id="leaderboardLoading" class="leaderboard-loading">
+                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-loading-img" draggable="false">
+                    </div>
+                    <div id="leaderboardRefreshTop" class="leaderboard-refresh-top" style="display:none">
+                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-refresh-img" draggable="false">
+                    </div>
+                    <div id="leaderboardList" class="leaderboard-list" style="display:none"></div>
+                </div>
+            </div>
+
+            <!-- Секция Настройки -->
+            <div id="settingsSection" class="modal-section">
+                <div class="settings-controls">
+                    <div class="sound-toggle-wrapper" id="soundToggleBtn">
+                        <img id="soundToggleImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png" class="sound-toggle-img" draggable="false">
+                    </div>
+                    <div class="radio-wrapper">
+                        <div class="radio-btn" id="radioBtn">
+                            <img id="radioBtnImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png" class="radio-img" draggable="false">
+                        </div>
+                        <div class="volume-control">
+                            <div class="vol-btn-wrapper" id="volMinus">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/minus.png" class="vol-btn-img" draggable="false">
+                            </div>
+                            <div id="volumeDisplay" class="volume-display"></div>
+                            <div class="vol-btn-wrapper" id="volPlus">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/plus.png" class="vol-btn-img" draggable="false">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hard-reset-wrapper">
+                        <div class="hard-reset-btn" id="hardResetBtn">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardreset.png" class="hard-reset-img" draggable="false">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция Магазин -->
+            <div id="shopSection" class="modal-section">
+                <div style="color:#888;font-size:18px;">Скоро...</div>
+            </div>
+        </div>
+        <div class="modal-close-wrapper" id="modalCloseWrapper">
+            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img" draggable="false">
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения сброса -->
+    <div class="modal" id="confirmResetModal">
+        <div class="modal-content" style="padding:40px 20px;">
+            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif" class="reset-gif" draggable="false">
+            <div class="reset-buttons">
+                <div class="reset-btn-wrapper reset-btn-check" id="confirmResetBtn">
+                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png" class="reset-btn-img" draggable="false">
+                </div>
+                <div class="reset-btn-wrapper reset-btn-cancel" id="cancelResetBtn">
+                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png" class="reset-btn-img" draggable="false">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, set, get, query, orderByChild, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // --- Инициализация Telegram WebApp ---
+        const tg = window.Telegram?.WebApp;
+        let tgUserId = null;
+        let userName = 'Unknown';
+
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+            if (tg.initDataUnsafe?.user) {
+                tgUserId = tg.initDataUnsafe.user.id;
+                userName = tg.initDataUnsafe.user.username || `User${tgUserId}`;
             }
         }
-    }, 1000);
-}
 
-function renderLeaderboard(players) {
-    leaderboardList.innerHTML = '';
-    if (players.length === 0) { leaderboardList.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Пока нет записей</div>'; return; }
-    players.forEach((player, index) => {
-        const item = document.createElement('div'); item.className = 'leaderboard-item';
-        const rankName = document.createElement('div'); rankName.className = 'leaderboard-rank-name';
-        const rank = document.createElement('div'); rank.className = 'leaderboard-rank'; rank.textContent = `#${index + 1}`;
-        const name = document.createElement('div'); name.className = 'leaderboard-name'; name.textContent = player.name;
-        rankName.appendChild(rank); rankName.appendChild(name);
-        const scoreContainer = document.createElement('div'); scoreContainer.className = 'leaderboard-score';
-        const scoreStr = player.score.toString();
-        for (const digit of scoreStr) {
-            const img = document.createElement('img'); img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
-            img.alt = digit; img.draggable = false; scoreContainer.appendChild(img);
+        function triggerHaptic(t = 'light') {
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(t);
         }
-        item.appendChild(rankName); item.appendChild(scoreContainer); leaderboardList.appendChild(item);
-    });
-}
 
-async function loadLocalGame() {
-    try {
-        if (tg && tg.CloudStorage) {
-            const data = await new Promise((resolve, reject) => tg.CloudStorage.getItem('gameData', (err, value) => err ? reject(err) : resolve(value)));
-            if (data) {
-                const parsed = typeof data === 'string' ? JSON.parse(data) : (typeof data === 'object' ? data : null);
-                if (parsed) { Object.assign(gameState, parsed); clicks = gameState.score || 0; }
+        // --- Конфигурация Firebase ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyB80zGKePJfaO5UQHThDAdHieY6E3AzRJE",
+            authDomain: "fumoclickbot.firebaseapp.com",
+            databaseURL: "https://fumoclickbot-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "fumoclickbot",
+            storageBucket: "fumoclickbot.firebasestorage.app",
+            messagingSenderId: "354246810410",
+            appId: "1:354246810410:web:9989e29eae8e865c185c53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- Ссылки на ресурсы ---
+        const imageUrls = [
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/period.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/minus.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/plus.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardreset.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundson.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png',
+            ...Array.from({ length: 10 }, (_, i) => `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`)
+        ];
+
+        const soundUrls = {
+            pop: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/pop.ogg',
+            monster: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/monsterenergy.ogg',
+            bonus: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/bonus.ogg',
+            bonusdelete: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/bonusdelete.ogg',
+            menuopen: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuopen.ogg',
+            menuclose: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuclose.ogg',
+            click: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/click.ogg'
+        };
+
+        // --- DOM Элементы ---
+        const counter = document.getElementById("counter");
+        const clickArea = document.getElementById("clickArea");
+        const image = document.getElementById("clickImage");
+        const boostIndicator = document.getElementById("boostIndicator");
+        const loadingScreen = document.getElementById("loadingScreen");
+        const gameContainer = document.getElementById("gameContainer");
+        const assetCache = document.getElementById("assetCache");
+        const modal = document.getElementById("modal");
+        const modalCloseWrapper = document.getElementById("modalCloseWrapper");
+        const leaderboardList = document.getElementById("leaderboardList");
+        const leaderboardLoading = document.getElementById("leaderboardLoading");
+        const leaderboardRefreshTop = document.getElementById("leaderboardRefreshTop");
+        const hardResetBtn = document.getElementById("hardResetBtn");
+        const confirmResetModal = document.getElementById("confirmResetModal");
+        const confirmResetBtn = document.getElementById("confirmResetBtn");
+        const cancelResetBtn = document.getElementById("cancelResetBtn");
+        const radioBtn = document.getElementById("radioBtn");
+        const radioBtnImg = document.getElementById("radioBtnImg");
+        const volMinus = document.getElementById("volMinus");
+        const volPlus = document.getElementById("volPlus");
+        const volumeDisplay = document.getElementById("volumeDisplay");
+        const soundToggleBtn = document.getElementById("soundToggleBtn");
+        const soundToggleImg = document.getElementById("soundToggleImg");
+
+        // --- Переменные состояния ---
+        let clicks = 0;
+        let clickMultiplier = 1;
+        let boostTimeout, multiplierTimeout;
+        let audioCtx = null;
+        let buffers = {};
+        let menuOpenPlaying = false;
+        let menuClosePlaying = false;
+        let saveTimeout = null;
+        let leaderboardInterval = null;
+        let radioAudio = null;
+        let isRadioPlaying = false;
+        let hasLoadedLeaderboardOnce = false;
+        let radioRetryCount = 0;
+        let firstInteractionDone = false;
+
+        // Стек модальных окон для навигации назад
+        const modalStack = [];
+
+        // Разделяем прогресс и настройки
+        const defaultProgress = {
+            score: 0,
+            selectedCharacter: 1,
+            upgrades: { clickPower: 1, autoClick: 0, critChance: 0 },
+            achievements: []
+        };
+
+        const defaultSettings = {
+            soundEnabled: true,
+            hapticEnabled: true,
+            theme: 'default',
+            radioEnabled: 1,
+            radioVolume: 50
+        };
+
+        let gameState = {
+            ...JSON.parse(JSON.stringify(defaultProgress)),
+            settings: JSON.parse(JSON.stringify(defaultSettings))
+        };
+
+        // --- Аудио система ---
+        function initAudioContext() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.error("AudioContext error:", e);
+                }
             }
         }
-    } catch (e) { console.error('Local load error:', e); }
-}
 
-async function saveLocalGame() {
-    gameState.score = clicks;
-    try {
-        if (tg && tg.CloudStorage) {
-            await new Promise((resolve, reject) => tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true)));
+        function playSound(buffer, volume = 0.5) {
+            if (!gameState.settings.soundEnabled) return;
+            if (!audioCtx || !buffer) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const source = audioCtx.createBufferSource();
+            const gain = audioCtx.createGain();
+            gain.gain.value = volume;
+            source.buffer = buffer;
+            source.connect(gain);
+            gain.connect(audioCtx.destination);
+            source.start(0);
         }
-    } catch (e) { console.error('Local save error:', e); }
-}
 
-function scheduleSave() {
-    if (saveTimeout) clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(async () => { await saveLocalGame(); await updateFirebaseScore(); }, 500);
-}
+        // --- Работа с радио ---
+        function recreateRadioAudio() {
+            if (radioAudio) {
+                radioAudio.pause();
+                radioAudio.src = '';
+                radioAudio = null;
+            }
+            
+            radioAudio = document.createElement('audio');
+            radioAudio.src = 'https://radio.loficafe.net/listen/japanese-lofi/radio.mp3';
+            radioAudio.loop = true;
+            radioAudio.preload = 'auto';
+            radioAudio.setAttribute('playsinline', '');
+            radioAudio.setAttribute('webkit-playsinline', '');
+            radioAudio.volume = (gameState.settings.radioVolume / 100) * 0.2;
 
-function updateVolumeDisplay(vol) {
-    volumeDisplay.innerHTML = '';
-    const digits = vol.toString().split('');
-    for (const digit of digits) {
-        const img = document.createElement('img'); img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
-        img.draggable = false; volumeDisplay.appendChild(img);
-    }
-    const percent = document.createElement('img'); percent.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png`;
-    percent.draggable = false; volumeDisplay.appendChild(percent);
-}
-
-function updateRadioUI() {
-    if (isRadioPlaying) radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png';
-    else radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png';
-}
-
-function updateSoundUI() {
-    if (gameState.settings.soundEnabled) soundToggleImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png';
-    else soundToggleImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundson.png';
-}
-
-// Пересоздание радио при ошибке
-function recreateRadioAudio() {
-    if (radioAudio) {
-        radioAudio.pause();
-        radioAudio.src = '';
-        radioAudio = null;
-    }
-    radioAudio = document.createElement('audio');
-    radioAudio.src = 'https://radio.loficafe.net/listen/japanese-lofi/radio.mp3';
-    radioAudio.loop = true;
-    radioAudio.preload = 'auto';
-    radioAudio.setAttribute('playsinline', '');
-    radioAudio.setAttribute('webkit-playsinline', '');
-    radioAudio.volume = (gameState.settings.radioVolume / 100) * 0.2;
-    
-    radioAudio.addEventListener('error', (e) => {
-        console.error("Radio error:", e);
-        radioRetryCount++;
-        if (radioRetryCount <= 3) {
-            setTimeout(() => {
-                console.log("Retrying radio...");
-                recreateRadioAudio();
-                if (isRadioPlaying) tryPlayRadioSync();
-            }, 2000);
+            radioAudio.addEventListener('error', () => {
+                console.error("Radio error, retrying...");
+                radioRetryCount++;
+                if (radioRetryCount <= 3) {
+                    setTimeout(() => {
+                        recreateRadioAudio();
+                        if (isRadioPlaying) tryPlayRadioSync();
+                    }, 2000);
+                }
+            });
         }
-    });
-    
-    radioAudio.addEventListener('stalled', () => {
-        console.log("Radio stalled, retrying...");
-        radioRetryCount++;
-        if (radioRetryCount <= 3) {
-            setTimeout(() => {
-                recreateRadioAudio();
-                if (isRadioPlaying) tryPlayRadioSync();
-            }, 1500);
-        }
-    });
-}
 
-function tryPlayRadioSync() {
-    if (!radioAudio) return;
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    
-    // Для iOS: сначала muted, потом unmuted
-    radioAudio.muted = true;
-    radioAudio.play().then(() => {
-        setTimeout(() => { radioAudio.muted = false; }, 100);
-        isRadioPlaying = true;
-        radioRetryCount = 0;
-        updateRadioUI();
-    }).catch(err => {
-        console.log("Radio play failed:", err);
-        radioRetryCount++;
-        if (radioRetryCount <= 3) {
-            setTimeout(() => {
-                recreateRadioAudio();
+        function tryPlayRadioSync() {
+            if (!radioAudio) return;
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+            radioAudio.muted = true;
+            radioAudio.play().then(() => {
+                setTimeout(() => { radioAudio.muted = false; }, 100);
+                isRadioPlaying = true;
+                radioRetryCount = 0;
+                updateRadioUI();
+            }).catch(err => {
+                console.log("Radio play failed:", err);
+                radioRetryCount++;
+                if (radioRetryCount <= 3) {
+                    setTimeout(() => {
+                        recreateRadioAudio();
+                        tryPlayRadioSync();
+                    }, 1000);
+                }
+            });
+        }
+
+        function unlockRadioOnFirstClick() {
+            if (firstInteractionDone) return;
+            firstInteractionDone = true;
+            
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            
+            if (radioAudio && gameState.settings.radioEnabled === 1 && gameState.settings.radioVolume > 0) {
                 tryPlayRadioSync();
-            }, 1000);
+            }
         }
-    });
-}
 
-function initRadio() {
-    recreateRadioAudio();
-    const vol = gameState.settings.radioVolume !== undefined ? gameState.settings.radioVolume : 50;
-    gameState.settings.radioVolume = vol;
-    radioAudio.volume = (vol / 100) * 0.2;
-    updateVolumeDisplay(vol);
-    if (gameState.settings.radioEnabled === 1 && vol > 0) {
-        tryPlayRadioSync();
-    } else {
-        isRadioPlaying = false;
-        updateRadioUI();
-    }
-    updateSoundUI();
-}
-
-async function preloadResources() {
-    initAudioContext(); await loadLocalGame();
-    const imgPromises = imageUrls.map(url => new Promise(resolve => {
-        let done = false; const finish = () => { if (!done) { done = true; resolve(); } };
-        const img = new Image(); img.addEventListener('load', finish, { once: true }); img.addEventListener('error', finish, { once: true }); img.src = url; setTimeout(finish, 3000);
-    }));
-    const soundPromises = Object.entries(soundUrls).map(async ([key, url]) => {
-        try { const r = await fetch(url); buffers[key] = await audioCtx.decodeAudioData(await r.arrayBuffer()); } catch (e) {}
-    });
-    await Promise.race([Promise.all([...imgPromises, ...soundPromises]), new Promise(resolve => setTimeout(resolve, 5000))]);
-    await new Promise(r => setTimeout(r, 300));
-    loadingScreen.classList.add('hidden'); gameContainer.classList.add('visible'); 
-    initGame(); initRadio();
-}
-
-function initGame() {
-    for (let i = 0; i <= 9; i++) {
-        const img = document.createElement("img"); img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`;
-        img.className = "digit-img"; assetCache.appendChild(img);
-    }
-    updateCounterDisplay(); scheduleNextBoost();
-    setInterval(() => { saveLocalGame(); updateFirebaseScore(); }, 10000);
-}
-
-function updateCounterDisplay() {
-    const s = clicks.toString(), imgs = Array.from(counter.querySelectorAll('.digit-img'));
-    for (let i = imgs.length; i < s.length; i++) { const img = document.createElement("img"); img.className = "digit-img"; img.draggable = false; counter.appendChild(img); imgs.push(img); }
-    while (imgs.length > s.length) counter.removeChild(imgs.pop());
-    for (let i = 0; i < s.length; i++) {
-        const src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${s[i]}.png`;
-        if (!imgs[i].src.includes(`${s[i]}.png`)) imgs[i].src = src;
-    }
-}
-
-function processClick(e) {
-    if (e && e.cancelable) e.preventDefault();
-    clicks += (1 * clickMultiplier * gameState.upgrades.clickPower); updateCounterDisplay(); playSound(buffers.pop, 0.5); triggerHaptic('light');
-    image.style.transform = "scale(1.1) scaleY(0.9)"; counter.classList.remove("pop"); void counter.offsetWidth; counter.classList.add("pop"); scheduleSave();
-}
-
-function resetClickAnimation(e) { if (e && e.cancelable) e.preventDefault(); image.style.transform = "scale(1) scaleY(1)"; }
-
-clickArea.addEventListener("touchstart", processClick, { passive: false }); clickArea.addEventListener("touchend", resetClickAnimation, { passive: false });
-clickArea.addEventListener("touchcancel", resetClickAnimation, { passive: false }); clickArea.addEventListener("mousedown", processClick);
-clickArea.addEventListener("mouseup", resetClickAnimation); clickArea.addEventListener("mouseleave", resetClickAnimation);
-clickArea.addEventListener("contextmenu", e => e.preventDefault());
-
-function setAnimSpeed(mult) { const a = clickArea.getAnimations(); if (a.length > 0) a[0].playbackRate = mult; }
-
-function spawnBoost() {
-    const container = document.createElement("div"); container.className = "boost-container";
-    const spring = document.createElement("div"); spring.className = "boost-spring spawning";
-    const sway = document.createElement("div"); sway.className = "boost-sway";
-    const img = document.createElement("img"); img.src = "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png";
-    img.className = "boost-image"; img.draggable = false; sway.appendChild(img); spring.appendChild(sway); container.appendChild(spring); document.body.appendChild(container);
-    playSound(buffers.bonus, 0.5);
-    const boostSize = 150, maxX = window.innerWidth - boostSize - 20, maxY = window.innerHeight - boostSize - 20;
-    container.style.left = Math.max(20, Math.random() * maxX) + "px"; container.style.top = Math.max(20, Math.random() * maxY) + "px";
-    let boostActivated = false;
-    const activateBoost = e => {
-        if (boostActivated) return; if (e && e.cancelable) e.preventDefault(); e.stopPropagation(); boostActivated = true;
-        playSound(buffers.monster, 0.5); triggerHaptic('medium'); clickMultiplier = 2; boostIndicator.classList.add("active"); setAnimSpeed(4);
-        spring.className = "boost-spring despawning"; setTimeout(() => { if (document.body.contains(container)) container.remove(); }, 150);
-        clearTimeout(boostTimeout); clearTimeout(multiplierTimeout);
-        multiplierTimeout = setTimeout(() => { clickMultiplier = 1; boostIndicator.classList.remove("active"); setAnimSpeed(1); scheduleNextBoost(); }, 10000);
-    };
-    container.addEventListener("touchstart", activateBoost, { passive: false }); container.addEventListener("mousedown", activateBoost); container.addEventListener("contextmenu", e => e.preventDefault());
-    boostTimeout = setTimeout(() => {
-        if (!boostActivated && document.body.contains(container)) {
-            playSound(buffers.bonusdelete, 0.5); spring.className = "boost-spring despawning";
-            setTimeout(() => { if (document.body.contains(container)) container.remove(); }, 150); setTimeout(() => scheduleNextBoost(), 150);
+        function initRadio() {
+            recreateRadioAudio();
+            const vol = gameState.settings.radioVolume !== undefined ? gameState.settings.radioVolume : 50;
+            gameState.settings.radioVolume = vol;
+            radioAudio.volume = (vol / 100) * 0.2;
+            updateVolumeDisplay(vol);
+            
+            if (gameState.settings.radioEnabled === 1 && vol > 0) {
+                tryPlayRadioSync();
+            } else {
+                isRadioPlaying = false;
+                updateRadioUI();
+            }
+            updateSoundUI();
         }
-    }, 5000);
-}
 
-function scheduleNextBoost() { setTimeout(spawnBoost, Math.floor(Math.random() * (40000 - 15000 + 1)) + 15000); }
+        // --- Firebase функции ---
+        async function updateFirebaseScore() {
+            if (!tgUserId) return;
+            try {
+                const userRef = ref(db, 'leaderboard/' + tgUserId);
+                await runTransaction(userRef, (currentData) => {
+                    if (currentData === null) return { name: userName, score: clicks, lastUpdated: Date.now() };
+                    if (clicks > currentData.score) return { name: userName, score: clicks, lastUpdated: Date.now() };
+                    clicks = currentData.score;
+                    updateCounterDisplay();
+                    return currentData;
+                });
+            } catch (e) {
+                console.error("Firebase update error:", e);
+            }
+        }
 
-// --- СТЕКОВАЯ СИСТЕМА НАВИГАЦИИ НАЗАД ---
-function pushModal(modalType) {
-    modalStack.push(modalType);
-    if (tg && tg.BackButton) {
-        tg.BackButton.show();
-    }
-}
+        async function loadLeaderboard() {
+            if (!hasLoadedLeaderboardOnce) {
+                leaderboardLoading.style.display = 'flex';
+                leaderboardList.style.display = 'none';
+                leaderboardRefreshTop.style.display = 'none';
+            }
+            
+            try {
+                const snapshot = await get(ref(db, 'leaderboard'));
+                if (!snapshot.exists()) {
+                    renderLeaderboard([]);
+                    return;
+                }
+                const q = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(10));
+                const querySnapshot = await get(q);
+                if (querySnapshot.exists()) {
+                    renderLeaderboard(Object.values(querySnapshot.val()).sort((a, b) => b.score - a.score));
+                } else {
+                    renderLeaderboard([]);
+                }
+            } catch (e) {
+                console.error("Firebase load error:", e);
+                renderLeaderboard([]);
+            } finally {
+                if (!hasLoadedLeaderboardOnce) {
+                    leaderboardLoading.style.display = 'none';
+                    leaderboardList.style.display = 'flex';
+                    leaderboardRefreshTop.style.display = 'flex';
+                    hasLoadedLeaderboardOnce = true;
+                }
+            }
+        }
 
-function popModal() {
-    if (modalStack.length === 0) return false;
-    const modalType = modalStack.pop();
-    
-    if (modalType === 'confirmReset') {
-        confirmResetModal.classList.remove('active');
-        // Возвращаемся к основному модалу
-        if (modalStack.length > 0) {
+        // --- Локальное сохранение ---
+        async function loadLocalGame() {
+            try {
+                if (tg && tg.CloudStorage) {
+                    const data = await new Promise((resolve, reject) => 
+                        tg.CloudStorage.getItem('gameData', (err, value) => err ? reject(err) : resolve(value))
+                    );
+                    if (data) {
+                        const parsed = typeof data === 'string' ? JSON.parse(data) : (typeof data === 'object' ? data : null);
+                        if (parsed) {
+                            gameState = { ...gameState, ...parsed };
+                            if (parsed.settings) gameState.settings = { ...defaultSettings, ...parsed.settings };
+                            clicks = gameState.score || 0;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Local load error:', e);
+            }
+        }
+
+        async function saveLocalGame() {
+            gameState.score = clicks;
+            try {
+                if (tg && tg.CloudStorage) {
+                    await new Promise((resolve, reject) => 
+                        tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true))
+                    );
+                }
+            } catch (e) {
+                console.error('Local save error:', e);
+            }
+        }
+
+        function scheduleSave() {
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(async () => {
+                await saveLocalGame();
+                await updateFirebaseScore();
+            }, 500);
+        }
+
+        // --- UI функции ---
+        function updateVolumeDisplay(vol) {
+            volumeDisplay.innerHTML = '';
+            const digits = vol.toString().split('');
+            for (const digit of digits) {
+                const img = document.createElement('img');
+                img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
+                img.draggable = false;
+                volumeDisplay.appendChild(img);
+            }
+            const percent = document.createElement('img');
+            percent.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png`;
+            percent.draggable = false;
+            volumeDisplay.appendChild(percent);
+        }
+
+        function updateRadioUI() {
+            if (isRadioPlaying) {
+                radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png';
+            } else {
+                radioBtnImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png';
+            }
+        }
+
+        function updateSoundUI() {
+            if (gameState.settings.soundEnabled) {
+                soundToggleImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png';
+            } else {
+                soundToggleImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundson.png';
+            }
+        }
+
+        function renderLeaderboard(players) {
+            leaderboardList.innerHTML = '';
+            if (players.length === 0) {
+                leaderboardList.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Пока нет записей</div>';
+                return;
+            }
+            players.forEach((player, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                
+                const rankName = document.createElement('div');
+                rankName.className = 'leaderboard-rank-name';
+                
+                const rank = document.createElement('div');
+                rank.className = 'leaderboard-rank';
+                rank.textContent = `#${index + 1}`;
+                
+                const name = document.createElement('div');
+                name.className = 'leaderboard-name';
+                name.textContent = player.name;
+                
+                rankName.appendChild(rank);
+                rankName.appendChild(name);
+                
+                const scoreContainer = document.createElement('div');
+                scoreContainer.className = 'leaderboard-score';
+                const scoreStr = player.score.toString();
+                for (const digit of scoreStr) {
+                    const img = document.createElement('img');
+                    img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
+                    img.alt = digit;
+                    img.draggable = false;
+                    scoreContainer.appendChild(img);
+                }
+                
+                item.appendChild(rankName);
+                item.appendChild(scoreContainer);
+                leaderboardList.appendChild(item);
+            });
+        }
+
+        function updateCounterDisplay() {
+            const s = clicks.toString();
+            const imgs = Array.from(counter.querySelectorAll('.digit-img'));
+            
+            for (let i = imgs.length; i < s.length; i++) {
+                const img = document.createElement("img");
+                img.className = "digit-img";
+                img.draggable = false;
+                counter.appendChild(img);
+                imgs.push(img);
+            }
+            while (imgs.length > s.length) counter.removeChild(imgs.pop());
+            
+            for (let i = 0; i < s.length; i++) {
+                const src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${s[i]}.png`;
+                if (!imgs[i].src.includes(`${s[i]}.png`)) imgs[i].src = src;
+            }
+        }
+
+        // --- Навигация ---
+        function pushModal(modalType) {
+            modalStack.push(modalType);
             if (tg && tg.BackButton) tg.BackButton.show();
-        } else {
-            if (tg && tg.BackButton) tg.BackButton.hide();
         }
-        return true;
-    }
-    
-    if (modalType === 'main') {
-        if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
-        if (refreshCountdown) { clearInterval(refreshCountdown); refreshCountdown = null; }
-        closeModal();
-        if (tg && tg.BackButton) tg.BackButton.hide();
-        return true;
-    }
-    
-    return false;
-}
 
-function handleBackNavigation() {
-    if (modalStack.length > 0) {
-        popModal();
-    }
-}
+        function popModal() {
+            if (modalStack.length === 0) return false;
+            const modalType = modalStack.pop();
+            
+            if (modalType === 'confirmReset') {
+                confirmResetModal.classList.remove('active');
+                if (modalStack.length > 0) {
+                    if (tg && tg.BackButton) tg.BackButton.show();
+                } else {
+                    if (tg && tg.BackButton) tg.BackButton.hide();
+                }
+                return true;
+            }
+            
+            if (modalType === 'main') {
+                if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
+                closeModal();
+                if (tg && tg.BackButton) tg.BackButton.hide();
+                return true;
+            }
+            return false;
+        }
 
-// Обработчик кнопки назад Telegram
-if (tg && tg.BackButton) {
-    tg.BackButton.onClick(handleBackNavigation);
-}
+        function handleBackNavigation() {
+            if (modalStack.length > 0) popModal();
+        }
 
-// Обработчик ESC для ПК
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' || e.keyCode === 27) {
-        e.preventDefault();
-        handleBackNavigation();
-    }
-});
+        // --- Игровая логика ---
+        function processClick(e) {
+            if (e && e.cancelable) e.preventDefault();
+            
+            unlockRadioOnFirstClick();
 
-let currentModalType = '';
-document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper => {
-    wrapper.addEventListener("click", e => {
-        e.preventDefault(); e.stopPropagation(); triggerHaptic('light'); currentModalType = wrapper.dataset.modal;
-        document.querySelectorAll('.modal-section').forEach(sec => sec.classList.remove('active'));
-        if (currentModalType === 'achv') { 
-            document.getElementById('achvSection').classList.add('active'); loadLeaderboard(); startRefreshTimer();
-            if (leaderboardInterval) clearInterval(leaderboardInterval);
-            leaderboardInterval = setInterval(() => { if (document.getElementById('achvSection').classList.contains('active')) loadLeaderboard(); }, 10000);
-        } else if (currentModalType === 'settings') { document.getElementById('settingsSection').classList.add('active'); }
-        else if (currentModalType === 'shop') { document.getElementById('shopSection').classList.add('active'); }
-        openModal();
-        pushModal('main');
-    });
-    wrapper.addEventListener("contextmenu", e => e.preventDefault());
-});
+            clicks += (1 * clickMultiplier * gameState.upgrades.clickPower);
+            updateCounterDisplay();
+            playSound(buffers.pop, 0.5);
+            triggerHaptic('light');
+            
+            image.style.transform = "scale(1.1) scaleY(0.9)";
+            counter.classList.remove("pop");
+            void counter.offsetWidth;
+            counter.classList.add("pop");
+            scheduleSave();
+        }
 
-modalCloseWrapper.addEventListener("click", e => { 
-    e.preventDefault(); e.stopPropagation(); triggerHaptic('light'); 
-    if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
-    if (refreshCountdown) { clearInterval(refreshCountdown); refreshCountdown = null; }
-    closeModal(); 
-    modalStack.length = 0;
-    if (tg && tg.BackButton) tg.BackButton.hide();
-});
-modalCloseWrapper.addEventListener("contextmenu", e => e.preventDefault());
+        function resetClickAnimation(e) {
+            if (e && e.cancelable) e.preventDefault();
+            image.style.transform = "scale(1) scaleY(1)";
+        }
 
-function adjustVolume(delta) {
-    playSound(buffers.click, 0.5); triggerHaptic('light');
-    let newVol = Math.max(0, Math.min(100, gameState.settings.radioVolume + delta));
-    gameState.settings.radioVolume = newVol;
-    radioAudio.volume = (newVol / 100) * 0.2;
-    if (newVol === 0) { radioAudio.pause(); isRadioPlaying = false; gameState.settings.radioEnabled = 0; } 
-    else { if (!isRadioPlaying) tryPlayRadioSync(); gameState.settings.radioEnabled = 1; }
-    updateVolumeDisplay(newVol); updateRadioUI(); scheduleSave();
-}
+        function spawnBoost() {
+            const container = document.createElement("div");
+            container.className = "boost-container";
+            
+            const spring = document.createElement("div");
+            spring.className = "boost-spring spawning";
+            
+            const sway = document.createElement("div");
+            sway.className = "boost-sway";
+            
+            const img = document.createElement("img");
+            img.src = "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png";
+            img.className = "boost-image";
+            img.draggable = false;
+            
+            sway.appendChild(img);
+            spring.appendChild(sway);
+            container.appendChild(spring);
+            document.body.appendChild(container);
+            
+            playSound(buffers.bonus, 0.5);
+            
+            const boostSize = 150;
+            const maxX = window.innerWidth - boostSize - 20;
+            const maxY = window.innerHeight - boostSize - 20;
+            container.style.left = Math.max(20, Math.random() * maxX) + "px";
+            container.style.top = Math.max(20, Math.random() * maxY) + "px";
+            
+            let boostActivated = false;
+            
+            const activateBoost = e => {
+                if (boostActivated) return;
+                if (e && e.cancelable) e.preventDefault();
+                e.stopPropagation();
+                boostActivated = true;
+                
+                playSound(buffers.monster, 0.5);
+                triggerHaptic('medium');
+                clickMultiplier = 2;
+                boostIndicator.classList.add("active");
+                setAnimSpeed(4);
+                
+                spring.className = "boost-spring despawning";
+                setTimeout(() => {
+                    if (document.body.contains(container)) container.remove();
+                }, 150);
+                
+                clearTimeout(boostTimeout);
+                clearTimeout(multiplierTimeout);
+                multiplierTimeout = setTimeout(() => {
+                    clickMultiplier = 1;
+                    boostIndicator.classList.remove("active");
+                    setAnimSpeed(1);
+                    scheduleNextBoost();
+                }, 10000);
+            };
+            
+            container.addEventListener("touchstart", activateBoost, { passive: false });
+            container.addEventListener("mousedown", activateBoost);
+            container.addEventListener("contextmenu", e => e.preventDefault());
+            
+            boostTimeout = setTimeout(() => {
+                if (!boostActivated && document.body.contains(container)) {
+                    playSound(buffers.bonusdelete, 0.5);
+                    spring.className = "boost-spring despawning";
+                    setTimeout(() => {
+                        if (document.body.contains(container)) container.remove();
+                    }, 150);
+                    setTimeout(() => scheduleNextBoost(), 150);
+                }
+            }, 5000);
+        }
 
-volMinus.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); adjustVolume(-5); });
-volMinus.addEventListener("touchstart", e => { e.preventDefault(); e.stopPropagation(); adjustVolume(-5); }, {passive: false});
-volMinus.addEventListener("contextmenu", e => e.preventDefault());
+        function scheduleNextBoost() {
+            setTimeout(spawnBoost, Math.floor(Math.random() * (40000 - 15000 + 1)) + 15000);
+        }
 
-volPlus.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); adjustVolume(5); });
-volPlus.addEventListener("touchstart", e => { e.preventDefault(); e.stopPropagation(); adjustVolume(5); }, {passive: false});
-volPlus.addEventListener("contextmenu", e => e.preventDefault());
+        function setAnimSpeed(mult) {
+            const a = clickArea.getAnimations();
+            if (a.length > 0) a[0].playbackRate = mult;
+        }
 
-radioBtn.addEventListener("click", e => {
-    e.preventDefault(); e.stopPropagation(); playSound(buffers.click, 0.5); triggerHaptic('light');
-    if (isRadioPlaying) { radioAudio.pause(); isRadioPlaying = false; gameState.settings.radioEnabled = 0; } 
-    else {
-        if (gameState.settings.radioVolume === 0) { gameState.settings.radioVolume = 50; radioAudio.volume = (50/100)*0.2; updateVolumeDisplay(50); }
-        tryPlayRadioSync(); gameState.settings.radioEnabled = 1;
-    }
-    updateRadioUI(); scheduleSave();
-});
-radioBtn.addEventListener("touchstart", e => {
-    e.preventDefault(); e.stopPropagation(); playSound(buffers.click, 0.5); triggerHaptic('light');
-    if (isRadioPlaying) { radioAudio.pause(); isRadioPlaying = false; gameState.settings.radioEnabled = 0; } 
-    else {
-        if (gameState.settings.radioVolume === 0) { gameState.settings.radioVolume = 50; radioAudio.volume = (50/100)*0.2; updateVolumeDisplay(50); }
-        tryPlayRadioSync(); gameState.settings.radioEnabled = 1;
-    }
-    updateRadioUI(); scheduleSave();
-}, {passive: false});
-radioBtn.addEventListener("contextmenu", e => e.preventDefault());
+        function openModal() {
+            if (modal.classList.contains('active') || menuOpenPlaying) return;
+            menuOpenPlaying = true;
+            playSound(buffers.menuopen, 0.5);
+            modal.classList.add('active');
+            setTimeout(() => { menuOpenPlaying = false; }, 500);
+        }
 
-soundToggleBtn.addEventListener("click", e => {
-    e.preventDefault(); e.stopPropagation(); triggerHaptic('light');
-    if (!gameState.settings.soundEnabled) {
-        gameState.settings.soundEnabled = true;
-        playSound(buffers.click, 0.5);
-    } else {
-        gameState.settings.soundEnabled = false;
-    }
-    updateSoundUI(); scheduleSave();
-});
-soundToggleBtn.addEventListener("touchstart", e => {
-    e.preventDefault(); e.stopPropagation(); triggerHaptic('light');
-    if (!gameState.settings.soundEnabled) {
-        gameState.settings.soundEnabled = true;
-        playSound(buffers.click, 0.5);
-    } else {
-        gameState.settings.soundEnabled = false;
-    }
-    updateSoundUI(); scheduleSave();
-}, {passive: false});
-soundToggleBtn.addEventListener("contextmenu", e => e.preventDefault());
+        function closeModal() {
+            if (!modal.classList.contains('active') || menuClosePlaying) return;
+            menuClosePlaying = true;
+            playSound(buffers.menuclose, 0.5);
+            modal.classList.remove('active');
+            setTimeout(() => { menuClosePlaying = false; }, 500);
+        }
 
-hardResetBtn.addEventListener("click", e => {
-    e.preventDefault(); e.stopPropagation(); triggerHaptic('light'); playSound(buffers.click, 0.5);
-    confirmResetModal.classList.add('active');
-    pushModal('confirmReset');
-});
-hardResetBtn.addEventListener("contextmenu", e => e.preventDefault());
+        // --- Обработчики событий ---
+        clickArea.addEventListener("touchstart", processClick, { passive: false });
+        clickArea.addEventListener("touchend", resetClickAnimation, { passive: false });
+        clickArea.addEventListener("touchcancel", resetClickAnimation, { passive: false });
+        clickArea.addEventListener("mousedown", processClick);
+        clickArea.addEventListener("mouseup", resetClickAnimation);
+        clickArea.addEventListener("mouseleave", resetClickAnimation);
+        clickArea.addEventListener("contextmenu", e => e.preventDefault());
 
-confirmResetBtn.addEventListener("click", async e => {
-    e.preventDefault(); e.stopPropagation(); triggerHaptic('medium'); playSound(buffers.click, 0.5);
-    clicks = 0; clickMultiplier = 1; gameState = JSON.parse(JSON.stringify(defaultGameState));
-    updateCounterDisplay();
-    try {
-        if (tg && tg.CloudStorage) await new Promise((resolve, reject) => tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true)));
-        if (tgUserId) await set(ref(db, 'leaderboard/' + tgUserId), { name: userName, score: 0, lastUpdated: Date.now() });
-    } catch (err) { console.error("Hard reset error:", err); }
-    confirmResetModal.classList.remove('active'); 
-    closeModal(); 
-    modalStack.length = 0;
-    if (tg && tg.BackButton) tg.BackButton.hide();
-});
-confirmResetBtn.addEventListener("contextmenu", e => e.preventDefault());
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' || e.keyCode === 27) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleBackNavigation();
+            }
+        }, true);
 
-cancelResetBtn.addEventListener("click", e => {
-    e.preventDefault(); e.stopPropagation(); triggerHaptic('light'); playSound(buffers.click, 0.5);
-    confirmResetModal.classList.remove('active');
-    popModal();
-});
-cancelResetBtn.addEventListener("contextmenu", e => e.preventDefault());
+        if (tg && tg.BackButton) {
+            tg.BackButton.onClick(handleBackNavigation);
+        }
 
-leaderboardRefreshTop.addEventListener("click", async e => {
-    e.preventDefault(); e.stopPropagation(); triggerHaptic('light'); playSound(buffers.click, 0.5);
-    await updateFirebaseScore(); loadLeaderboard(); startRefreshTimer();
-});
-leaderboardRefreshTop.addEventListener("contextmenu", e => e.preventDefault());
+        // Кнопки UI
+        document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper => {
+            wrapper.addEventListener("click", e => {
+                e.preventDefault();
+                e.stopPropagation();
+                triggerHaptic('light');
+                
+                const currentModalType = wrapper.dataset.modal;
+                document.querySelectorAll('.modal-section').forEach(sec => sec.classList.remove('active'));
+                
+                if (currentModalType === 'achv') {
+                    document.getElementById('achvSection').classList.add('active');
+                    loadLeaderboard();
+                    if (leaderboardInterval) clearInterval(leaderboardInterval);
+                    leaderboardInterval = setInterval(() => {
+                        if (document.getElementById('achvSection').classList.contains('active')) loadLeaderboard();
+                    }, 10000);
+                } else if (currentModalType === 'settings') {
+                    document.getElementById('settingsSection').classList.add('active');
+                } else if (currentModalType === 'shop') {
+                    document.getElementById('shopSection').classList.add('active');
+                }
+                
+                openModal();
+                pushModal('main');
+            });
+            wrapper.addEventListener("contextmenu", e => e.preventDefault());
+        });
 
-function openModal() {
-    if (modal.classList.contains('active') || menuOpenPlaying) return; menuOpenPlaying = true;
-    playSound(buffers.menuopen, 0.5); modal.classList.add('active'); setTimeout(() => { menuOpenPlaying = false; }, 500);
-}
+        modalCloseWrapper.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
+            closeModal();
+            modalStack.length = 0;
+            if (tg && tg.BackButton) tg.BackButton.hide();
+        });
+        modalCloseWrapper.addEventListener("contextmenu", e => e.preventDefault());
 
-function closeModal() {
-    if (!modal.classList.contains('active') || menuClosePlaying) return; menuClosePlaying = true;
-    playSound(buffers.menuclose, 0.5); modal.classList.remove('active'); setTimeout(() => { menuClosePlaying = false; }, 500);
-}
+        // Настройки громкости
+        function adjustVolume(delta) {
+            let newVol = Math.max(0, Math.min(100, gameState.settings.radioVolume + delta));
+            gameState.settings.radioVolume = newVol;
+            radioAudio.volume = (newVol / 100) * 0.2;
+            
+            if (newVol === 0) {
+                radioAudio.pause();
+                isRadioPlaying = false;
+                gameState.settings.radioEnabled = 0;
+            } else {
+                if (!isRadioPlaying) tryPlayRadioSync();
+                gameState.settings.radioEnabled = 1;
+            }
+            
+            updateVolumeDisplay(newVol);
+            updateRadioUI();
+            scheduleSave();
+        }
 
-document.addEventListener('visibilitychange', () => { if (document.hidden) { saveLocalGame(); updateFirebaseScore(); } });
-window.addEventListener('beforeunload', () => { saveLocalGame(); updateFirebaseScore(); });
-window.addEventListener('pagehide', () => { saveLocalGame(); updateFirebaseScore(); });
+        volMinus.addEventListener("touchend", e => { 
+            e.preventDefault(); e.stopPropagation(); 
+            playSound(buffers.click, 0.5);
+            triggerHaptic('light');
+            adjustVolume(-5); 
+        });
+        volMinus.addEventListener("click", e => { 
+            e.preventDefault(); e.stopPropagation(); 
+            playSound(buffers.click, 0.5);
+            triggerHaptic('light');
+            adjustVolume(-5); 
+        });
+        volMinus.addEventListener("contextmenu", e => e.preventDefault());
 
-preloadResources();
-</script></body></html>
+        volPlus.addEventListener("touchend", e => { 
+            e.preventDefault(); e.stopPropagation(); 
+            playSound(buffers.click, 0.5);
+            triggerHaptic('light');
+            adjustVolume(5); 
+        });
+        volPlus.addEventListener("click", e => { 
+            e.preventDefault(); e.stopPropagation(); 
+            playSound(buffers.click, 0.5);
+            triggerHaptic('light');
+            adjustVolume(5); 
+        });
+        volPlus.addEventListener("contextmenu", e => e.preventDefault());
+
+        // Кнопка радио
+        function toggleRadio() {
+            playSound(buffers.click, 0.5);
+            triggerHaptic('light');
+            
+            if (isRadioPlaying) {
+                radioAudio.pause();
+                isRadioPlaying = false;
+                gameState.settings.radioEnabled = 0;
+            } else {
+                if (gameState.settings.radioVolume === 0) {
+                    gameState.settings.radioVolume = 50;
+                    radioAudio.volume = (50/100)*0.2;
+                    updateVolumeDisplay(50);
+                }
+                tryPlayRadioSync();
+                gameState.settings.radioEnabled = 1;
+            }
+            updateRadioUI();
+            scheduleSave();
+        }
+
+        radioBtn.addEventListener("touchend", e => {
+            e.preventDefault(); e.stopPropagation();
+            toggleRadio();
+        });
+        radioBtn.addEventListener("click", e => {
+            e.preventDefault(); e.stopPropagation();
+            toggleRadio();
+        });
+        radioBtn.addEventListener("contextmenu", e => e.preventDefault());
+
+        // Кнопка звука
+        function toggleSound() {
+            triggerHaptic('light');
+            if (!gameState.settings.soundEnabled) {
+                gameState.settings.soundEnabled = true;
+                playSound(buffers.click, 0.5);
+            } else {
+                gameState.settings.soundEnabled = false;
+            }
+            updateSoundUI();
+            scheduleSave();
+        }
+
+        soundToggleBtn.addEventListener("touchend", e => {
+            e.preventDefault(); e.stopPropagation();
+            toggleSound();
+        });
+        soundToggleBtn.addEventListener("click", e => {
+            e.preventDefault(); e.stopPropagation();
+            toggleSound();
+        });
+        soundToggleBtn.addEventListener("contextmenu", e => e.preventDefault());
+
+        // Сброс прогресса
+        hardResetBtn.addEventListener("touchend", e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            confirmResetModal.classList.add('active');
+            pushModal('confirmReset');
+        });
+        hardResetBtn.addEventListener("click", e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            confirmResetModal.classList.add('active');
+            pushModal('confirmReset');
+        });
+        hardResetBtn.addEventListener("contextmenu", e => e.preventDefault());
+
+        confirmResetBtn.addEventListener("touchend", async e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('medium');
+            playSound(buffers.click, 0.5);
+            
+            clicks = 0;
+            clickMultiplier = 1;
+            gameState = { ...JSON.parse(JSON.stringify(defaultProgress)), settings: gameState.settings };
+            
+            updateCounterDisplay();
+            
+            try {
+                if (tg && tg.CloudStorage) {
+                    await new Promise((resolve, reject) => 
+                        tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true))
+                    );
+                }
+                if (tgUserId) {
+                    await set(ref(db, 'leaderboard/' + tgUserId), { name: userName, score: 0, lastUpdated: Date.now() });
+                }
+            } catch (err) {
+                console.error("Hard reset error:", err);
+            }
+            
+            confirmResetModal.classList.remove('active');
+            closeModal();
+            modalStack.length = 0;
+            if (tg && tg.BackButton) tg.BackButton.hide();
+        });
+        confirmResetBtn.addEventListener("click", async e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('medium');
+            playSound(buffers.click, 0.5);
+            
+            clicks = 0;
+            clickMultiplier = 1;
+            gameState = { ...JSON.parse(JSON.stringify(defaultProgress)), settings: gameState.settings };
+            
+            updateCounterDisplay();
+            
+            try {
+                if (tg && tg.CloudStorage) {
+                    await new Promise((resolve, reject) => 
+                        tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true))
+                    );
+                }
+                if (tgUserId) {
+                    await set(ref(db, 'leaderboard/' + tgUserId), { name: userName, score: 0, lastUpdated: Date.now() });
+                }
+            } catch (err) {
+                console.error("Hard reset error:", err);
+            }
+            
+            confirmResetModal.classList.remove('active');
+            closeModal();
+            modalStack.length = 0;
+            if (tg && tg.BackButton) tg.BackButton.hide();
+        });
+        confirmResetBtn.addEventListener("contextmenu", e => e.preventDefault());
+
+        cancelResetBtn.addEventListener("touchend", e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            confirmResetModal.classList.remove('active');
+            popModal();
+        });
+        cancelResetBtn.addEventListener("click", e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            confirmResetModal.classList.remove('active');
+            popModal();
+        });
+        cancelResetBtn.addEventListener("contextmenu", e => e.preventDefault());
+
+        // Обновление лидерборда
+        leaderboardRefreshTop.addEventListener("touchend", async e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            await updateFirebaseScore();
+            loadLeaderboard();
+        });
+        leaderboardRefreshTop.addEventListener("click", async e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            await updateFirebaseScore();
+            loadLeaderboard();
+        });
+        leaderboardRefreshTop.addEventListener("contextmenu", e => e.preventDefault());
+
+        // Сохранение при сворачивании
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                saveLocalGame();
+                updateFirebaseScore();
+            }
+        });
+        window.addEventListener('beforeunload', () => { saveLocalGame(); updateFirebaseScore(); });
+        window.addEventListener('pagehide', () => { saveLocalGame(); updateFirebaseScore(); });
+
+        // --- Загрузка ресурсов и старт ---
+        async function preloadResources() {
+            initAudioContext();
+            await loadLocalGame();
+            
+            const imgPromises = imageUrls.map(url => new Promise(resolve => {
+                let done = false;
+                const finish = () => { if (!done) { done = true; resolve(); } };
+                const img = new Image();
+                img.addEventListener('load', finish, { once: true });
+                img.addEventListener('error', finish, { once: true });
+                img.src = url;
+                setTimeout(finish, 3000);
+            }));
+            
+            const soundPromises = Object.entries(soundUrls).map(async ([key, url]) => {
+                try {
+                    const r = await fetch(url);
+                    buffers[key] = await audioCtx.decodeAudioData(await r.arrayBuffer());
+                } catch (e) {}
+            });
+            
+            await Promise.race([
+                Promise.all([...imgPromises, ...soundPromises]),
+                new Promise(resolve => setTimeout(resolve, 5000))
+            ]);
+            
+            // Загружаем лидерборд во время предзагрузки
+            await loadLeaderboard();
+            
+            await new Promise(r => setTimeout(r, 300));
+            loadingScreen.classList.add('hidden');
+            gameContainer.classList.add('visible');
+            
+            initGame();
+            initRadio();
+        }
+
+        function initGame() {
+            for (let i = 0; i <= 9; i++) {
+                const img = document.createElement("img");
+                img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`;
+                img.className = "digit-img";
+                assetCache.appendChild(img);
+            }
+            updateCounterDisplay();
+            scheduleNextBoost();
+            setInterval(() => { saveLocalGame(); updateFirebaseScore(); }, 10000);
+        }
+
+        preloadResources();
+    </script>
+</body>
+</html>

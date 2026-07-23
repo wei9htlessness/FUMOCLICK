@@ -85,7 +85,7 @@ const counter = document.getElementById("counter"), clickArea = document.getElem
 
 let boostTimeout, multiplierTimeout, audioCtx = null, buffers = {}, menuOpenPlaying = false, menuClosePlaying = false, saveTimeout = null;
 let leaderboardInterval = null, refreshCountdown = null, countdownValue = 10;
-let radioAudio = null, isRadioPlaying = false, hasLoadedLeaderboardOnce = false;
+let radioAudio = null, isRadioPlaying = false, hasLoadedLeaderboardOnce = false, radioRetryCount = 0;
 
 const defaultGameState = {
     score: 0, selectedCharacter: 1, upgrades: { clickPower: 1, autoClick: 0, critChance: 0 },
@@ -94,11 +94,23 @@ const defaultGameState = {
 };
 let gameState = JSON.parse(JSON.stringify(defaultGameState));
 
-// Создаём radioAudio СРАЗУ при загрузке скрипта (до первого взаимодействия)
-try { radioAudio = new Audio('https://radio.loficafe.net/listen/japanese-lofi/radio.mp3'); radioAudio.loop = true; radioAudio.volume = 0.1; } catch(e) {}
+// Стек модальных окон для корректной работы свайпа назад
+const modalStack = [];
 
 function initAudioContext() {
-    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (!audioCtx) { 
+        try { 
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+            // Разблокировка аудио через user gesture
+            const unlock = () => {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                document.removeEventListener('touchstart', unlock);
+                document.removeEventListener('click', unlock);
+            };
+            document.addEventListener('touchstart', unlock, { once: true });
+            document.addEventListener('click', unlock, { once: true });
+        } catch (e) {} 
+    }
 }
 
 function playSound(buffer, volume = 0.5) {
@@ -232,43 +244,79 @@ function updateRadioUI() {
 }
 
 function updateSoundUI() {
-    // Если звук включен - показываем кнопку выключения (soundsoff), и наоборот
     if (gameState.settings.soundEnabled) soundToggleImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png';
     else soundToggleImg.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundson.png';
 }
 
-// Глобальный обработчик первого касания - разблокирует аудио на мобильных
-let firstInteractionDone = false;
-function handleFirstInteraction() {
-    if (firstInteractionDone) return;
-    firstInteractionDone = true;
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    if (radioAudio && gameState.settings.radioEnabled === 1 && gameState.settings.radioVolume > 0) {
-        radioAudio.play().then(() => {
-            isRadioPlaying = true;
-            updateRadioUI();
-        }).catch(e => console.log("Radio still blocked:", e));
+// Пересоздание радио при ошибке
+function recreateRadioAudio() {
+    if (radioAudio) {
+        radioAudio.pause();
+        radioAudio.src = '';
+        radioAudio = null;
     }
+    radioAudio = document.createElement('audio');
+    radioAudio.src = 'https://radio.loficafe.net/listen/japanese-lofi/radio.mp3';
+    radioAudio.loop = true;
+    radioAudio.preload = 'auto';
+    radioAudio.setAttribute('playsinline', '');
+    radioAudio.setAttribute('webkit-playsinline', '');
+    radioAudio.volume = (gameState.settings.radioVolume / 100) * 0.2;
+    
+    radioAudio.addEventListener('error', (e) => {
+        console.error("Radio error:", e);
+        radioRetryCount++;
+        if (radioRetryCount <= 3) {
+            setTimeout(() => {
+                console.log("Retrying radio...");
+                recreateRadioAudio();
+                if (isRadioPlaying) tryPlayRadioSync();
+            }, 2000);
+        }
+    });
+    
+    radioAudio.addEventListener('stalled', () => {
+        console.log("Radio stalled, retrying...");
+        radioRetryCount++;
+        if (radioRetryCount <= 3) {
+            setTimeout(() => {
+                recreateRadioAudio();
+                if (isRadioPlaying) tryPlayRadioSync();
+            }, 1500);
+        }
+    });
 }
-document.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
-document.addEventListener('mousedown', handleFirstInteraction, { once: true, passive: true });
 
 function tryPlayRadioSync() {
     if (!radioAudio) return;
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    radioAudio.play().then(() => { isRadioPlaying = true; updateRadioUI(); }).catch(err => {
+    
+    // Для iOS: сначала muted, потом unmuted
+    radioAudio.muted = true;
+    radioAudio.play().then(() => {
+        setTimeout(() => { radioAudio.muted = false; }, 100);
+        isRadioPlaying = true;
+        radioRetryCount = 0;
+        updateRadioUI();
+    }).catch(err => {
         console.log("Radio play failed:", err);
+        radioRetryCount++;
+        if (radioRetryCount <= 3) {
+            setTimeout(() => {
+                recreateRadioAudio();
+                tryPlayRadioSync();
+            }, 1000);
+        }
     });
 }
 
 function initRadio() {
+    recreateRadioAudio();
     const vol = gameState.settings.radioVolume !== undefined ? gameState.settings.radioVolume : 50;
     gameState.settings.radioVolume = vol;
-    // Отображаемая громкость 0-100, реальная = отображаемая * 0.2 (максимум 20%)
     radioAudio.volume = (vol / 100) * 0.2;
     updateVolumeDisplay(vol);
     if (gameState.settings.radioEnabled === 1 && vol > 0) {
-        // Пробуем сразу, но если не выйдет - сработает handleFirstInteraction
         tryPlayRadioSync();
     } else {
         isRadioPlaying = false;
@@ -354,33 +402,58 @@ function spawnBoost() {
 
 function scheduleNextBoost() { setTimeout(spawnBoost, Math.floor(Math.random() * (40000 - 15000 + 1)) + 15000); }
 
-// --- Обработка кнопки назад Telegram (свайп назад / кнопка назад) ---
-let currentModalOpen = false;
-function showBackButton() {
+// --- СТЕКОВАЯ СИСТЕМА НАВИГАЦИИ НАЗАД ---
+function pushModal(modalType) {
+    modalStack.push(modalType);
     if (tg && tg.BackButton) {
         tg.BackButton.show();
-        tg.BackButton.onClick(handleBackButton);
     }
-    currentModalOpen = true;
 }
-function hideBackButton() {
-    if (tg && tg.BackButton) {
-        tg.BackButton.hide();
-        tg.BackButton.offClick(handleBackButton);
-    }
-    currentModalOpen = false;
-}
-function handleBackButton() {
-    // Закрываем активное модальное окно
-    if (confirmResetModal.classList.contains('active')) {
+
+function popModal() {
+    if (modalStack.length === 0) return false;
+    const modalType = modalStack.pop();
+    
+    if (modalType === 'confirmReset') {
         confirmResetModal.classList.remove('active');
-    } else if (modal.classList.contains('active')) {
+        // Возвращаемся к основному модалу
+        if (modalStack.length > 0) {
+            if (tg && tg.BackButton) tg.BackButton.show();
+        } else {
+            if (tg && tg.BackButton) tg.BackButton.hide();
+        }
+        return true;
+    }
+    
+    if (modalType === 'main') {
         if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
         if (refreshCountdown) { clearInterval(refreshCountdown); refreshCountdown = null; }
         closeModal();
+        if (tg && tg.BackButton) tg.BackButton.hide();
+        return true;
     }
-    hideBackButton();
+    
+    return false;
 }
+
+function handleBackNavigation() {
+    if (modalStack.length > 0) {
+        popModal();
+    }
+}
+
+// Обработчик кнопки назад Telegram
+if (tg && tg.BackButton) {
+    tg.BackButton.onClick(handleBackNavigation);
+}
+
+// Обработчик ESC для ПК
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+        e.preventDefault();
+        handleBackNavigation();
+    }
+});
 
 let currentModalType = '';
 document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper => {
@@ -394,7 +467,7 @@ document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper => {
         } else if (currentModalType === 'settings') { document.getElementById('settingsSection').classList.add('active'); }
         else if (currentModalType === 'shop') { document.getElementById('shopSection').classList.add('active'); }
         openModal();
-        showBackButton();
+        pushModal('main');
     });
     wrapper.addEventListener("contextmenu", e => e.preventDefault());
 });
@@ -404,7 +477,8 @@ modalCloseWrapper.addEventListener("click", e => {
     if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
     if (refreshCountdown) { clearInterval(refreshCountdown); refreshCountdown = null; }
     closeModal(); 
-    hideBackButton();
+    modalStack.length = 0;
+    if (tg && tg.BackButton) tg.BackButton.hide();
 });
 modalCloseWrapper.addEventListener("contextmenu", e => e.preventDefault());
 
@@ -412,7 +486,6 @@ function adjustVolume(delta) {
     playSound(buffers.click, 0.5); triggerHaptic('light');
     let newVol = Math.max(0, Math.min(100, gameState.settings.radioVolume + delta));
     gameState.settings.radioVolume = newVol;
-    // Реальная громкость = отображаемая * 0.2 (максимум 20%)
     radioAudio.volume = (newVol / 100) * 0.2;
     if (newVol === 0) { radioAudio.pause(); isRadioPlaying = false; gameState.settings.radioEnabled = 0; } 
     else { if (!isRadioPlaying) tryPlayRadioSync(); gameState.settings.radioEnabled = 1; }
@@ -450,11 +523,9 @@ radioBtn.addEventListener("contextmenu", e => e.preventDefault());
 soundToggleBtn.addEventListener("click", e => {
     e.preventDefault(); e.stopPropagation(); triggerHaptic('light');
     if (!gameState.settings.soundEnabled) {
-        // Включаем звук - проигрываем click
         gameState.settings.soundEnabled = true;
         playSound(buffers.click, 0.5);
     } else {
-        // Выключаем звук - БЕЗ звука click
         gameState.settings.soundEnabled = false;
     }
     updateSoundUI(); scheduleSave();
@@ -474,6 +545,7 @@ soundToggleBtn.addEventListener("contextmenu", e => e.preventDefault());
 hardResetBtn.addEventListener("click", e => {
     e.preventDefault(); e.stopPropagation(); triggerHaptic('light'); playSound(buffers.click, 0.5);
     confirmResetModal.classList.add('active');
+    pushModal('confirmReset');
 });
 hardResetBtn.addEventListener("contextmenu", e => e.preventDefault());
 
@@ -485,13 +557,17 @@ confirmResetBtn.addEventListener("click", async e => {
         if (tg && tg.CloudStorage) await new Promise((resolve, reject) => tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true)));
         if (tgUserId) await set(ref(db, 'leaderboard/' + tgUserId), { name: userName, score: 0, lastUpdated: Date.now() });
     } catch (err) { console.error("Hard reset error:", err); }
-    confirmResetModal.classList.remove('active'); closeModal(); hideBackButton();
+    confirmResetModal.classList.remove('active'); 
+    closeModal(); 
+    modalStack.length = 0;
+    if (tg && tg.BackButton) tg.BackButton.hide();
 });
 confirmResetBtn.addEventListener("contextmenu", e => e.preventDefault());
 
 cancelResetBtn.addEventListener("click", e => {
     e.preventDefault(); e.stopPropagation(); triggerHaptic('light'); playSound(buffers.click, 0.5);
     confirmResetModal.classList.remove('active');
+    popModal();
 });
 cancelResetBtn.addEventListener("contextmenu", e => e.preventDefault());
 

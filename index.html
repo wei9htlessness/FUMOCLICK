@@ -106,32 +106,18 @@
             opacity: 1;
         }
 
-        #boostIndicator {
-            position: absolute;
-            top: 60px;
-            left: -45%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .3s ease;
-            z-index: 20;
+        /* Контейнер для счетчика - позиционирован относительно для абсолютного размещения индикаторов */
+        .counter-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: counterFloat 2.1s ease-in-out infinite;
+            z-index: 25;
         }
 
-        #boostIndicator.active {
-            opacity: 1;
-        }
-
-        .x2-img {
-            width: 120px;
-            height: auto;
-            animation: x2Pulse .3s ease-in-out infinite alternate;
-            pointer-events: none;
-            -webkit-user-drag: none;
-        }
-
-        @keyframes x2Pulse {
-            0% { transform: scale(.8); }
-            100% { transform: scale(1.2); }
+        .counter-wrapper.pop {
+            animation: counterFloat 2.1s ease-in-out infinite, counterPop .18s ease;
         }
 
         #counter {
@@ -139,11 +125,6 @@
             justify-content: center;
             align-items: center;
             gap: 3px;
-            animation: counterFloat 2.1s ease-in-out infinite;
-        }
-
-        #counter.pop {
-            animation: counterFloat 2.1s ease-in-out infinite, counterPop .18s ease;
         }
 
         .digit-img {
@@ -154,12 +135,65 @@
             pointer-events: none;
         }
 
+        /* Индикаторы бонуса x2 и cursor - абсолютно позиционированы под счетчиком, перекрывают fumo */
+        .boost-indicators {
+            position: absolute;
+            top: 150%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: -20px;
+            opacity: 0;
+            transition: opacity .3s ease;
+            z-index: 30;
+            pointer-events: none;
+        }
+
+        .boost-indicators.active {
+            opacity: 1;
+        }
+
+        .boost-indicator-img {
+            width: 70px;
+            height: auto;
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+
+        .cursor-indicator {
+            width: 23px;
+        }
+
+        .x2-indicator,
+        .cursor-indicator {
+            animation: x2Pulse .3s ease-in-out infinite alternate;
+        }
+
+        @keyframes x2Pulse {
+            0% { transform: scale(.8); }
+            100% { transform: scale(1.2); }
+        }
+
+        @keyframes counterFloat {
+            0%, 100% { transform: translateY(-7px); }
+            50% { transform: translateY(7px); }
+        }
+
+        @keyframes counterPop {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.12); }
+        }
+
         #clickArea {
             margin-top: 20px;
             animation: idle 3.5s ease-in-out infinite;
             transform-origin: center bottom;
             -webkit-touch-callout: none;
             touch-action: none;
+            position: relative;
+            z-index: 10;
         }
 
         #clickImage {
@@ -176,16 +210,6 @@
         @keyframes idle {
             0%, 100% { transform: rotate(-2deg); }
             50% { transform: rotate(2deg); }
-        }
-
-        @keyframes counterFloat {
-            0%, 100% { transform: translateY(-7px); }
-            50% { transform: translateY(7px); }
-        }
-
-        @keyframes counterPop {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-10px) scale(1.12); }
         }
 
         /* --- Бонус Monster Energy --- */
@@ -397,7 +421,6 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
-            margin-bottom: 15px;
             pointer-events: auto;
             touch-action: manipulation;
             -webkit-touch-callout: none;
@@ -412,6 +435,77 @@
         .leaderboard-refresh-img {
             width: 40px;
             height: 40px;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        .leaderboard-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 8px;
+            margin-top: -6px;
+            min-height: 46px;
+        }
+
+        .leaderboard-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .leaderboard-nav-btn {
+            width: 46px;
+            height: 46px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            transition: transform .1s ease;
+            animation: leaderboardFloat 4s ease-in-out infinite;
+        }
+
+        .leaderboard-nav-btn:active {
+            transform: scale(1.08);
+        }
+
+        .leaderboard-nav-btn:disabled {
+            opacity: .45;
+            transform: none;
+        }
+
+        .leaderboard-nav-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .leaderboard-page-info {
+            min-width: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            animation: leaderboardFloat 4s ease-in-out infinite;
+        }
+
+        .leaderboard-page-info img {
+            height: 22px;
+            width: auto;
             pointer-events: none;
             -webkit-user-drag: none;
             -webkit-touch-callout: none;
@@ -438,6 +532,22 @@
             background: var(--tg-theme-bg-color, #fff);
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+        }
+
+        .leaderboard-user-row {
+            display: flex !important;
+            width: 100%;
+            justify-content: space-between;
+            margin-top: 6px;
+            border: 2px solid var(--tg-theme-link-color, #0088cc);
+            background: var(--tg-theme-secondary-bg-color, #f4f7fb);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .12);
+            padding: 12px;
+            animation: leaderboardFloat 4s ease-in-out infinite;
+        }
+
+        .leaderboard-user-row .leaderboard-rank {
+            color: var(--tg-theme-link-color, #0088cc);
         }
 
         .leaderboard-rank-name {
@@ -494,6 +604,7 @@
             justify-content: center;
             width: 100%;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .radio-btn {
@@ -506,6 +617,9 @@
             -webkit-touch-callout: none;
             animation: radioFloat 3.5s ease-in-out infinite;
             transition: transform .1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .radio-btn:active {
@@ -520,6 +634,7 @@
         .radio-img {
             width: 100%;
             height: 100%;
+            object-fit: contain;
             pointer-events: none;
             -webkit-user-drag: none;
             -webkit-touch-callout: none;
@@ -529,18 +644,32 @@
         .volume-control {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 15px;
+            width: 100%;
+            margin-top: 12px;
         }
 
         .vol-btn-wrapper {
             width: 50px;
             height: 50px;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             pointer-events: auto;
             touch-action: manipulation;
             -webkit-touch-callout: none;
             animation: volBtnFloat 3.5s ease-in-out infinite;
             transition: transform .1s ease;
+        }
+
+        .vol-btn-wrapper.minus-btn {
+            justify-content: flex-start;
+        }
+
+        .vol-btn-wrapper.plus-btn {
+            justify-content: flex-end;
         }
 
         .vol-btn-wrapper:active {
@@ -553,8 +682,11 @@
         }
 
         .vol-btn-img {
-            width: 100%;
+            width: auto;
             height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
             pointer-events: none;
             -webkit-user-drag: none;
             -webkit-touch-callout: none;
@@ -593,6 +725,9 @@
             -webkit-touch-callout: none;
             animation: soundFloat 3.5s ease-in-out infinite;
             transition: transform .1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .sound-toggle-wrapper:active {
@@ -607,6 +742,7 @@
         .sound-toggle-img {
             width: 100%;
             height: 100%;
+            object-fit: contain;
             pointer-events: none;
             -webkit-user-drag: none;
             -webkit-touch-callout: none;
@@ -703,7 +839,7 @@
 </head>
 <body>
 
-    <!-- Кэш ресурсов -->
+    <!-- Кэш ресурсов для удержания картинок в памяти -->
     <div id="assetCache"></div>
 
     <!-- Экран загрузки -->
@@ -714,16 +850,22 @@
 
     <!-- Игровая зона -->
     <div class="game" id="gameContainer">
-        <div id="boostIndicator">
-            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="x2-img" draggable="false">
+        <!-- Обертка для счетчика с абсолютным позиционированием индикаторов -->
+        <div class="counter-wrapper" id="counterWrapper">
+            <div id="counter"></div>
+            <!-- Индикаторы бонуса x2 и cursor - перекрывают fumo -->
+            <div class="boost-indicators" id="boostIndicators">
+                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="boost-indicator-img x2-indicator" draggable="false">
+                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/cursor.png" class="boost-indicator-img cursor-indicator" draggable="false">
+            </div>
         </div>
-        <div id="counter"></div>
+        <!-- Область клика по fumo -->
         <div id="clickArea">
             <img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" draggable="false" alt="Click">
         </div>
     </div>
 
-    <!-- Кнопки интерфейса -->
+    <!-- Кнопки интерфейса (achv, settings, shop) -->
     <div class="ui-container">
         <div class="ui-left">
             <div class="ui-btn-wrapper" data-modal="achv">
@@ -747,31 +889,43 @@
                     <div id="leaderboardLoading" class="leaderboard-loading">
                         <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-loading-img" draggable="false">
                     </div>
-                    <div id="leaderboardRefreshTop" class="leaderboard-refresh-top" style="display:none">
-                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-refresh-img" draggable="false">
+                    <div class="leaderboard-toolbar">
+                        <div id="leaderboardRefreshTop" class="leaderboard-refresh-top" style="display:none">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-refresh-img" draggable="false">
+                        </div>
+                        <div id="leaderboardControls" class="leaderboard-controls" style="display:none">
+                            <button id="leaderboardPrevBtn" class="leaderboard-nav-btn" type="button" aria-label="Previous page">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/prev.png" class="leaderboard-nav-img" draggable="false">
+                            </button>
+                            <div id="leaderboardPageInfo" class="leaderboard-page-info"></div>
+                            <button id="leaderboardNextBtn" class="leaderboard-nav-btn" type="button" aria-label="Next page">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/next.png" class="leaderboard-nav-img" draggable="false">
+                            </button>
+                        </div>
                     </div>
                     <div id="leaderboardList" class="leaderboard-list" style="display:none"></div>
+                    <div id="leaderboardUserRow" class="leaderboard-item leaderboard-user-row" style="display:none;"></div>
                 </div>
             </div>
 
             <!-- Секция Настройки -->
             <div id="settingsSection" class="modal-section">
                 <div class="settings-controls">
-                    <div class="sound-toggle-wrapper" id="soundToggleBtn">
-                        <img id="soundToggleImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png" class="sound-toggle-img" draggable="false">
-                    </div>
                     <div class="radio-wrapper">
+                        <div class="sound-toggle-wrapper" id="soundToggleBtn">
+                            <img id="soundToggleImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png" class="sound-toggle-img" draggable="false">
+                        </div>
                         <div class="radio-btn" id="radioBtn">
                             <img id="radioBtnImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png" class="radio-img" draggable="false">
                         </div>
-                        <div class="volume-control">
-                            <div class="vol-btn-wrapper" id="volMinus">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/minus.png" class="vol-btn-img" draggable="false">
-                            </div>
-                            <div id="volumeDisplay" class="volume-display"></div>
-                            <div class="vol-btn-wrapper" id="volPlus">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/plus.png" class="vol-btn-img" draggable="false">
-                            </div>
+                    </div>
+                    <div class="volume-control">
+                        <div class="vol-btn-wrapper minus-btn" id="volMinus">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/minus.png" class="vol-btn-img" draggable="false">
+                        </div>
+                        <div id="volumeDisplay" class="volume-display"></div>
+                        <div class="vol-btn-wrapper plus-btn" id="volPlus">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/plus.png" class="vol-btn-img" draggable="false">
                         </div>
                     </div>
                     <div class="hard-reset-wrapper">
@@ -808,6 +962,7 @@
     </div>
 
     <script type="module">
+        // Импорт Firebase SDK для работы с базой данных
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, get, query, orderByChild, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -826,6 +981,7 @@
             }
         }
 
+        // Функция тактильной отдачи через Telegram API
         function triggerHaptic(t = 'light') {
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(t);
         }
@@ -844,16 +1000,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- Ссылки на ресурсы ---
+        // --- Ссылки на ресурсы для предзагрузки ---
         const imageUrls = [
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png',
-            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/cursor.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png',
-            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/period.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/cursor.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/minus.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/plus.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/slash.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png',
@@ -870,6 +1026,7 @@
             ...Array.from({ length: 10 }, (_, i) => `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`)
         ];
 
+        // Ссылки на звуковые файлы
         const soundUrls = {
             pop: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/pop.ogg',
             monster: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/monsterenergy.ogg',
@@ -882,9 +1039,10 @@
 
         // --- DOM Элементы ---
         const counter = document.getElementById("counter");
+        const counterWrapper = document.getElementById("counterWrapper");
         const clickArea = document.getElementById("clickArea");
         const image = document.getElementById("clickImage");
-        const boostIndicator = document.getElementById("boostIndicator");
+        const boostIndicators = document.getElementById("boostIndicators");
         const loadingScreen = document.getElementById("loadingScreen");
         const gameContainer = document.getElementById("gameContainer");
         const assetCache = document.getElementById("assetCache");
@@ -893,6 +1051,11 @@
         const leaderboardList = document.getElementById("leaderboardList");
         const leaderboardLoading = document.getElementById("leaderboardLoading");
         const leaderboardRefreshTop = document.getElementById("leaderboardRefreshTop");
+        const leaderboardControls = document.getElementById("leaderboardControls");
+        const leaderboardPrevBtn = document.getElementById("leaderboardPrevBtn");
+        const leaderboardNextBtn = document.getElementById("leaderboardNextBtn");
+        const leaderboardPageInfo = document.getElementById("leaderboardPageInfo");
+        const leaderboardUserRow = document.getElementById("leaderboardUserRow");
         const hardResetBtn = document.getElementById("hardResetBtn");
         const confirmResetModal = document.getElementById("confirmResetModal");
         const confirmResetBtn = document.getElementById("confirmResetBtn");
@@ -905,7 +1068,7 @@
         const soundToggleBtn = document.getElementById("soundToggleBtn");
         const soundToggleImg = document.getElementById("soundToggleImg");
 
-        // --- Переменные состояния ---
+        // --- Переменные состояния игры ---
         let clicks = 0;
         let clickMultiplier = 1;
         let boostTimeout, multiplierTimeout;
@@ -914,17 +1077,17 @@
         let menuOpenPlaying = false;
         let menuClosePlaying = false;
         let saveTimeout = null;
-        let leaderboardInterval = null;
         let radioAudio = null;
         let isRadioPlaying = false;
         let hasLoadedLeaderboardOnce = false;
         let radioRetryCount = 0;
-        let firstInteractionDone = false;
+        let leaderboardPlayers = [];
+        let leaderboardPage = 0;
 
-        // Стек модальных окон для навигации назад
+        // Стек модальных окон для навигации назад (свайп/ESC)
         const modalStack = [];
 
-        // Разделяем прогресс и настройки
+        // Прогресс игры (сбрасывается при hard reset)
         const defaultProgress = {
             score: 0,
             selectedCharacter: 1,
@@ -932,11 +1095,12 @@
             achievements: []
         };
 
+        // Настройки (сохраняются при hard reset)
         const defaultSettings = {
             soundEnabled: true,
             hapticEnabled: true,
             theme: 'default',
-            radioEnabled: 1,
+            radioEnabled: 0,
             radioVolume: 50
         };
 
@@ -1020,17 +1184,6 @@
             });
         }
 
-        function unlockRadioOnFirstClick() {
-            if (firstInteractionDone) return;
-            firstInteractionDone = true;
-            
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            
-            if (radioAudio && gameState.settings.radioEnabled === 1 && gameState.settings.radioVolume > 0) {
-                tryPlayRadioSync();
-            }
-        }
-
         function initRadio() {
             recreateRadioAudio();
             const vol = gameState.settings.radioVolume !== undefined ? gameState.settings.radioVolume : 50;
@@ -1065,10 +1218,15 @@
         }
 
         async function loadLeaderboard() {
-            if (!hasLoadedLeaderboardOnce) {
+            const shouldShowLoading = !hasLoadedLeaderboardOnce;
+            resetLeaderboardPagination();
+            leaderboardPage = 0;
+            if (shouldShowLoading) {
                 leaderboardLoading.style.display = 'flex';
                 leaderboardList.style.display = 'none';
                 leaderboardRefreshTop.style.display = 'none';
+                leaderboardControls.style.display = 'none';
+                leaderboardUserRow.style.display = 'none';
             }
             
             try {
@@ -1077,27 +1235,34 @@
                     renderLeaderboard([]);
                     return;
                 }
-                const q = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(10));
-                const querySnapshot = await get(q);
-                if (querySnapshot.exists()) {
-                    renderLeaderboard(Object.values(querySnapshot.val()).sort((a, b) => b.score - a.score));
-                } else {
-                    renderLeaderboard([]);
-                }
+
+                const rawEntries = Object.entries(snapshot.val() || {});
+                const players = rawEntries
+                    .filter(([, player]) => player && typeof player.score === 'number')
+                    .map(([id, player]) => ({
+                        id,
+                        name: player.name || 'Unknown',
+                        score: player.score
+                    }))
+                    .sort((a, b) => b.score - a.score);
+
+                renderLeaderboard(players);
             } catch (e) {
                 console.error("Firebase load error:", e);
                 renderLeaderboard([]);
             } finally {
-                if (!hasLoadedLeaderboardOnce) {
+                if (shouldShowLoading) {
                     leaderboardLoading.style.display = 'none';
                     leaderboardList.style.display = 'flex';
                     leaderboardRefreshTop.style.display = 'flex';
+                    leaderboardControls.style.display = 'flex';
+                    leaderboardUserRow.style.display = 'flex';
                     hasLoadedLeaderboardOnce = true;
                 }
             }
         }
 
-        // --- Локальное сохранение ---
+        // --- Локальное сохранение в Telegram CloudStorage ---
         async function loadLocalGame() {
             try {
                 if (tg && tg.CloudStorage) {
@@ -1171,13 +1336,120 @@
             }
         }
 
+        function resetLeaderboardPagination() {
+            leaderboardPage = 0;
+            if (leaderboardPageInfo) {
+                leaderboardPageInfo.innerHTML = '';
+            }
+            if (leaderboardPrevBtn) {
+                leaderboardPrevBtn.disabled = true;
+            }
+            if (leaderboardNextBtn) {
+                leaderboardNextBtn.disabled = true;
+            }
+            if (leaderboardList) {
+                leaderboardList.innerHTML = '';
+            }
+            if (leaderboardUserRow) {
+                leaderboardUserRow.innerHTML = '';
+                leaderboardUserRow.style.display = 'none';
+            }
+        }
+
+        function appendPageNumberImages(container, value) {
+            const digits = value.toString().split('');
+            for (const digit of digits) {
+                const img = document.createElement('img');
+                img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
+                img.alt = digit;
+                img.draggable = false;
+                container.appendChild(img);
+            }
+        }
+
+        function updateLeaderboardPaginationUI(totalPages) {
+            leaderboardPrevBtn.disabled = leaderboardPage === 0;
+            leaderboardNextBtn.disabled = leaderboardPage >= totalPages - 1;
+            leaderboardPageInfo.innerHTML = '';
+
+            if (leaderboardPlayers.length > 0) {
+                appendPageNumberImages(leaderboardPageInfo, leaderboardPage + 1);
+                const slash = document.createElement('img');
+                slash.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/slash.png';
+                slash.alt = '/';
+                slash.draggable = false;
+                leaderboardPageInfo.appendChild(slash);
+                appendPageNumberImages(leaderboardPageInfo, totalPages);
+            } else {
+                appendPageNumberImages(leaderboardPageInfo, 0);
+                const slash = document.createElement('img');
+                slash.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/slash.png';
+                slash.alt = '/';
+                slash.draggable = false;
+                leaderboardPageInfo.appendChild(slash);
+                appendPageNumberImages(leaderboardPageInfo, 0);
+            }
+        }
+
+        function renderCurrentUserRow() {
+            leaderboardUserRow.innerHTML = '';
+            leaderboardUserRow.style.display = 'none';
+
+            const currentUserName = userName || 'Unknown';
+            const currentUserScore = clicks || 0;
+            const currentPlayer = tgUserId ? leaderboardPlayers.find(player => String(player.id) === String(tgUserId)) : null;
+            const currentRank = currentPlayer ? leaderboardPlayers.findIndex(player => String(player.id) === String(tgUserId)) + 1 : null;
+
+            const row = document.createElement('div');
+            row.className = 'leaderboard-rank-name';
+
+            const rank = document.createElement('div');
+            rank.className = 'leaderboard-rank';
+            rank.textContent = currentRank ? `#${currentRank}` : '—';
+
+            const name = document.createElement('div');
+            name.className = 'leaderboard-name';
+            name.textContent = currentUserName;
+
+            const scoreContainer = document.createElement('div');
+            scoreContainer.className = 'leaderboard-score';
+            const scoreStr = currentPlayer ? currentPlayer.score.toString() : currentUserScore.toString();
+            for (const digit of scoreStr) {
+                const img = document.createElement('img');
+                img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
+                img.alt = digit;
+                img.draggable = false;
+                scoreContainer.appendChild(img);
+            }
+
+            row.appendChild(rank);
+            row.appendChild(name);
+            leaderboardUserRow.appendChild(row);
+            leaderboardUserRow.appendChild(scoreContainer);
+            leaderboardUserRow.style.display = 'flex';
+        }
+
         function renderLeaderboard(players) {
+            leaderboardPlayers = players;
             leaderboardList.innerHTML = '';
+            leaderboardControls.style.display = 'flex';
+            leaderboardUserRow.style.display = 'flex';
+
             if (players.length === 0) {
                 leaderboardList.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Пока нет записей</div>';
+                leaderboardPrevBtn.disabled = true;
+                leaderboardNextBtn.disabled = true;
+                updateLeaderboardPaginationUI(0);
+                renderCurrentUserRow();
                 return;
             }
-            players.forEach((player, index) => {
+
+            const totalPages = Math.max(1, Math.ceil(players.length / 10));
+            leaderboardPage = Math.min(leaderboardPage, totalPages - 1);
+            const startIndex = leaderboardPage * 10;
+            const visiblePlayers = players.slice(startIndex, startIndex + 10);
+
+            visiblePlayers.forEach((player, index) => {
                 const item = document.createElement('div');
                 item.className = 'leaderboard-item';
                 
@@ -1186,7 +1458,7 @@
                 
                 const rank = document.createElement('div');
                 rank.className = 'leaderboard-rank';
-                rank.textContent = `#${index + 1}`;
+                rank.textContent = `#${startIndex + index + 1}`;
                 
                 const name = document.createElement('div');
                 name.className = 'leaderboard-name';
@@ -1210,6 +1482,9 @@
                 item.appendChild(scoreContainer);
                 leaderboardList.appendChild(item);
             });
+
+            renderCurrentUserRow();
+            updateLeaderboardPaginationUI(totalPages);
         }
 
         function updateCounterDisplay() {
@@ -1252,7 +1527,6 @@
             }
             
             if (modalType === 'main') {
-                if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
                 closeModal();
                 if (tg && tg.BackButton) tg.BackButton.hide();
                 return true;
@@ -1268,17 +1542,15 @@
         function processClick(e) {
             if (e && e.cancelable) e.preventDefault();
             
-            unlockRadioOnFirstClick();
-
             clicks += (1 * clickMultiplier * gameState.upgrades.clickPower);
             updateCounterDisplay();
             playSound(buffers.pop, 0.5);
             triggerHaptic('light');
             
             image.style.transform = "scale(1.1) scaleY(0.9)";
-            counter.classList.remove("pop");
-            void counter.offsetWidth;
-            counter.classList.add("pop");
+            counterWrapper.classList.remove("pop");
+            void counterWrapper.offsetWidth;
+            counterWrapper.classList.add("pop");
             scheduleSave();
         }
 
@@ -1326,8 +1598,8 @@
                 playSound(buffers.monster, 0.5);
                 triggerHaptic('medium');
                 clickMultiplier = 2;
-                boostIndicator.classList.add("active");
-                setAnimSpeed(4);
+                boostIndicators.classList.add("active");
+                setAnimSpeed(4.4);
                 
                 spring.className = "boost-spring despawning";
                 setTimeout(() => {
@@ -1338,7 +1610,7 @@
                 clearTimeout(multiplierTimeout);
                 multiplierTimeout = setTimeout(() => {
                     clickMultiplier = 1;
-                    boostIndicator.classList.remove("active");
+                    boostIndicators.classList.remove("active");
                     setAnimSpeed(1);
                     scheduleNextBoost();
                 }, 10000);
@@ -1382,6 +1654,7 @@
             menuClosePlaying = true;
             playSound(buffers.menuclose, 0.5);
             modal.classList.remove('active');
+            resetLeaderboardPagination();
             setTimeout(() => { menuClosePlaying = false; }, 500);
         }
 
@@ -1406,7 +1679,6 @@
             tg.BackButton.onClick(handleBackNavigation);
         }
 
-        // Кнопки UI
         document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper => {
             wrapper.addEventListener("click", e => {
                 e.preventDefault();
@@ -1418,11 +1690,8 @@
                 
                 if (currentModalType === 'achv') {
                     document.getElementById('achvSection').classList.add('active');
+                    resetLeaderboardPagination();
                     loadLeaderboard();
-                    if (leaderboardInterval) clearInterval(leaderboardInterval);
-                    leaderboardInterval = setInterval(() => {
-                        if (document.getElementById('achvSection').classList.contains('active')) loadLeaderboard();
-                    }, 10000);
                 } else if (currentModalType === 'settings') {
                     document.getElementById('settingsSection').classList.add('active');
                 } else if (currentModalType === 'shop') {
@@ -1440,14 +1709,12 @@
             e.stopPropagation();
             triggerHaptic('light');
             playSound(buffers.click, 0.5);
-            if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
             closeModal();
             modalStack.length = 0;
             if (tg && tg.BackButton) tg.BackButton.hide();
         });
         modalCloseWrapper.addEventListener("contextmenu", e => e.preventDefault());
 
-        // Настройки громкости
         function adjustVolume(delta) {
             let newVol = Math.max(0, Math.min(100, gameState.settings.radioVolume + delta));
             gameState.settings.radioVolume = newVol;
@@ -1495,7 +1762,6 @@
         });
         volPlus.addEventListener("contextmenu", e => e.preventDefault());
 
-        // Кнопка радио
         function toggleRadio() {
             playSound(buffers.click, 0.5);
             triggerHaptic('light');
@@ -1527,7 +1793,6 @@
         });
         radioBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        // Кнопка звука
         function toggleSound() {
             triggerHaptic('light');
             if (!gameState.settings.soundEnabled) {
@@ -1550,7 +1815,6 @@
         });
         soundToggleBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        // Сброс прогресса
         hardResetBtn.addEventListener("touchend", e => {
             e.preventDefault(); e.stopPropagation();
             triggerHaptic('light');
@@ -1643,7 +1907,6 @@
         });
         cancelResetBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        // Обновление лидерборда
         leaderboardRefreshTop.addEventListener("touchend", async e => {
             e.preventDefault(); e.stopPropagation();
             triggerHaptic('light');
@@ -1660,7 +1923,41 @@
         });
         leaderboardRefreshTop.addEventListener("contextmenu", e => e.preventDefault());
 
-        // Сохранение при сворачивании
+        function changeLeaderboardPage(delta) {
+            if (!leaderboardPlayers.length) return;
+            const totalPages = Math.max(1, Math.ceil(leaderboardPlayers.length / 10));
+            leaderboardPage = Math.max(0, Math.min(totalPages - 1, leaderboardPage + delta));
+            renderLeaderboard(leaderboardPlayers);
+        }
+
+        leaderboardPrevBtn.addEventListener("touchend", e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            changeLeaderboardPage(-1);
+        });
+        leaderboardPrevBtn.addEventListener("click", e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            changeLeaderboardPage(-1);
+        });
+        leaderboardPrevBtn.addEventListener("contextmenu", e => e.preventDefault());
+
+        leaderboardNextBtn.addEventListener("touchend", e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            changeLeaderboardPage(1);
+        });
+        leaderboardNextBtn.addEventListener("click", e => {
+            e.preventDefault(); e.stopPropagation();
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            changeLeaderboardPage(1);
+        });
+        leaderboardNextBtn.addEventListener("contextmenu", e => e.preventDefault());
+
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 saveLocalGame();
@@ -1670,7 +1967,6 @@
         window.addEventListener('beforeunload', () => { saveLocalGame(); updateFirebaseScore(); });
         window.addEventListener('pagehide', () => { saveLocalGame(); updateFirebaseScore(); });
 
-        // --- Загрузка ресурсов и старт ---
         async function preloadResources() {
             initAudioContext();
             await loadLocalGame();
@@ -1697,7 +1993,6 @@
                 new Promise(resolve => setTimeout(resolve, 5000))
             ]);
             
-            // Загружаем лидерборд во время предзагрузки
             await loadLeaderboard();
             
             await new Promise(r => setTimeout(r, 300));

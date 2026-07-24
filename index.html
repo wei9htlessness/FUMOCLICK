@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>FUMOCLICK</title>
     <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/favicon.ico">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -555,6 +555,7 @@
             gap: 10px;
             align-items: center;
             flex: 1;
+            min-width: 0;
         }
 
         .leaderboard-rank {
@@ -570,7 +571,71 @@
             font-weight: bold;
             text-align: left;
             color: var(--tg-theme-text-color, #000);
-            word-break: break-all;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            position: relative;
+            min-width: 0;
+        }
+
+        .leaderboard-name span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            width: 100%;
+            transition: opacity .2s ease;
+        }
+
+        .leaderboard-name-alt {
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .leaderboard-name-alt img {
+            height: 18px;
+            width: auto;
+        }
+
+        .leaderboard-name.show-alt .leaderboard-name-text {
+            opacity: 0;
+        }
+
+        .leaderboard-name.show-alt .leaderboard-name-alt {
+            opacity: 1;
+        }
+
+        .orientation-lock-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            background: rgba(0, 0, 0, 0.92);
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            padding: 30px;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            pointer-events: all;
+        }
+
+        @media (orientation: landscape) {
+            .orientation-lock-overlay {
+                display: flex;
+            }
+
+            .game,
+            .ui-container,
+            .modal {
+                filter: blur(4px);
+            }
         }
 
         .leaderboard-score {
@@ -865,6 +930,8 @@
         </div>
     </div>
 
+    <div id="orientationLockOverlay" class="orientation-lock-overlay">Пожалуйста, поверните устройство в портретный режим.</div>
+
     <!-- Кнопки интерфейса (achv, settings, shop) -->
     <div class="ui-container">
         <div class="ui-left">
@@ -1056,6 +1123,7 @@
         const leaderboardNextBtn = document.getElementById("leaderboardNextBtn");
         const leaderboardPageInfo = document.getElementById("leaderboardPageInfo");
         const leaderboardUserRow = document.getElementById("leaderboardUserRow");
+        const orientationLockOverlay = document.getElementById("orientationLockOverlay");
         const hardResetBtn = document.getElementById("hardResetBtn");
         const confirmResetModal = document.getElementById("confirmResetModal");
         const confirmResetBtn = document.getElementById("confirmResetBtn");
@@ -1083,6 +1151,8 @@
         let radioRetryCount = 0;
         let leaderboardPlayers = [];
         let leaderboardPage = 0;
+        let leaderboardNameSwapTimer = null;
+        let leaderboardShowingScore = false;
 
         // Стек модальных окон для навигации назад (свайп/ESC)
         const modalStack = [];
@@ -1367,6 +1437,71 @@
             }
         }
 
+        function createDigitImage(digit) {
+            const img = document.createElement('img');
+            img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
+            img.alt = digit;
+            img.draggable = false;
+            img.style.pointerEvents = 'none';
+            img.style.userSelect = 'none';
+            img.style.webkitUserDrag = 'none';
+            img.style.webkitTouchCallout = 'none';
+            img.oncontextmenu = () => false;
+            return img;
+        }
+
+        function createLeaderboardName(nameText, scoreValue) {
+            const name = document.createElement('div');
+            name.className = 'leaderboard-name';
+            if (leaderboardShowingScore) name.classList.add('show-alt');
+            name.dataset.score = scoreValue;
+
+            const main = document.createElement('span');
+            main.className = 'leaderboard-name-text';
+            main.textContent = nameText;
+
+            const alt = document.createElement('span');
+            alt.className = 'leaderboard-name-alt';
+            alt.style.display = 'inline-flex';
+            alt.style.gap = '2px';
+            alt.style.alignItems = 'center';
+            alt.style.justifyContent = 'flex-start';
+            alt.style.whiteSpace = 'nowrap';
+            for (const digit of scoreValue.toString()) {
+                alt.appendChild(createDigitImage(digit));
+            }
+
+            name.appendChild(main);
+            name.appendChild(alt);
+            return name;
+        }
+
+        function toggleLeaderboardNameLabels() {
+            leaderboardShowingScore = !leaderboardShowingScore;
+            document.querySelectorAll('.leaderboard-name').forEach(el => {
+                if (leaderboardShowingScore) {
+                    el.classList.add('show-alt');
+                } else {
+                    el.classList.remove('show-alt');
+                }
+            });
+        }
+
+        function startLeaderboardNameSwap() {
+            if (leaderboardNameSwapTimer) return;
+            leaderboardNameSwapTimer = setInterval(toggleLeaderboardNameLabels, 2000);
+        }
+
+        function refreshOrientationLock() {
+            if (!orientationLockOverlay) return;
+            const inLandscape = window.matchMedia('(orientation: landscape)').matches || window.innerWidth > window.innerHeight;
+            orientationLockOverlay.style.display = inLandscape ? 'flex' : 'none';
+        }
+
+        window.addEventListener('resize', refreshOrientationLock);
+        window.addEventListener('orientationchange', refreshOrientationLock);
+        refreshOrientationLock();
+
         function updateLeaderboardPaginationUI(totalPages) {
             leaderboardPrevBtn.disabled = leaderboardPage === 0;
             leaderboardNextBtn.disabled = leaderboardPage >= totalPages - 1;
@@ -1407,25 +1542,11 @@
             rank.className = 'leaderboard-rank';
             rank.textContent = currentRank ? `#${currentRank}` : '—';
 
-            const name = document.createElement('div');
-            name.className = 'leaderboard-name';
-            name.textContent = currentUserName;
-
-            const scoreContainer = document.createElement('div');
-            scoreContainer.className = 'leaderboard-score';
-            const scoreStr = currentPlayer ? currentPlayer.score.toString() : currentUserScore.toString();
-            for (const digit of scoreStr) {
-                const img = document.createElement('img');
-                img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
-                img.alt = digit;
-                img.draggable = false;
-                scoreContainer.appendChild(img);
-            }
+            const name = createLeaderboardName(currentUserName, currentUserScore);
 
             row.appendChild(rank);
             row.appendChild(name);
             leaderboardUserRow.appendChild(row);
-            leaderboardUserRow.appendChild(scoreContainer);
             leaderboardUserRow.style.display = 'flex';
         }
 
@@ -1444,10 +1565,10 @@
                 return;
             }
 
-            const totalPages = Math.max(1, Math.ceil(players.length / 10));
+            const totalPages = Math.max(1, Math.ceil(players.length / 7));
             leaderboardPage = Math.min(leaderboardPage, totalPages - 1);
-            const startIndex = leaderboardPage * 10;
-            const visiblePlayers = players.slice(startIndex, startIndex + 10);
+            const startIndex = leaderboardPage * 7;
+            const visiblePlayers = players.slice(startIndex, startIndex + 7);
 
             visiblePlayers.forEach((player, index) => {
                 const item = document.createElement('div');
@@ -1460,29 +1581,16 @@
                 rank.className = 'leaderboard-rank';
                 rank.textContent = `#${startIndex + index + 1}`;
                 
-                const name = document.createElement('div');
-                name.className = 'leaderboard-name';
-                name.textContent = player.name;
+                const name = createLeaderboardName(player.name, player.score);
                 
                 rankName.appendChild(rank);
                 rankName.appendChild(name);
                 
-                const scoreContainer = document.createElement('div');
-                scoreContainer.className = 'leaderboard-score';
-                const scoreStr = player.score.toString();
-                for (const digit of scoreStr) {
-                    const img = document.createElement('img');
-                    img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
-                    img.alt = digit;
-                    img.draggable = false;
-                    scoreContainer.appendChild(img);
-                }
-                
                 item.appendChild(rankName);
-                item.appendChild(scoreContainer);
                 leaderboardList.appendChild(item);
             });
 
+            startLeaderboardNameSwap();
             renderCurrentUserRow();
             updateLeaderboardPaginationUI(totalPages);
         }
@@ -1925,37 +2033,25 @@
 
         function changeLeaderboardPage(delta) {
             if (!leaderboardPlayers.length) return;
-            const totalPages = Math.max(1, Math.ceil(leaderboardPlayers.length / 10));
+            const totalPages = Math.max(1, Math.ceil(leaderboardPlayers.length / 7));
             leaderboardPage = Math.max(0, Math.min(totalPages - 1, leaderboardPage + delta));
             renderLeaderboard(leaderboardPlayers);
         }
 
-        leaderboardPrevBtn.addEventListener("touchend", e => {
-            e.preventDefault(); e.stopPropagation();
+        const handleLeaderboardNav = (delta) => (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             triggerHaptic('light');
             playSound(buffers.click, 0.5);
-            changeLeaderboardPage(-1);
-        });
-        leaderboardPrevBtn.addEventListener("click", e => {
-            e.preventDefault(); e.stopPropagation();
-            triggerHaptic('light');
-            playSound(buffers.click, 0.5);
-            changeLeaderboardPage(-1);
-        });
+            changeLeaderboardPage(delta);
+        };
+
+        leaderboardPrevBtn.addEventListener("pointerup", handleLeaderboardNav(-1));
         leaderboardPrevBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        leaderboardNextBtn.addEventListener("touchend", e => {
-            e.preventDefault(); e.stopPropagation();
-            triggerHaptic('light');
-            playSound(buffers.click, 0.5);
-            changeLeaderboardPage(1);
-        });
-        leaderboardNextBtn.addEventListener("click", e => {
-            e.preventDefault(); e.stopPropagation();
-            triggerHaptic('light');
-            playSound(buffers.click, 0.5);
-            changeLeaderboardPage(1);
-        });
+        leaderboardNextBtn.addEventListener("pointerup", handleLeaderboardNav(1));
         leaderboardNextBtn.addEventListener("contextmenu", e => e.preventDefault());
 
         document.addEventListener('visibilitychange', () => {

@@ -1781,16 +1781,19 @@
 
         // --- Firebase функции ---
         async function updateFirebaseScore() {
-            if (!auth.currentUser) return;
-            const firebaseUid = auth.currentUser.uid;
+            const userKey = tgUserId; 
+            if (!userKey) return;
+
             try {
-                const userRef = ref(db, 'leaderboard/' + firebaseUid);
+                const userRef = ref(db, 'leaderboard/' + userKey);
                 await runTransaction(userRef, (currentData) => {
                     if (currentData === null) return { name: userName, score: clicks, lastUpdated: Date.now() };
                     if (clicks > currentData.score) return { ...currentData, name: userName, score: clicks, lastUpdated: Date.now() };
+                if (currentData.score > clicks) {
                     clicks = currentData.score;
                     updateCounterDisplay();
-                    return currentData;
+                }
+                return currentData;
                 });
             } catch (e) {
                 console.error("Firebase update error:", e);
@@ -2065,7 +2068,7 @@
 
             const currentUserName = userName || 'Unknown';
             const currentUserScore = clicks || 0;
-            const currentUid = auth.currentUser?.uid;
+            const currentUid = tgUserId; 
             const currentPlayer = currentUid ? leaderboardPlayers.find(player => String(player.id) === String(currentUid)) : null;
             const currentRank = currentPlayer ? leaderboardPlayers.findIndex(player => String(player.id) === String(currentUid)) + 1 : null;
 
@@ -2535,12 +2538,13 @@
                         tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true))
                     );
                 }
-                if (auth.currentUser) {
-                    await set(ref(db, 'leaderboard/' + auth.currentUser.uid), { name: userName, score: 0, lastUpdated: Date.now() });
+                const userKey = tgUserId;
+                    if (userKey) {
+                        await set(ref(db, 'leaderboard/' + userKey), { name: userName, score: 0, lastUpdated: Date.now() });
+                    }
+                } catch (err) {
+                    console.error("Hard reset error:", err);
                 }
-            } catch (err) {
-                console.error("Hard reset error:", err);
-            }
             
             confirmResetModal.classList.remove('active');
             closeModal();

@@ -1286,7 +1286,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, get, query, orderByChild, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         // Защита DevTools от самых простых способов открытия
         window.addEventListener('keydown', function(e) {
@@ -2620,18 +2620,67 @@
         window.addEventListener('beforeunload', () => { saveLocalGame(); updateFirebaseScore(); });
         window.addEventListener('pagehide', () => { saveLocalGame(); updateFirebaseScore(); });
 
-        async function preloadResources() {
-            initAudioContext();
 
-            try {
+// --- Функция умной авторизации ---
+async function authTelegramUser() {
+    if (!tgUserId) {
+        // Если открыли вне телеграма - пускаем как обычного гостя
+        await signInAnonymously(auth);
+        return;
+    }
+
+    // Генерируем уникальный, но постоянный email для этого игрока
+    const email = `tg_${tgUserId}@fumoclick.app`;
+
+    // Ищем пароль в Telegram CloudStorage (он синхронизируется между ПК и телефоном)
+    let password = await new Promise((resolve) => {
+        tg.CloudStorage.getItem('fb_pass', (err, val) => resolve(val || null));
+    });
+
+    if (!password) {
+        // Пароля нет (первый вход). Генерируем надежный случайный пароль.
+        password = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+        await new Promise((resolve) => {
+            tg.CloudStorage.setItem('fb_pass', password, () => resolve());
+        });
+
+        try {
+            // Создаем аккаунт в Firebase
+            await createUserWithEmailAndPassword(auth, email, password);
+        } catch (e) {
+            console.error("Ошибка регистрации:", e);
+            await signInAnonymously(auth); // Запасной план
+        }
+    } else {
+        // Пароль найден (человек зашел с другого устройства)
+        try {
+            // Входим в тот же самый аккаунт
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (e) {
+            if (e.code === 'auth/user-not-found') {
+                await createUserWithEmailAndPassword(auth, email, password);
+            } else {
+                console.error("Ошибка входа:", e);
                 await signInAnonymously(auth);
-                console.log("Авторизация прошла успешно. UID:", auth.currentUser?.uid);
-            } catch (e) {
-                console.error("Ошибка авторизации:", e);
-                const loadingText = document.getElementById('loadingText');
-                if (loadingText) loadingText.textContent = "ОШИБКА СЕТИ";
-                return;
             }
+        }
+    }
+}
+
+// Изменяем блок preloadResources, чтобы использовать нашу новую функцию
+async function preloadResources() {
+    initAudioContext();
+
+    try {
+        // ВМЕСТО signInAnonymously(auth) вызываем нашу умную авторизацию:
+        await authTelegramUser();
+        console.log("Авторизация прошла успешно. Email:", auth.currentUser?.email);
+    } catch (e) {
+        console.error("Ошибка авторизации:", e);
+        const loadingText = document.getElementById('loadingText');
+        if (loadingText) loadingText.textContent = "ОШИБКА СЕТИ";
+        return;
+    }
             
             await loadLocalGame();
 

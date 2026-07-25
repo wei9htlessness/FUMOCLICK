@@ -301,10 +301,6 @@
             transition: transform .1s ease;
         }
 
-        .ui-btn-wrapper:active {
-            transform: scale(1.08);
-        }
-
         .ui-btn-img {
             pointer-events: none;
             -webkit-user-drag: none;
@@ -319,9 +315,9 @@
         .ui-btn-settings { animation: uiFloat2 3.5s ease-in-out infinite; }
         .ui-btn-shop { animation: uiFloat3 4s ease-in-out infinite; }
 
-        @keyframes uiFloat1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-3px, -3px); } }
-        @keyframes uiFloat2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(3px, -3px); } }
-        @keyframes uiFloat3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-3px, 3px); } }
+        @keyframes uiFloat1 { 0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); } 50% { transform: translate(-3px, -3px) scale(var(--press-scale)); } }
+        @keyframes uiFloat2 { 0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); } 50% { transform: translate(3px, -3px) scale(var(--press-scale)); } }
+        @keyframes uiFloat3 { 0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); } 50% { transform: translate(-3px, 3px) scale(var(--press-scale)); } }
 
         /* --- Модальные окна --- */
         .modal {
@@ -364,17 +360,17 @@
             pointer-events: auto;
             touch-action: manipulation;
             -webkit-touch-callout: none;
-            transition: transform .1s ease;
+            transition: transform .18s ease-out;
             animation: exitFloat 3.5s ease-in-out infinite;
         }
 
         .modal-close-wrapper:active {
-            transform: scale(1.08);
+            --press-scale: 1.08;
         }
 
         @keyframes exitFloat {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-2px, 2px); }
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            50% { transform: translate(-2px, 2px) scale(var(--press-scale)); }
         }
 
         .modal-close-img {
@@ -426,10 +422,6 @@
             -webkit-touch-callout: none;
             animation: leaderboardFloat 4s ease-in-out infinite;
             transition: transform .1s ease;
-        }
-
-        .leaderboard-refresh-top:active {
-            transform: scale(1.08);
         }
 
         .leaderboard-refresh-img {
@@ -513,12 +505,22 @@
             animation: leaderboardFloat 4s ease-in-out infinite;
         }
 
-        .leaderboard-page-info img {
+        .leaderboard-page-info,
+        .leaderboard-page-info img,
+        .leaderboard-page-digit {
+            --press-scale: 1;
+        }
+
+        .leaderboard-page-info img,
+        .leaderboard-page-digit {
             height: 22px;
             width: auto;
             pointer-events: none;
             -webkit-user-drag: none;
             -webkit-touch-callout: none;
+            user-select: none;
+            animation: leaderboardFloat 4s ease-in-out infinite;
+            transition: transform .18s ease-out;
         }
 
         .leaderboard-list {
@@ -529,10 +531,10 @@
         }
 
         @keyframes leaderboardFloat {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(2px, -2px); }
-            50% { transform: translate(-2px, 2px); }
-            75% { transform: translate(2px, 2px); }
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            25% { transform: translate(2px, -2px) scale(var(--press-scale)); }
+            50% { transform: translate(-2px, 2px) scale(var(--press-scale)); }
+            75% { transform: translate(2px, 2px) scale(var(--press-scale)); }
         }
 
         .leaderboard-item {
@@ -644,14 +646,35 @@
             inset: 0;
             z-index: 20000;
             background: rgba(0, 0, 0, 0.92);
-            color: #fff;
-            font-size: 18px;
             text-align: center;
             padding: 30px;
             align-items: center;
             justify-content: center;
             user-select: none;
             pointer-events: all;
+        }
+
+        .orientation-lock-overlay img {
+            width: min(220px, 60%);
+            height: auto;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        .no-save-img {
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(-2px, -3px); }
+            66% { transform: translate(2px, 2px); }
         }
 
         @media (orientation: landscape) {
@@ -686,7 +709,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
+            gap: 24px;
             margin-top: 20px;
         }
 
@@ -722,6 +745,7 @@
             justify-content: center;
             gap: 16px;
             width: 100%;
+            margin-top: 0;
         }
 
         .action-btn {
@@ -739,10 +763,6 @@
             justify-content: center;
         }
 
-        .action-btn:active {
-            transform: scale(1.08);
-        }
-
         .donate-img,
         .hard-reset-img {
             width: 100%;
@@ -754,13 +774,37 @@
             user-select: none;
         }
 
-        .radio-btn:active {
+        .radio-btn:active,
+        .sound-toggle-wrapper:active,
+        .vol-btn-wrapper:active,
+        .action-btn:active,
+        .reset-btn-wrapper:active,
+        .modal-close-wrapper:active,
+        .leaderboard-nav-btn:active {
             transform: scale(1.08);
         }
 
+        .pressable {
+            --press-scale: 1;
+            transition: transform .18s ease-out;
+            transform: scale(var(--press-scale));
+        }
+
+        .pressable.pressed {
+            --press-scale: 1.08;
+        }
+
+        .ui-btn-wrapper[data-modal="shop"].pressable.pressed {
+            --press-scale: 1.06;
+        }
+
+        .pressable.released {
+            --press-scale: 0.96;
+        }
+
         @keyframes radioFloat {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(2px, -2px); }
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            50% { transform: translate(2px, -2px) scale(var(--press-scale)); }
         }
 
         .radio-img {
@@ -779,7 +823,8 @@
             justify-content: center;
             gap: 15px;
             width: 100%;
-            margin-top: 12px;
+            margin-top: 5px;
+            margin-bottom: 24px;
         }
 
         .vol-btn-wrapper {
@@ -804,13 +849,9 @@
             justify-content: flex-end;
         }
 
-        .vol-btn-wrapper:active {
-            transform: scale(1.08);
-        }
-
         @keyframes volBtnFloat {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-2px, 2px); }
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            50% { transform: translate(-2px, 2px) scale(var(--press-scale)); }
         }
 
         .vol-btn-img {
@@ -862,13 +903,9 @@
             justify-content: center;
         }
 
-        .sound-toggle-wrapper:active {
-            transform: scale(1.08);
-        }
-
         @keyframes soundFloat {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-2px, 2px); }
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            50% { transform: translate(-2px, 2px) scale(var(--press-scale)); }
         }
 
         .sound-toggle-img {
@@ -902,13 +939,9 @@
             justify-content: center;
         }
 
-        .hard-reset-btn:active {
-            transform: scale(1.08);
-        }
-
         @keyframes hardResetFloat {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(2px, -2px); }
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            50% { transform: translate(2px, -2px) scale(var(--press-scale)); }
         }
 
         .hard-reset-img {
@@ -923,11 +956,69 @@
         .reset-gif {
             width: 150px;
             height: auto;
-            margin-bottom: 30px;
+            margin-top: 20px;
+            margin-bottom: 12px;
             pointer-events: none;
             -webkit-user-drag: none;
             -webkit-touch-callout: none;
             animation: resetFloat 3s ease-in-out infinite;
+        }
+
+        .reset-score-display {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 26px;
+            animation: resetFloat 3s ease-in-out infinite;
+        }
+
+        .reset-score-display img {
+            width: 28px;
+            height: auto;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        .reset-arrow-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            animation: resetFloat 3s ease-in-out infinite;
+        }
+
+        .reset-arrow-img {
+            width: 44px;
+            height: auto;
+            transform: rotate(-90deg);
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        .reset-zero-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+            animation: resetFloat 3s ease-in-out infinite;
+        }
+
+        .reset-zero-row .reset-score-digit {
+            width: auto;
+            height: auto;
+            max-width: 120px;
+            max-height: 140px;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
+        .reset-score-digit {
+            width: 32px;
+            height: auto;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
         }
 
         @keyframes resetFloat {
@@ -949,18 +1040,18 @@
             pointer-events: auto;
             touch-action: manipulation;
             -webkit-touch-callout: none;
-            transition: transform .1s ease;
+            transition: transform .18s ease-out;
         }
 
         .reset-btn-wrapper:active {
-            transform: scale(1.08);
+            --press-scale: 1.08;
         }
 
         .reset-btn-check { animation: checkFloat 3.5s ease-in-out infinite; }
         .reset-btn-cancel { animation: cancelFloat 4s ease-in-out infinite; }
 
-        @keyframes checkFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2px, -2px); } }
-        @keyframes cancelFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, -2px); } }
+        @keyframes checkFloat { 0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); } 50% { transform: translate(-2px, -2px) scale(var(--press-scale)); } }
+        @keyframes cancelFloat { 0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); } 50% { transform: translate(2px, -2px) scale(var(--press-scale)); } }
 
         .reset-btn-img {
             width: 100%;
@@ -1000,7 +1091,9 @@
         </div>
     </div>
 
-    <div id="orientationLockOverlay" class="orientation-lock-overlay">Пожалуйста, поверните устройство в портретный режим.</div>
+    <div id="orientationLockOverlay" class="orientation-lock-overlay">
+        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/rotate.png" class="orientation-rotate-img no-save-img" draggable="false" oncontextmenu="return false;">
+    </div>
 
     <!-- Кнопки интерфейса (achv, settings, shop) -->
     <div class="ui-container">
@@ -1089,13 +1182,20 @@
     <!-- Модальное окно подтверждения сброса -->
     <div class="modal" id="confirmResetModal">
         <div class="modal-content" style="padding:40px 20px;">
-            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif" class="reset-gif" draggable="false">
+            <div id="confirmResetScore" class="reset-score-display"></div>
+            <div class="reset-arrow-row">
+                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/prev.png" class="reset-arrow-img no-save-img" draggable="false" oncontextmenu="return false;" alt="arrow down">
+            </div>
+            <div class="reset-zero-row">
+                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/0.png" class="reset-score-digit no-save-img" draggable="false" oncontextmenu="return false;" alt="0">
+            </div>
+            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif" class="reset-gif no-save-img" draggable="false" oncontextmenu="return false;">
             <div class="reset-buttons">
                 <div class="reset-btn-wrapper reset-btn-check" id="confirmResetBtn">
-                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png" class="reset-btn-img" draggable="false">
+                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png" class="reset-btn-img no-save-img" draggable="false" oncontextmenu="return false;">
                 </div>
                 <div class="reset-btn-wrapper reset-btn-cancel" id="cancelResetBtn">
-                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png" class="reset-btn-img" draggable="false">
+                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png" class="reset-btn-img no-save-img" draggable="false" oncontextmenu="return false;">
                 </div>
             </div>
         </div>
@@ -1153,6 +1253,7 @@
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/settings.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/rotate.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardreset.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif',
@@ -1188,8 +1289,8 @@
         const loadingScreen = document.getElementById("loadingScreen");
         const gameContainer = document.getElementById("gameContainer");
         const assetCache = document.getElementById("assetCache");
-        const modal = document.getElementById("modal");
-        const modalCloseWrapper = document.getElementById("modalCloseWrapper");
+        const modal = document.getElementById("modal"); // main overlay for achievements/settings/shop sections
+        const modalCloseWrapper = document.getElementById("modalCloseWrapper"); // close button wrapper for main modal
         const leaderboardList = document.getElementById("leaderboardList");
         const leaderboardLoading = document.getElementById("leaderboardLoading");
         const leaderboardRefreshTop = document.getElementById("leaderboardRefreshTop");
@@ -1201,11 +1302,15 @@
         const orientationLockOverlay = document.getElementById("orientationLockOverlay");
         const hardResetBtn = document.getElementById("hardResetBtn");
         const donateBtn = document.getElementById("donateBtn");
-        const confirmResetModal = document.getElementById("confirmResetModal");
+        const confirmResetModal = document.getElementById("confirmResetModal"); // confirmation modal for hard reset
         const confirmResetBtn = document.getElementById("confirmResetBtn");
         const cancelResetBtn = document.getElementById("cancelResetBtn");
         const radioBtn = document.getElementById("radioBtn");
         const radioBtnImg = document.getElementById("radioBtnImg");
+
+        document.querySelectorAll('.no-save-img').forEach(img => {
+            img.addEventListener('contextmenu', e => e.preventDefault());
+        });
         const volMinus = document.getElementById("volMinus");
         const volPlus = document.getElementById("volPlus");
         const volumeDisplay = document.getElementById("volumeDisplay");
@@ -1213,17 +1318,18 @@
         const soundToggleImg = document.getElementById("soundToggleImg");
 
         // --- Переменные состояния игры ---
-        let clicks = 0;
-        let clickMultiplier = 1;
-        let boostTimeout, multiplierTimeout;
-        let audioCtx = null;
-        let buffers = {};
-        let menuOpenPlaying = false;
-        let menuClosePlaying = false;
-        let saveTimeout = null;
+        let clicks = 0; // current score/click count
+        let clickMultiplier = 1; // current multiplier for clicks
+        let boostTimeout, multiplierTimeout; // timers for boost and multiplier resets
+        let audioCtx = null; // Web Audio API context
+        let buffers = {}; // decoded audio buffers for sound effects
+        let menuOpenPlaying = false; // prevent duplicate open sounds
+        let menuClosePlaying = false; // prevent duplicate close sounds
+        let saveTimeout = null; // delayed save timer
         let radioAudio = null;
         let hardResetAudio = null;
         let isRadioPlaying = false;
+        let radioWasPlayingBeforeHardReset = false; // remember radio state across hard reset modal
         let isHardResetAudioPlaying = false;
         let hasLoadedLeaderboardOnce = false;
         let radioRetryCount = 0;
@@ -1233,7 +1339,7 @@
         let leaderboardShowingScore = false;
 
         // Стек модальных окон для навигации назад (свайп/ESC)
-        const modalStack = [];
+        const modalStack = []; // stack for modal navigation and back button handling
 
         // Прогресс игры (сбрасывается при hard reset)
         const defaultProgress = {
@@ -1284,6 +1390,7 @@
 
         // --- Работа с радио ---
         function recreateRadioAudio() {
+            // recreate the radio element when needed and keep it muted initially
             if (radioAudio) {
                 radioAudio.pause();
                 radioAudio.src = '';
@@ -1334,6 +1441,7 @@
         }
 
         function initRadio() {
+            // initialize radio state on app launch and do not start playback automatically
             recreateRadioAudio();
             const vol = gameState.settings.radioVolume !== undefined ? gameState.settings.radioVolume : 50;
             gameState.settings.radioVolume = vol;
@@ -1347,14 +1455,16 @@
         }
 
         function ensureHardResetAudio() {
+            // preload hard reset loop so it starts immediately when pressed
             if (!hardResetAudio) {
                 hardResetAudio = new Audio(soundUrls.hardresetloop);
                 hardResetAudio.loop = true;
                 hardResetAudio.preload = 'auto';
-                hardResetAudio.volume = 0.65;
+                hardResetAudio.volume = 0.50; // reduce loop volume by 50%
                 hardResetAudio.muted = !gameState.settings.soundEnabled;
                 hardResetAudio.setAttribute('playsinline', '');
                 hardResetAudio.setAttribute('webkit-playsinline', '');
+                hardResetAudio.load();
             }
         }
 
@@ -1362,6 +1472,16 @@
             ensureHardResetAudio();
             if (!hardResetAudio) return;
             if (isHardResetAudioPlaying) return;
+
+            // pause any current radio playback when the hard reset modal opens
+            radioWasPlayingBeforeHardReset = isRadioPlaying;
+            if (radioAudio) {
+                radioAudio.pause();
+                radioAudio.currentTime = 0;
+            }
+            isRadioPlaying = false;
+            updateRadioUI();
+
             hardResetAudio.currentTime = 0;
             hardResetAudio.play().catch(() => {});
             isHardResetAudioPlaying = true;
@@ -1372,6 +1492,137 @@
             hardResetAudio.pause();
             hardResetAudio.currentTime = 0;
             isHardResetAudioPlaying = false;
+
+            // restore radio only if it was playing before the hard reset modal opened
+            if (radioWasPlayingBeforeHardReset && radioAudio) {
+                radioWasPlayingBeforeHardReset = false;
+                tryPlayRadioSync();
+            }
+        }
+
+        function applyPressAnimation(selector) {
+            // apply press/release animation to interactive elements
+            document.querySelectorAll(selector).forEach(element => {
+                element.classList.add('pressable');
+                let releaseTimer = null;
+
+                const clearRelease = () => {
+                    if (releaseTimer) {
+                        clearTimeout(releaseTimer);
+                        releaseTimer = null;
+                    }
+                    element.classList.remove('pressed');
+                    element.classList.remove('released');
+                };
+
+                const pressStart = () => {
+                    clearRelease();
+                    element.classList.add('pressed');
+                };
+
+                const pressEnd = () => {
+                    element.classList.remove('pressed');
+                    element.classList.add('released');
+                    releaseTimer = setTimeout(() => {
+                        element.classList.remove('released');
+                        releaseTimer = null;
+                    }, 120);
+                };
+
+                element.addEventListener('pointerdown', pressStart);
+                element.addEventListener('mousedown', pressStart);
+                element.addEventListener('touchstart', pressStart, { passive: true });
+
+                element.addEventListener('pointerup', pressEnd);
+                element.addEventListener('mouseup', pressEnd);
+                element.addEventListener('touchend', pressEnd);
+
+                element.addEventListener('pointerleave', clearRelease);
+                element.addEventListener('pointerout', clearRelease);
+                element.addEventListener('pointercancel', clearRelease);
+                element.addEventListener('touchcancel', clearRelease);
+            });
+        }
+
+        function attachReleaseAction(element, action) {
+            let isPressed = false;
+            let pointerId = null;
+
+            const getPoint = (e) => {
+                if (e.changedTouches && e.changedTouches.length > 0) {
+                    return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                }
+                if (e.touches && e.touches.length > 0) {
+                    return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+                if (typeof e.clientX === 'number' && typeof e.clientY === 'number') {
+                    return { x: e.clientX, y: e.clientY };
+                }
+                return null;
+            };
+
+            const isInside = (point) => {
+                if (!point) return false;
+                const rect = element.getBoundingClientRect();
+                return point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom;
+            };
+
+            const startPress = (e) => {
+                if (e.type === 'mousedown' && e.button !== 0) return;
+                if (e.pointerType === 'mouse' && e.button !== 0) return;
+                e.preventDefault();
+                e.stopPropagation();
+                isPressed = true;
+                pointerId = e.pointerId || null;
+                if (e.pointerId && element.setPointerCapture) {
+                    try { element.setPointerCapture(e.pointerId); } catch (err) {}
+                }
+            };
+
+            const movePress = (e) => {
+                if (!isPressed) return;
+                if (e.pointerId && pointerId !== null && e.pointerId !== pointerId) return;
+                const point = getPoint(e);
+                if (!isInside(point)) {
+                    clearPress();
+                }
+            };
+
+            const endPress = (e) => {
+                if (!isPressed) return;
+                if (e.pointerId && pointerId !== null && e.pointerId !== pointerId) return;
+                const point = getPoint(e);
+                clearPress();
+                if (!isInside(point)) return;
+                e.preventDefault();
+                e.stopPropagation();
+                action(e);
+            };
+
+            const clearPress = () => {
+                if (pointerId !== null && element.releasePointerCapture) {
+                    try { element.releasePointerCapture(pointerId); } catch (err) {}
+                }
+                isPressed = false;
+                pointerId = null;
+            };
+
+            element.addEventListener('pointerdown', startPress);
+            element.addEventListener('mousedown', startPress);
+            element.addEventListener('touchstart', startPress, { passive: false });
+
+            element.addEventListener('pointermove', movePress);
+            element.addEventListener('mousemove', movePress);
+            element.addEventListener('touchmove', movePress, { passive: false });
+
+            element.addEventListener('pointerup', endPress);
+            element.addEventListener('mouseup', endPress);
+            element.addEventListener('touchend', endPress, { passive: false });
+
+            element.addEventListener('pointerleave', clearPress);
+            element.addEventListener('mouseleave', clearPress);
+            element.addEventListener('pointercancel', clearPress);
+            element.addEventListener('touchcancel', clearPress);
         }
 
         // --- Firebase функции ---
@@ -1545,6 +1796,7 @@
                 img.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
                 img.alt = digit;
                 img.draggable = false;
+                img.className = 'leaderboard-page-digit';
                 container.appendChild(img);
             }
         }
@@ -1726,6 +1978,21 @@
             }
         }
 
+        function renderConfirmResetScore() {
+            const scoreDisplay = document.getElementById('confirmResetScore');
+            if (!scoreDisplay) return;
+            scoreDisplay.innerHTML = '';
+            const value = clicks.toString();
+            for (const digit of value) {
+                const digitImg = document.createElement('img');
+                digitImg.className = 'reset-score-digit no-save-img';
+                digitImg.draggable = false;
+                digitImg.src = `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${digit}.png`;
+                digitImg.alt = digit;
+                scoreDisplay.appendChild(digitImg);
+            }
+        }
+
         // --- Навигация ---
         function pushModal(modalType) {
             modalStack.push(modalType);
@@ -1902,33 +2169,29 @@
         }
 
         document.querySelectorAll('.ui-btn-wrapper').forEach(wrapper => {
-            wrapper.addEventListener("click", e => {
-                e.preventDefault();
-                e.stopPropagation();
+            attachReleaseAction(wrapper, e => {
                 triggerHaptic('light');
-                
                 const currentModalType = wrapper.dataset.modal;
                 document.querySelectorAll('.modal-section').forEach(sec => sec.classList.remove('active'));
-                
+
                 if (currentModalType === 'achv') {
                     document.getElementById('achvSection').classList.add('active');
                     resetLeaderboardPagination();
                     loadLeaderboard();
                 } else if (currentModalType === 'settings') {
                     document.getElementById('settingsSection').classList.add('active');
+                    ensureHardResetAudio(); // preload hard reset loop before the user presses reset
                 } else if (currentModalType === 'shop') {
                     document.getElementById('shopSection').classList.add('active');
                 }
-                
+
                 openModal();
                 pushModal('main');
             });
             wrapper.addEventListener("contextmenu", e => e.preventDefault());
         });
 
-        modalCloseWrapper.addEventListener("click", e => {
-            e.preventDefault();
-            e.stopPropagation();
+        attachReleaseAction(modalCloseWrapper, e => {
             triggerHaptic('light');
             playSound(buffers.click, 0.5);
             stopHardResetLoop();
@@ -1955,31 +2218,17 @@
             scheduleSave();
         }
 
-        volMinus.addEventListener("touchend", e => { 
-            e.preventDefault(); e.stopPropagation(); 
+        attachReleaseAction(volMinus, e => {
             playSound(buffers.click, 0.5);
             triggerHaptic('light');
-            adjustVolume(-5); 
-        });
-        volMinus.addEventListener("click", e => { 
-            e.preventDefault(); e.stopPropagation(); 
-            playSound(buffers.click, 0.5);
-            triggerHaptic('light');
-            adjustVolume(-5); 
+            adjustVolume(-5);
         });
         volMinus.addEventListener("contextmenu", e => e.preventDefault());
 
-        volPlus.addEventListener("touchend", e => { 
-            e.preventDefault(); e.stopPropagation(); 
+        attachReleaseAction(volPlus, e => {
             playSound(buffers.click, 0.5);
             triggerHaptic('light');
-            adjustVolume(5); 
-        });
-        volPlus.addEventListener("click", e => { 
-            e.preventDefault(); e.stopPropagation(); 
-            playSound(buffers.click, 0.5);
-            triggerHaptic('light');
-            adjustVolume(5); 
+            adjustVolume(5);
         });
         volPlus.addEventListener("contextmenu", e => e.preventDefault());
 
@@ -2002,22 +2251,14 @@
             scheduleSave();
         }
 
-        radioBtn.addEventListener("touchend", e => {
-            e.preventDefault(); e.stopPropagation();
-            toggleRadio();
-        });
-        radioBtn.addEventListener("click", e => {
-            e.preventDefault(); e.stopPropagation();
+        attachReleaseAction(radioBtn, e => {
             toggleRadio();
         });
         radioBtn.addEventListener("contextmenu", e => e.preventDefault());
 
         if (donateBtn) {
-            donateBtn.addEventListener("click", e => {
-                e.preventDefault(); e.stopPropagation();
-            });
-            donateBtn.addEventListener("touchend", e => {
-                e.preventDefault(); e.stopPropagation();
+            attachReleaseAction(donateBtn, e => {
+                // placeholder for future donate action
             });
             donateBtn.addEventListener("contextmenu", e => e.preventDefault());
         }
@@ -2034,66 +2275,22 @@
             scheduleSave();
         }
 
-        soundToggleBtn.addEventListener("touchend", e => {
-            e.preventDefault(); e.stopPropagation();
-            toggleSound();
-        });
-        soundToggleBtn.addEventListener("click", e => {
-            e.preventDefault(); e.stopPropagation();
+        attachReleaseAction(soundToggleBtn, e => {
             toggleSound();
         });
         soundToggleBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        hardResetBtn.addEventListener("touchend", e => {
-            e.preventDefault(); e.stopPropagation();
+        attachReleaseAction(hardResetBtn, e => {
             triggerHaptic('light');
             playSound(buffers.click, 0.5);
-            playHardResetLoop();
-            confirmResetModal.classList.add('active');
-            pushModal('confirmReset');
-        });
-        hardResetBtn.addEventListener("click", e => {
-            e.preventDefault(); e.stopPropagation();
-            triggerHaptic('light');
-            playSound(buffers.click, 0.5);
+            renderConfirmResetScore();
             playHardResetLoop();
             confirmResetModal.classList.add('active');
             pushModal('confirmReset');
         });
         hardResetBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        confirmResetBtn.addEventListener("touchend", async e => {
-            e.preventDefault(); e.stopPropagation();
-            triggerHaptic('medium');
-            playSound(buffers.click, 0.5);
-            stopHardResetLoop();
-            
-            clicks = 0;
-            clickMultiplier = 1;
-            gameState = { ...JSON.parse(JSON.stringify(defaultProgress)), settings: gameState.settings };
-            
-            updateCounterDisplay();
-            
-            try {
-                if (tg && tg.CloudStorage) {
-                    await new Promise((resolve, reject) => 
-                        tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true))
-                    );
-                }
-                if (tgUserId) {
-                    await set(ref(db, 'leaderboard/' + tgUserId), { name: userName, score: 0, lastUpdated: Date.now() });
-                }
-            } catch (err) {
-                console.error("Hard reset error:", err);
-            }
-            
-            confirmResetModal.classList.remove('active');
-            closeModal();
-            modalStack.length = 0;
-            if (tg && tg.BackButton) tg.BackButton.hide();
-        });
-        confirmResetBtn.addEventListener("click", async e => {
-            e.preventDefault(); e.stopPropagation();
+        attachReleaseAction(confirmResetBtn, async e => {
             triggerHaptic('medium');
             playSound(buffers.click, 0.5);
             stopHardResetLoop();
@@ -2124,16 +2321,7 @@
         });
         confirmResetBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        cancelResetBtn.addEventListener("touchend", e => {
-            e.preventDefault(); e.stopPropagation();
-            triggerHaptic('light');
-            playSound(buffers.click, 0.5);
-            stopHardResetLoop();
-            confirmResetModal.classList.remove('active');
-            popModal();
-        });
-        cancelResetBtn.addEventListener("click", e => {
-            e.preventDefault(); e.stopPropagation();
+        attachReleaseAction(cancelResetBtn, e => {
             triggerHaptic('light');
             playSound(buffers.click, 0.5);
             stopHardResetLoop();
@@ -2142,15 +2330,7 @@
         });
         cancelResetBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        leaderboardRefreshTop.addEventListener("touchend", async e => {
-            e.preventDefault(); e.stopPropagation();
-            triggerHaptic('light');
-            playSound(buffers.click, 0.5);
-            await updateFirebaseScore();
-            loadLeaderboard();
-        });
-        leaderboardRefreshTop.addEventListener("click", async e => {
-            e.preventDefault(); e.stopPropagation();
+        attachReleaseAction(leaderboardRefreshTop, async e => {
             triggerHaptic('light');
             playSound(buffers.click, 0.5);
             await updateFirebaseScore();
@@ -2175,11 +2355,35 @@
             changeLeaderboardPage(delta);
         };
 
-        leaderboardPrevBtn.addEventListener("pointerup", handleLeaderboardNav(-1));
+        attachReleaseAction(leaderboardPrevBtn, e => {
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            changeLeaderboardPage(-1);
+        });
         leaderboardPrevBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        leaderboardNextBtn.addEventListener("pointerup", handleLeaderboardNav(1));
+        attachReleaseAction(leaderboardNextBtn, e => {
+            triggerHaptic('light');
+            playSound(buffers.click, 0.5);
+            changeLeaderboardPage(1);
+        });
         leaderboardNextBtn.addEventListener("contextmenu", e => e.preventDefault());
+
+        applyPressAnimation('.ui-btn-wrapper');
+        applyPressAnimation('.sound-toggle-wrapper');
+        applyPressAnimation('.radio-btn');
+        applyPressAnimation('.vol-btn-wrapper');
+        applyPressAnimation('.action-btn');
+        applyPressAnimation('.reset-btn-wrapper');
+        applyPressAnimation('.modal-close-wrapper');
+        applyPressAnimation('.leaderboard-nav-btn');
+        applyPressAnimation('.leaderboard-refresh-top');
+        applyPressAnimation('.leaderboard-nav-img');
+        applyPressAnimation('.sound-toggle-img');
+        applyPressAnimation('.radio-img');
+        applyPressAnimation('.vol-btn-img');
+        applyPressAnimation('.hard-reset-img');
+        applyPressAnimation('.donate-img');
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -2238,7 +2442,6 @@
             setInterval(() => { saveLocalGame(); updateFirebaseScore(); }, 10000);
         }
 
-        
         preloadResources();
     </script>
 </body>

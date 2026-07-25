@@ -106,7 +106,6 @@
             opacity: 1;
         }
 
-        /* Контейнер для счетчика - позиционирован относительно для абсолютного размещения индикаторов */
         .counter-wrapper {
             position: relative;
             display: flex;
@@ -135,7 +134,6 @@
             pointer-events: none;
         }
 
-        /* Индикаторы бонуса x2 и cursor - абсолютно позиционированы под счетчиком, перекрывают fumo */
         .boost-indicators {
             position: absolute;
             top: 150%;
@@ -448,7 +446,6 @@
             text-align: center;
         }
 
-
         .modal-close-wrapper:active {
             --press-scale: 1.08;
         }
@@ -571,16 +568,6 @@
             transform: none;
         }
 
-        .leaderboard-nav-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            pointer-events: none;
-            -webkit-user-drag: none;
-            -webkit-touch-callout: none;
-            user-select: none;
-        }
-
         .leaderboard-page-info {
             min-width: 90px;
             display: flex;
@@ -588,12 +575,6 @@
             justify-content: center;
             gap: 2px;
             animation: leaderboardFloat 4s ease-in-out infinite;
-        }
-
-        .leaderboard-page-info,
-        .leaderboard-page-info img,
-        .leaderboard-page-digit {
-            --press-scale: 1;
         }
 
         .leaderboard-page-info img,
@@ -772,21 +753,6 @@
             .modal {
                 filter: blur(4px);
             }
-        }
-
-        .leaderboard-score {
-            display: flex;
-            gap: 1px;
-            align-items: center;
-            margin-left: auto;
-        }
-
-        .leaderboard-score img {
-            height: 20px;
-            width: auto;
-            -webkit-user-drag: none;
-            pointer-events: none;
-            -webkit-touch-callout: none;
         }
 
         /* --- Настройки --- */
@@ -1029,15 +995,6 @@
             50% { transform: translate(2px, -2px) scale(var(--press-scale)); }
         }
 
-        .hard-reset-img {
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            -webkit-user-drag: none;
-            -webkit-touch-callout: none;
-            user-select: none;
-        }
-
         .reset-gif {
             width: 150px;
             height: auto;
@@ -1272,7 +1229,6 @@
                 </div>
             </div>
             <div class="stats-grid">
-                <!-- Stats values: AI can bind these in future feature updates -->
                 <div class="stats-row">
                     <div class="stats-label">количество кликов</div>
                     <div class="stats-value" id="statsClicks">0</div>
@@ -1332,6 +1288,15 @@
         import { getDatabase, ref, set, get, query, orderByChild, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+        // Защита DevTools от самых простых способов открытия
+        window.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123 || // F12
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I / J
+                (e.ctrlKey && e.keyCode === 85)) { // Ctrl+U
+                e.preventDefault();
+            }
+        });
+
         // --- Конфигурация Firebase ---
         const firebaseConfig = {
             apiKey: "AIzaSyB80zGKePJfaO5UQHThDAdHieY6E3AzRJE",
@@ -1362,7 +1327,52 @@
             }
         }
 
-        // Функция тактильной отдачи через Telegram API
+        // --- СИСТЕМА БЕЗОПАСНОСТИ ОЧКОВ ---
+        // Скрываем переменные и используем хеширование для защиты от инъекций через память
+        const SEC_SALT = "_fumo_hash_2024!";
+        let _clicks = 0;
+        let _clicksHash = btoa("0" + SEC_SALT);
+
+        function getClicks() {
+            // Если хеш не совпадает со значением, значит читер изменил переменную _clicks напрямую
+            if (btoa(_clicks + SEC_SALT) !== _clicksHash) {
+                console.warn("Integrity check failed. Resetting score.");
+                _clicks = 0;
+                _clicksHash = btoa("0" + SEC_SALT);
+            }
+            return _clicks;
+        }
+
+        function setClicks(val) {
+            _clicks = val;
+            _clicksHash = btoa(val + SEC_SALT);
+        }
+
+        function addClicks(amount) {
+            setClicks(getClicks() + amount);
+        }
+
+        // Защита от автокликеров (Soft Rate Limit)
+        // Позволяет делать максимум ~30 нажатий в секунду (человеческий предел при игре 10 пальцами)
+        // Не ограничивает бонусные очки, только скорость физических нажатий!
+        let clickTimestamps = [];
+        const MAX_CLICKS_PER_SECOND = 30;
+
+        // Кодирование данных для Cloud Storage (Защита от редактирования сохранения)
+        function encodeGameData(data) {
+            return btoa(encodeURIComponent(JSON.stringify(data)));
+        }
+
+        function decodeGameData(dataStr) {
+            try { 
+                return JSON.parse(decodeURIComponent(atob(dataStr))); 
+            } catch(e) { 
+                // Если не удалось расшифровать, пробуем распарсить старый открытый формат (обратная совместимость)
+                try { return JSON.parse(dataStr); } catch(err) { return null; }
+            }
+        }
+        // ------------------------------------
+
         function triggerHaptic(t = 'light') {
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(t);
         }
@@ -1416,8 +1426,8 @@
         const loadingScreen = document.getElementById("loadingScreen");
         const gameContainer = document.getElementById("gameContainer");
         const assetCache = document.getElementById("assetCache");
-        const modal = document.getElementById("modal"); // main overlay for achievements/settings/shop sections
-        const modalCloseWrapper = document.getElementById("modalCloseWrapper"); // close button wrapper for main modal
+        const modal = document.getElementById("modal");
+        const modalCloseWrapper = document.getElementById("modalCloseWrapper");
         const leaderboardList = document.getElementById("leaderboardList");
         const leaderboardLoading = document.getElementById("leaderboardLoading");
         const leaderboardRefreshTop = document.getElementById("leaderboardRefreshTop");
@@ -1438,7 +1448,7 @@
         const statsCrits = document.getElementById("statsCrits");
         const statsAbilities = document.getElementById("statsAbilities");
         const statsAchievements = document.getElementById("statsAchievements");
-        const confirmResetModal = document.getElementById("confirmResetModal"); // confirmation modal for hard reset
+        const confirmResetModal = document.getElementById("confirmResetModal");
         const confirmResetBtn = document.getElementById("confirmResetBtn");
         const cancelResetBtn = document.getElementById("cancelResetBtn");
         const radioBtn = document.getElementById("radioBtn");
@@ -1454,28 +1464,27 @@
         const soundToggleImg = document.getElementById("soundToggleImg");
 
         // --- Переменные состояния игры ---
-        let clicks = 0; // current score/click count
-        let clickMultiplier = 1; // current multiplier for clicks
-        let boostTimeout, multiplierTimeout; // timers for boost and multiplier resets
+        let clickMultiplier = 1; 
+        let boostTimeout, multiplierTimeout; 
 
-        // Stats counters for future features and analytics
-        let bonusesCollected = 0; // increment when any bonus is collected
-        let timePlayedSeconds = 0; // track overall time in game
-        let shopPurchases = 0; // future: increment when player buys shop items
-        let criticalClicks = 0; // future: increment on critical click events
-        let abilityActivations = 0; // future: increment when abilities activate
-        let achievements = 0; // future: increment when achievements unlock
+        // Stats counters
+        let bonusesCollected = 0; 
+        let timePlayedSeconds = 0; 
+        let shopPurchases = 0; 
+        let criticalClicks = 0; 
+        let abilityActivations = 0; 
+        let achievements = 0; 
 
         let statsTimer = null;
-        let audioCtx = null; // Web Audio API context
-        let buffers = {}; // decoded audio buffers for sound effects
-        let menuOpenPlaying = false; // prevent duplicate open sounds
-        let menuClosePlaying = false; // prevent duplicate close sounds
-        let saveTimeout = null; // delayed save timer
+        let audioCtx = null;
+        let buffers = {};
+        let menuOpenPlaying = false; 
+        let menuClosePlaying = false; 
+        let saveTimeout = null; 
         let radioAudio = null;
         let hardResetAudio = null;
         let isRadioPlaying = false;
-        let radioWasPlayingBeforeHardReset = false; // remember radio state across hard reset modal
+        let radioWasPlayingBeforeHardReset = false; 
         let isHardResetAudioPlaying = false;
         let hasLoadedLeaderboardOnce = false;
         let radioRetryCount = 0;
@@ -1484,26 +1493,21 @@
         let leaderboardNameSwapTimer = null;
         let leaderboardShowingScore = false;
 
-        // Стек модальных окон для навигации назад (свайп/ESC)
-        const modalStack = []; // stack for modal navigation and back button handling
+        const modalStack = []; 
 
-        // Прогресс игры (сбрасывается при hard reset)
-        // Важно: все поля прогресса сохраняются в Telegram CloudStorage в gameData.
         const defaultProgress = {
             score: 0,
             selectedCharacter: 1,
             upgrades: { clickPower: 1, autoClick: 0, critChance: 0 },
             achievements: [],
-            // Статистика, которая привязана к Telegram storage как clicks
             bonusesCollected: 0,
             timePlayedSeconds: 0,
             shopPurchases: 0,
             criticalClicks: 0,
             abilityActivations: 0,
-            achievements: 0
+            achievementsCounter: 0
         };
 
-        // Настройки (сохраняются при hard reset)
         const defaultSettings = {
             soundEnabled: true,
             hapticEnabled: true,
@@ -1544,7 +1548,6 @@
 
         // --- Работа с радио ---
         function recreateRadioAudio() {
-            // recreate the radio element when needed and keep it muted initially
             if (radioAudio) {
                 radioAudio.pause();
                 radioAudio.src = '';
@@ -1595,7 +1598,6 @@
         }
 
         function initRadio() {
-            // initialize radio state on app launch and do not start playback automatically
             recreateRadioAudio();
             const vol = gameState.settings.radioVolume !== undefined ? gameState.settings.radioVolume : 50;
             gameState.settings.radioVolume = vol;
@@ -1609,12 +1611,11 @@
         }
 
         function ensureHardResetAudio() {
-            // preload hard reset loop so it starts immediately when pressed
             if (!hardResetAudio) {
                 hardResetAudio = new Audio(soundUrls.hardresetloop);
                 hardResetAudio.loop = true;
                 hardResetAudio.preload = 'auto';
-                hardResetAudio.volume = 0.50; // reduce loop volume by 50%
+                hardResetAudio.volume = 0.50; 
                 hardResetAudio.muted = !gameState.settings.soundEnabled;
                 hardResetAudio.setAttribute('playsinline', '');
                 hardResetAudio.setAttribute('webkit-playsinline', '');
@@ -1627,7 +1628,6 @@
             if (!hardResetAudio) return;
             if (isHardResetAudioPlaying) return;
 
-            // pause any current radio playback when the hard reset modal opens
             radioWasPlayingBeforeHardReset = isRadioPlaying;
             if (radioAudio) {
                 radioAudio.pause();
@@ -1647,7 +1647,6 @@
             hardResetAudio.currentTime = 0;
             isHardResetAudioPlaying = false;
 
-            // restore radio only if it was playing before the hard reset modal opened
             if (radioWasPlayingBeforeHardReset && radioAudio) {
                 radioWasPlayingBeforeHardReset = false;
                 tryPlayRadioSync();
@@ -1655,7 +1654,6 @@
         }
 
         function applyPressAnimation(selector) {
-            // apply press/release animation to interactive elements
             document.querySelectorAll(selector).forEach(element => {
                 element.classList.add('pressable');
                 let releaseTimer = null;
@@ -1764,15 +1762,12 @@
             element.addEventListener('pointerdown', startPress);
             element.addEventListener('mousedown', startPress);
             element.addEventListener('touchstart', startPress, { passive: false });
-
             element.addEventListener('pointermove', movePress);
             element.addEventListener('mousemove', movePress);
             element.addEventListener('touchmove', movePress, { passive: false });
-
             element.addEventListener('pointerup', endPress);
             element.addEventListener('mouseup', endPress);
             element.addEventListener('touchend', endPress, { passive: false });
-
             element.addEventListener('pointerleave', clearPress);
             element.addEventListener('mouseleave', clearPress);
             element.addEventListener('pointercancel', clearPress);
@@ -1783,14 +1778,15 @@
         async function updateFirebaseScore() {
             const userKey = tgUserId; 
             if (!userKey) return;
+            const currentScore = getClicks(); // Используем защищенную функцию
 
             try {
                 const userRef = ref(db, 'leaderboard/' + userKey);
                 await runTransaction(userRef, (currentData) => {
-                    if (currentData === null) return { name: userName, score: clicks, lastUpdated: Date.now() };
-                    if (clicks > currentData.score) return { ...currentData, name: userName, score: clicks, lastUpdated: Date.now() };
-                if (currentData.score > clicks) {
-                    clicks = currentData.score;
+                    if (currentData === null) return { name: userName, score: currentScore, lastUpdated: Date.now() };
+                    if (currentScore > currentData.score) return { ...currentData, name: userName, score: currentScore, lastUpdated: Date.now() };
+                if (currentData.score > currentScore) {
+                    setClicks(currentData.score); // Обновляем защищенную переменную
                     updateCounterDisplay();
                 }
                 return currentData;
@@ -1849,22 +1845,23 @@
         async function loadLocalGame() {
             try {
                 if (tg && tg.CloudStorage) {
-                    const data = await new Promise((resolve, reject) => 
+                    const dataStr = await new Promise((resolve, reject) => 
                         tg.CloudStorage.getItem('gameData', (err, value) => err ? reject(err) : resolve(value))
                     );
-                    if (data) {
-                        const parsed = typeof data === 'string' ? JSON.parse(data) : (typeof data === 'object' ? data : null);
+                    if (dataStr) {
+                        const parsed = decodeGameData(dataStr); // Используем функцию дешифровки
                         if (parsed) {
                             gameState = { ...gameState, ...parsed };
                             if (parsed.settings) gameState.settings = { ...defaultSettings, ...parsed.settings };
                             gameState.settings.radioEnabled = 0;
-                            clicks = gameState.score || 0;
+                            
+                            setClicks(gameState.score || 0); // Устанавливаем безопасные очки
                             bonusesCollected = gameState.bonusesCollected || 0;
                             timePlayedSeconds = gameState.timePlayedSeconds || 0;
                             shopPurchases = gameState.shopPurchases || 0;
                             criticalClicks = gameState.criticalClicks || 0;
                             abilityActivations = gameState.abilityActivations || 0;
-                            achievements = gameState.achievements || 0;
+                            achievements = gameState.achievementsCounter || 0;
                         }
                     }
                 }
@@ -1874,14 +1871,14 @@
         }
 
         async function saveLocalGame() {
-            gameState.score = clicks;
-            // Синхронизируем все статистические счётчики с gameState перед сохранением
+            gameState.score = getClicks(); // Читаем безопасные очки
+            
             gameState.bonusesCollected = bonusesCollected;
             gameState.timePlayedSeconds = timePlayedSeconds;
             gameState.shopPurchases = shopPurchases;
             gameState.criticalClicks = criticalClicks;
             gameState.abilityActivations = abilityActivations;
-            gameState.achievements = achievements;
+            gameState.achievementsCounter = achievements;
 
             const saveState = {
                 ...gameState,
@@ -1892,8 +1889,10 @@
             };
             try {
                 if (tg && tg.CloudStorage) {
+                    // Кодируем данные перед сохранением
+                    const encodedData = encodeGameData(saveState);
                     await new Promise((resolve, reject) => 
-                        tg.CloudStorage.setItem('gameData', JSON.stringify(saveState), (err) => err ? reject(err) : resolve(true))
+                        tg.CloudStorage.setItem('gameData', encodedData, (err) => err ? reject(err) : resolve(true))
                     );
                 }
             } catch (e) {
@@ -1943,18 +1942,10 @@
 
         function resetLeaderboardPagination() {
             leaderboardPage = 0;
-            if (leaderboardPageInfo) {
-                leaderboardPageInfo.innerHTML = '';
-            }
-            if (leaderboardPrevBtn) {
-                leaderboardPrevBtn.disabled = true;
-            }
-            if (leaderboardNextBtn) {
-                leaderboardNextBtn.disabled = true;
-            }
-            if (leaderboardList) {
-                leaderboardList.innerHTML = '';
-            }
+            if (leaderboardPageInfo) leaderboardPageInfo.innerHTML = '';
+            if (leaderboardPrevBtn) leaderboardPrevBtn.disabled = true;
+            if (leaderboardNextBtn) leaderboardNextBtn.disabled = true;
+            if (leaderboardList) leaderboardList.innerHTML = '';
             if (leaderboardUserRow) {
                 leaderboardUserRow.innerHTML = '';
                 leaderboardUserRow.style.display = 'none';
@@ -2067,7 +2058,7 @@
             leaderboardUserRow.style.display = 'none';
 
             const currentUserName = userName || 'Unknown';
-            const currentUserScore = clicks || 0;
+            const currentUserScore = getClicks(); // Используем функцию
             const currentUid = tgUserId; 
             const currentPlayer = currentUid ? leaderboardPlayers.find(player => String(player.id) === String(currentUid)) : null;
             const currentRank = currentPlayer ? leaderboardPlayers.findIndex(player => String(player.id) === String(currentUid)) + 1 : null;
@@ -2133,7 +2124,7 @@
         }
 
         function updateCounterDisplay() {
-            const s = clicks.toString();
+            const s = getClicks().toString();
             const imgs = Array.from(counter.querySelectorAll('.digit-img'));
             
             for (let i = imgs.length; i < s.length; i++) {
@@ -2155,7 +2146,7 @@
             const scoreDisplay = document.getElementById('confirmResetScore');
             if (!scoreDisplay) return;
             scoreDisplay.innerHTML = '';
-            const value = clicks.toString();
+            const value = getClicks().toString();
             for (const digit of value) {
                 const digitImg = document.createElement('img');
                 digitImg.className = 'reset-score-digit no-save-img';
@@ -2210,7 +2201,7 @@
         }
 
         function updateStatsPanel() {
-            if (statsClicks) statsClicks.textContent = clicks.toString();
+            if (statsClicks) statsClicks.textContent = getClicks().toString();
             if (statsBonuses) statsBonuses.textContent = bonusesCollected.toString();
             if (statsPurchases) statsPurchases.textContent = shopPurchases.toString();
             if (statsCrits) statsCrits.textContent = criticalClicks.toString();
@@ -2234,9 +2225,20 @@
 
         // --- Игровая логика ---
         function processClick(e) {
+            // Anti-autoclicker logic (Soft limit: Physical click limits, NOT score limits)
+            const now = Date.now();
+            clickTimestamps = clickTimestamps.filter(t => now - t < 1000);
+            if (clickTimestamps.length > MAX_CLICKS_PER_SECOND) {
+                if (e && e.cancelable) e.preventDefault();
+                return; // Игнорируем подозрительно быстрые клики
+            }
+            clickTimestamps.push(now);
+
             if (e && e.cancelable) e.preventDefault();
             
-            clicks += (1 * clickMultiplier * gameState.upgrades.clickPower);
+            // Начисление очков с бонусами
+            addClicks(1 * clickMultiplier * gameState.upgrades.clickPower);
+            
             updateCounterDisplay();
             playSound(buffers.pop, 0.5);
             triggerHaptic('light');
@@ -2276,7 +2278,7 @@
             playSound(buffers.bonus, 0.5);
             
             const boostSize = 150;
-            const uiBottomZone = 180; // reserve space for bottom buttons: shop/achv/settings
+            const uiBottomZone = 180; 
             const maxX = window.innerWidth - boostSize - 20;
             const maxY = window.innerHeight - boostSize - uiBottomZone;
             container.style.left = Math.max(20, Math.random() * maxX) + "px";
@@ -2292,7 +2294,9 @@
                 
                 playSound(buffers.monster, 0.5);
                 triggerHaptic('medium');
-                clickMultiplier = 2;
+                clickMultiplier = 2; // Бонус на клики
+                bonusesCollected++;
+                
                 boostIndicators.classList.add("active");
                 setAnimSpeed(4.4);
                 
@@ -2387,7 +2391,7 @@
                     loadLeaderboard();
                 } else if (currentModalType === 'settings') {
                     document.getElementById('settingsSection').classList.add('active');
-                    ensureHardResetAudio(); // preload hard reset loop before the user presses reset
+                    ensureHardResetAudio(); 
                 } else if (currentModalType === 'shop') {
                     document.getElementById('shopSection').classList.add('active');
                 }
@@ -2486,8 +2490,6 @@
             statsExitBtn.addEventListener("contextmenu", e => e.preventDefault());
         }
 
-        
-
         function toggleSound() {
             triggerHaptic('light');
             if (!gameState.settings.soundEnabled) {
@@ -2520,7 +2522,8 @@
             playSound(buffers.click, 0.5);
             stopHardResetLoop();
             
-            clicks = 0;
+            // Безопасный сброс
+            setClicks(0);
             clickMultiplier = 1;
             bonusesCollected = 0;
             timePlayedSeconds = 0;
@@ -2534,8 +2537,9 @@
             
             try {
                 if (tg && tg.CloudStorage) {
+                    const encodedData = encodeGameData(gameState);
                     await new Promise((resolve, reject) => 
-                        tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true))
+                        tg.CloudStorage.setItem('gameData', encodedData, (err) => err ? reject(err) : resolve(true))
                     );
                 }
                 const userKey = tgUserId;
@@ -2577,16 +2581,6 @@
             renderLeaderboard(leaderboardPlayers);
         }
 
-        const handleLeaderboardNav = (delta) => (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            triggerHaptic('light');
-            playSound(buffers.click, 0.5);
-            changeLeaderboardPage(delta);
-        };
-
         attachReleaseAction(leaderboardPrevBtn, e => {
             triggerHaptic('light');
             playSound(buffers.click, 0.5);
@@ -2600,7 +2594,6 @@
             changeLeaderboardPage(1);
         });
         leaderboardNextBtn.addEventListener("contextmenu", e => e.preventDefault());
-
         
         applyPressAnimation('.ui-btn-wrapper');
         applyPressAnimation('.sound-toggle-wrapper');
@@ -2630,7 +2623,6 @@
         async function preloadResources() {
             initAudioContext();
 
-            // 1. Авторизация в Firebase перед дальнейшей загрузкой
             try {
                 await signInAnonymously(auth);
                 console.log("Авторизация прошла успешно. UID:", auth.currentUser?.uid);
@@ -2683,6 +2675,7 @@
             }
             updateCounterDisplay();
             scheduleNextBoost();
+            startStatsTimer();
             setInterval(() => { saveLocalGame(); updateFirebaseScore(); }, 10000);
         }
 

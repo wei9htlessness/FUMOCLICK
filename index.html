@@ -1328,45 +1328,9 @@
     </div>
 
     <script type="module">
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-        // ... внутри функции инициализации (после ready()) ...
-        signInAnonymously(auth).then(() => {
-          console.log("Пользователь анонимно авторизован");
-        }).catch((error) => {
-          console.error("Ошибка авторизации", error);
-        });
-
-        // Импорт Firebase SDK для работы с базой данных
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, get, query, orderByChild, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-        const auth = getAuth(app);
-
-        // --- Инициализация Telegram WebApp ---
-        const tg = window.Telegram?.WebApp;
-        let tgUserId = null;
-        let userName = 'Unknown';
-
-        if (tg) {
-            tg.ready();
-            signInAnonymously(auth).then(() => {
-              console.log("Пользователь анонимно авторизован");
-            }).catch((error) => {
-              console.error("Ошибка авторизации", error);
-            });
-            tg.expand();
-            if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
-            if (tg.initDataUnsafe?.user) {
-                tgUserId = tg.initDataUnsafe.user.id;
-                userName = tg.initDataUnsafe.user.username || `User${tgUserId}`;
-            }
-        }
-
-        // Функция тактильной отдачи через Telegram API
-        function triggerHaptic(t = 'light') {
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(t);
-        }
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         // --- Конфигурация Firebase ---
         const firebaseConfig = {
@@ -1381,6 +1345,27 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        // --- Инициализация Telegram WebApp ---
+        const tg = window.Telegram?.WebApp;
+        let tgUserId = null;
+        let userName = 'Unknown';
+
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+            if (tg.initDataUnsafe?.user) {
+                tgUserId = tg.initDataUnsafe.user.id;
+                userName = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || `User${tgUserId}`;
+            }
+        }
+
+        // Функция тактильной отдачи через Telegram API
+        function triggerHaptic(t = 'light') {
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(t);
+        }
 
         // --- Ссылки на ресурсы для предзагрузки ---
         const imageUrls = [
@@ -1796,12 +1781,13 @@
 
         // --- Firebase функции ---
         async function updateFirebaseScore() {
-            if (!tgUserId) return;
+            if (!auth.currentUser) return;
+            const firebaseUid = auth.currentUser.uid;
             try {
-                const userRef = ref(db, 'leaderboard/' + tgUserId);
+                const userRef = ref(db, 'leaderboard/' + firebaseUid);
                 await runTransaction(userRef, (currentData) => {
                     if (currentData === null) return { name: userName, score: clicks, lastUpdated: Date.now() };
-                    if (clicks > currentData.score) return { name: userName, score: clicks, lastUpdated: Date.now() };
+                    if (clicks > currentData.score) return { ...currentData, name: userName, score: clicks, lastUpdated: Date.now() };
                     clicks = currentData.score;
                     updateCounterDisplay();
                     return currentData;
@@ -2079,8 +2065,9 @@
 
             const currentUserName = userName || 'Unknown';
             const currentUserScore = clicks || 0;
-            const currentPlayer = tgUserId ? leaderboardPlayers.find(player => String(player.id) === String(tgUserId)) : null;
-            const currentRank = currentPlayer ? leaderboardPlayers.findIndex(player => String(player.id) === String(tgUserId)) + 1 : null;
+            const currentUid = auth.currentUser?.uid;
+            const currentPlayer = currentUid ? leaderboardPlayers.find(player => String(player.id) === String(currentUid)) : null;
+            const currentRank = currentPlayer ? leaderboardPlayers.findIndex(player => String(player.id) === String(currentUid)) + 1 : null;
 
             const row = document.createElement('div');
             row.className = 'leaderboard-rank-name';
@@ -2548,8 +2535,8 @@
                         tg.CloudStorage.setItem('gameData', JSON.stringify(gameState), (err) => err ? reject(err) : resolve(true))
                     );
                 }
-                if (tgUserId) {
-                    await set(ref(db, 'leaderboard/' + tgUserId), { name: userName, score: 0, lastUpdated: Date.now() });
+                if (auth.currentUser) {
+                    await set(ref(db, 'leaderboard/' + auth.currentUser.uid), { name: userName, score: 0, lastUpdated: Date.now() });
                 }
             } catch (err) {
                 console.error("Hard reset error:", err);
@@ -2610,6 +2597,7 @@
         });
         leaderboardNextBtn.addEventListener("contextmenu", e => e.preventDefault());
 
+        
         applyPressAnimation('.ui-btn-wrapper');
         applyPressAnimation('.sound-toggle-wrapper');
         applyPressAnimation('.radio-btn');
@@ -2637,8 +2625,20 @@
 
         async function preloadResources() {
             initAudioContext();
-            await loadLocalGame();
+
+            // 1. Авторизация в Firebase перед дальнейшей загрузкой
+            try {
+                await signInAnonymously(auth);
+                console.log("Авторизация прошла успешно. UID:", auth.currentUser?.uid);
+            } catch (e) {
+                console.error("Ошибка авторизации:", e);
+                const loadingText = document.getElementById('loadingText');
+                if (loadingText) loadingText.textContent = "ОШИБКА СЕТИ";
+                return;
+            }
             
+            await loadLocalGame();
+
             const imgPromises = imageUrls.map(url => new Promise(resolve => {
                 let done = false;
                 const finish = () => { if (!done) { done = true; resolve(); } };
@@ -2655,14 +2655,13 @@
                     buffers[key] = await audioCtx.decodeAudioData(await r.arrayBuffer());
                 } catch (e) {}
             });
-            
             await Promise.race([
                 Promise.all([...imgPromises, ...soundPromises]),
                 new Promise(resolve => setTimeout(resolve, 5000))
             ]);
-            
+
             await loadLeaderboard();
-            
+
             await new Promise(r => setTimeout(r, 300));
             loadingScreen.classList.add('hidden');
             gameContainer.classList.add('visible');

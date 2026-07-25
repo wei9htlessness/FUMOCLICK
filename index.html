@@ -364,7 +364,7 @@
             animation: exitFloat 3.5s ease-in-out infinite;
         }
 
-        .donate-modal-content {
+        .stats-modal-content {
             width: 92%;
             max-width: 380px;
             padding: 24px 18px 24px;
@@ -377,32 +377,59 @@
             overflow-y: auto;
         }
 
-        .donate-iframe-wrapper {
-            box-sizing: border-box;
-            padding: 12px;
-            width: 100%;
+        .stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
-        .donate-iframe-wrapper iframe {
-            width: 100%;
-            max-width: 500px;
-            height: min(690px, 85vh);
-            border: 0;
-            display: block;
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(250,250,250,0.96);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
+            transition: transform .18s ease, background .18s ease;
         }
 
-        .donate-modal-content .donate-label,
-        .donate-modal-content .donate-value,
-        .donate-modal-content .donate-line {
+        .stats-row:active {
+            transform: scale(0.98);
+        }
+
+        .stats-label,
+        .stats-value,
+        .stats-row {
             text-transform: uppercase;
             white-space: normal;
             word-break: break-word;
             overflow-wrap: anywhere;
         }
 
-        .donate-modal-content .donate-value {
-            padding-left: 6px;
-            padding-right: 6px;
+        .stats-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            letter-spacing: .5px;
+            text-align: left;
+        }
+
+        .stats-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111;
+            text-align: right;
+            line-height: 1.2;
+        }
+
+        .stats-close-wrapper {
+            position: static;
+            width: 34px;
+            height: 34px;
+            margin-left: auto;
+            animation: exitFloat 3.5s ease-in-out infinite;
         }
 
         .modal-header {
@@ -421,59 +448,6 @@
             text-align: center;
         }
 
-        .donate-close-wrapper {
-            position: static;
-            width: 34px;
-            height: 34px;
-            margin-left: auto;
-            animation: exitFloat 3.5s ease-in-out infinite;
-        }
-
-        .donate-lines {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .donate-line {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 16px 18px;
-            border-radius: 18px;
-            background: rgba(250,250,250,0.96);
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
-            transition: transform .18s ease, background .18s ease;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .donate-line:active {
-            transform: scale(0.98);
-        }
-
-        .donate-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-        }
-
-        .donate-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #111;
-            word-break: break-all;
-            line-height: 1.2;
-        }
-
-        .donate-value.no-save-img {
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-drag: none;
-            -webkit-touch-callout: none;
-        }
 
         .modal-close-wrapper:active {
             --press-scale: 1.08;
@@ -874,7 +848,7 @@
             justify-content: center;
         }
 
-        .donate-img,
+        .stats-img,
         .hard-reset-img {
             width: 100%;
             height: 100%;
@@ -1273,8 +1247,8 @@
                         <div class="action-btn hard-reset-btn" id="hardResetBtn">
                             <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardreset.png" class="hard-reset-img" draggable="false">
                         </div>
-                        <div class="action-btn donate-btn" id="donateBtn">
-                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/donate.png" class="donate-img" draggable="false">
+                        <div class="action-btn stats-btn" id="statsBtn">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/stats.png" class="stats-img" draggable="false">
                         </div>
                     </div>
                 </div>
@@ -1290,20 +1264,47 @@
         </div>
     </div>
 
-        <div class="modal" id="donateModal">
-            <div class="modal-content donate-modal-content">
-                <div class="donate-iframe-wrapper">
-                    <div class="donate-close-top">
-                        <div class="modal-close-wrapper donate-close-wrapper" id="donateExitBtn">
-                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img no-save-img" draggable="false" oncontextmenu="return false;">
-                        </div>
-                    </div>
-                    <div style="display:flex;justify-content:center;">
-                        <iframe src="https://yoomoney.ru/quickpay/fundraise/widget?billNumber=1J89N3B0BHE.260725&" style="width:100%;max-width:500px;height:600px;border:0;" allowtransparency="true" scrolling="no"></iframe>
-                    </div>
+    <div class="modal" id="statsModal">
+        <div class="modal-content stats-modal-content">
+            <div class="modal-header">
+                <div class="modal-title">СТАТИСТИКА</div>
+                <div class="modal-close-wrapper stats-close-wrapper" id="statsExitBtn">
+                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img no-save-img" draggable="false" oncontextmenu="return false;">
+                </div>
+            </div>
+            <div class="stats-grid">
+                <!-- Stats values: AI can bind these in future feature updates -->
+                <div class="stats-row">
+                    <div class="stats-label">количество кликов</div>
+                    <div class="stats-value" id="statsClicks">0</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">количество собранных бонусов</div>
+                    <div class="stats-value" id="statsBonuses">0</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">время в игре</div>
+                    <div class="stats-value" id="statsTime">0ч 0м</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">покупок в магазине</div>
+                    <div class="stats-value" id="statsPurchases">0</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">критических кликов</div>
+                    <div class="stats-value" id="statsCrits">0</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">активированных способностей</div>
+                    <div class="stats-value" id="statsAbilities">0</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">полученных достижений</div>
+                    <div class="stats-value" id="statsAchievements">0</div>
                 </div>
             </div>
         </div>
+    </div>
 
     <!-- Модальное окно подтверждения сброса -->
     <div class="modal" id="confirmResetModal">
@@ -1385,7 +1386,7 @@
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/hardresetfumo.gif',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/cancel.png',
-            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/donate.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/stats.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radioon.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png',
@@ -1427,9 +1428,16 @@
         const leaderboardUserRow = document.getElementById("leaderboardUserRow");
         const orientationLockOverlay = document.getElementById("orientationLockOverlay");
         const hardResetBtn = document.getElementById("hardResetBtn");
-        const donateBtn = document.getElementById("donateBtn");
-        const donateModal = document.getElementById("donateModal");
-        const donateExitBtn = document.getElementById("donateExitBtn");
+        const statsBtn = document.getElementById("statsBtn");
+        const statsModal = document.getElementById("statsModal");
+        const statsExitBtn = document.getElementById("statsExitBtn");
+        const statsClicks = document.getElementById("statsClicks");
+        const statsBonuses = document.getElementById("statsBonuses");
+        const statsTime = document.getElementById("statsTime");
+        const statsPurchases = document.getElementById("statsPurchases");
+        const statsCrits = document.getElementById("statsCrits");
+        const statsAbilities = document.getElementById("statsAbilities");
+        const statsAchievements = document.getElementById("statsAchievements");
         const confirmResetModal = document.getElementById("confirmResetModal"); // confirmation modal for hard reset
         const confirmResetBtn = document.getElementById("confirmResetBtn");
         const cancelResetBtn = document.getElementById("cancelResetBtn");
@@ -1449,6 +1457,16 @@
         let clicks = 0; // current score/click count
         let clickMultiplier = 1; // current multiplier for clicks
         let boostTimeout, multiplierTimeout; // timers for boost and multiplier resets
+
+        // Stats counters for future features and analytics
+        let bonusesCollected = 0; // increment when any bonus is collected
+        let timePlayedSeconds = 0; // track overall time in game
+        let shopPurchases = 0; // future: increment when player buys shop items
+        let criticalClicks = 0; // future: increment on critical click events
+        let abilityActivations = 0; // future: increment when abilities activate
+        let achievements = 0; // future: increment when achievements unlock
+
+        let statsTimer = null;
         let audioCtx = null; // Web Audio API context
         let buffers = {}; // decoded audio buffers for sound effects
         let menuOpenPlaying = false; // prevent duplicate open sounds
@@ -1470,11 +1488,19 @@
         const modalStack = []; // stack for modal navigation and back button handling
 
         // Прогресс игры (сбрасывается при hard reset)
+        // Важно: все поля прогресса сохраняются в Telegram CloudStorage в gameData.
         const defaultProgress = {
             score: 0,
             selectedCharacter: 1,
             upgrades: { clickPower: 1, autoClick: 0, critChance: 0 },
-            achievements: []
+            achievements: [],
+            // Статистика, которая привязана к Telegram storage как clicks
+            bonusesCollected: 0,
+            timePlayedSeconds: 0,
+            shopPurchases: 0,
+            criticalClicks: 0,
+            abilityActivations: 0,
+            achievements: 0
         };
 
         // Настройки (сохраняются при hard reset)
@@ -1829,6 +1855,12 @@
                             if (parsed.settings) gameState.settings = { ...defaultSettings, ...parsed.settings };
                             gameState.settings.radioEnabled = 0;
                             clicks = gameState.score || 0;
+                            bonusesCollected = gameState.bonusesCollected || 0;
+                            timePlayedSeconds = gameState.timePlayedSeconds || 0;
+                            shopPurchases = gameState.shopPurchases || 0;
+                            criticalClicks = gameState.criticalClicks || 0;
+                            abilityActivations = gameState.abilityActivations || 0;
+                            achievements = gameState.achievements || 0;
                         }
                     }
                 }
@@ -1839,6 +1871,14 @@
 
         async function saveLocalGame() {
             gameState.score = clicks;
+            // Синхронизируем все статистические счётчики с gameState перед сохранением
+            gameState.bonusesCollected = bonusesCollected;
+            gameState.timePlayedSeconds = timePlayedSeconds;
+            gameState.shopPurchases = shopPurchases;
+            gameState.criticalClicks = criticalClicks;
+            gameState.abilityActivations = abilityActivations;
+            gameState.achievements = achievements;
+
             const saveState = {
                 ...gameState,
                 settings: {
@@ -2142,8 +2182,8 @@
                 return true;
             }
 
-            if (modalType === 'donate') {
-                if (donateModal) donateModal.classList.remove('active');
+            if (modalType === 'stats') {
+                if (statsModal) statsModal.classList.remove('active');
                 if (modalStack.length > 0) {
                     if (tg && tg.BackButton) tg.BackButton.show();
                 } else {
@@ -2162,6 +2202,29 @@
 
         function handleBackNavigation() {
             if (modalStack.length > 0) popModal();
+        }
+
+        function updateStatsPanel() {
+            if (statsClicks) statsClicks.textContent = clicks.toString();
+            if (statsBonuses) statsBonuses.textContent = bonusesCollected.toString();
+            if (statsPurchases) statsPurchases.textContent = shopPurchases.toString();
+            if (statsCrits) statsCrits.textContent = criticalClicks.toString();
+            if (statsAbilities) statsAbilities.textContent = abilityActivations.toString();
+            if (statsAchievements) statsAchievements.textContent = achievements.toString();
+
+            if (statsTime) {
+                const hours = Math.floor(timePlayedSeconds / 3600);
+                const minutes = Math.floor((timePlayedSeconds % 3600) / 60);
+                statsTime.textContent = `${hours}ч ${minutes}м`;
+            }
+        }
+
+        function startStatsTimer() {
+            if (statsTimer) return;
+            statsTimer = setInterval(() => {
+                timePlayedSeconds += 1;
+                updateStatsPanel();
+            }, 1000);
         }
 
         // --- Игровая логика ---
@@ -2208,10 +2271,11 @@
             playSound(buffers.bonus, 0.5);
             
             const boostSize = 150;
+            const uiBottomZone = 180; // reserve space for bottom buttons: shop/achv/settings
             const maxX = window.innerWidth - boostSize - 20;
-            const maxY = window.innerHeight - boostSize - 20;
+            const maxY = window.innerHeight - boostSize - uiBottomZone;
             container.style.left = Math.max(20, Math.random() * maxX) + "px";
-            container.style.top = Math.max(20, Math.random() * maxY) + "px";
+            container.style.top = Math.max(20, Math.random() * Math.max(20, maxY)) + "px";
             
             let boostActivated = false;
             
@@ -2394,26 +2458,27 @@
         });
         radioBtn.addEventListener("contextmenu", e => e.preventDefault());
 
-        if (donateBtn) {
-            attachReleaseAction(donateBtn, e => {
-                if (!donateModal) return;
+        if (statsBtn) {
+            attachReleaseAction(statsBtn, e => {
+                if (!statsModal) return;
                 triggerHaptic('light');
                 playSound(buffers.click, 0.5);
-                donateModal.classList.add('active');
-                pushModal('donate');
+                updateStatsPanel();
+                statsModal.classList.add('active');
+                pushModal('stats');
                 if (tg && tg.BackButton) tg.BackButton.show();
             });
-            donateBtn.addEventListener("contextmenu", e => e.preventDefault());
+            statsBtn.addEventListener("contextmenu", e => e.preventDefault());
         }
 
-        if (donateExitBtn) {
-            attachReleaseAction(donateExitBtn, e => {
+        if (statsExitBtn) {
+            attachReleaseAction(statsExitBtn, e => {
                 triggerHaptic('light');
                 playSound(buffers.click, 0.5);
-                donateModal.classList.remove('active');
+                statsModal.classList.remove('active');
                 popModal();
             });
-            donateExitBtn.addEventListener("contextmenu", e => e.preventDefault());
+            statsExitBtn.addEventListener("contextmenu", e => e.preventDefault());
         }
 
         
@@ -2452,6 +2517,12 @@
             
             clicks = 0;
             clickMultiplier = 1;
+            bonusesCollected = 0;
+            timePlayedSeconds = 0;
+            shopPurchases = 0;
+            criticalClicks = 0;
+            abilityActivations = 0;
+            achievements = 0;
             gameState = { ...JSON.parse(JSON.stringify(defaultProgress)), settings: gameState.settings };
             
             updateCounterDisplay();
@@ -2538,7 +2609,7 @@
         applyPressAnimation('.radio-img');
         applyPressAnimation('.vol-btn-img');
         applyPressAnimation('.hard-reset-img');
-        applyPressAnimation('.donate-img');
+        applyPressAnimation('.stats-img');
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {

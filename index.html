@@ -567,15 +567,26 @@
         }
 
         .leaderboard-name {
+            display: flex;
+            align-items: center;
             font-size: 20px;
             font-weight: bold;
             text-align: left;
             color: var(--tg-theme-text-color, #000);
+            position: relative;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .leaderboard-name-text {
+            display: block;
+            flex: 1;
+            min-width: 0;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-            position: relative;
-            min-width: 0;
+            transition: opacity .2s ease;
         }
 
         .leaderboard-name span {
@@ -595,6 +606,13 @@
             gap: 4px;
             opacity: 0;
             pointer-events: none;
+            padding-right: 6px;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        .leaderboard-name.show-alt {
+            justify-content: flex-start;
         }
 
         .leaderboard-name-alt img {

@@ -1267,7 +1267,6 @@
     <div class="modal" id="statsModal">
         <div class="modal-content stats-modal-content">
             <div class="modal-header">
-                <div class="modal-title">СТАТИСТИКА</div>
                 <div class="modal-close-wrapper stats-close-wrapper" id="statsExitBtn">
                     <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img no-save-img" draggable="false" oncontextmenu="return false;">
                 </div>
@@ -1329,9 +1328,20 @@
     </div>
 
     <script type="module">
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        // ... внутри функции инициализации (после ready()) ...
+        signInAnonymously(auth).then(() => {
+          console.log("Пользователь анонимно авторизован");
+        }).catch((error) => {
+          console.error("Ошибка авторизации", error);
+        });
+
         // Импорт Firebase SDK для работы с базой данных
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, get, query, orderByChild, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const auth = getAuth(app);
 
         // --- Инициализация Telegram WebApp ---
         const tg = window.Telegram?.WebApp;
@@ -1340,6 +1350,11 @@
 
         if (tg) {
             tg.ready();
+            signInAnonymously(auth).then(() => {
+              console.log("Пользователь анонимно авторизован");
+            }).catch((error) => {
+              console.error("Ошибка авторизации", error);
+            });
             tg.expand();
             if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
             if (tg.initDataUnsafe?.user) {

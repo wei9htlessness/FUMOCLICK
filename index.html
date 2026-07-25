@@ -364,6 +364,117 @@
             animation: exitFloat 3.5s ease-in-out infinite;
         }
 
+        .donate-modal-content {
+            width: 92%;
+            max-width: 380px;
+            padding: 24px 18px 24px;
+            text-align: center;
+            background: rgba(255,255,255,0.96);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.24);
+            border-radius: 22px;
+            position: relative;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .donate-iframe-wrapper {
+            box-sizing: border-box;
+            padding: 12px;
+            width: 100%;
+        }
+
+        .donate-iframe-wrapper iframe {
+            width: 100%;
+            max-width: 500px;
+            height: min(690px, 85vh);
+            border: 0;
+            display: block;
+        }
+
+        .donate-modal-content .donate-label,
+        .donate-modal-content .donate-value,
+        .donate-modal-content .donate-line {
+            text-transform: uppercase;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .donate-modal-content .donate-value {
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+            flex: 1;
+            text-align: center;
+        }
+
+        .donate-close-wrapper {
+            position: static;
+            width: 34px;
+            height: 34px;
+            margin-left: auto;
+            animation: exitFloat 3.5s ease-in-out infinite;
+        }
+
+        .donate-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .donate-line {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(250,250,250,0.96);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
+            transition: transform .18s ease, background .18s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .donate-line:active {
+            transform: scale(0.98);
+        }
+
+        .donate-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .donate-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111;
+            word-break: break-all;
+            line-height: 1.2;
+        }
+
+        .donate-value.no-save-img {
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+        }
+
         .modal-close-wrapper:active {
             --press-scale: 1.08;
         }
@@ -1179,6 +1290,21 @@
         </div>
     </div>
 
+        <div class="modal" id="donateModal">
+            <div class="modal-content donate-modal-content">
+                <div class="donate-iframe-wrapper">
+                    <div class="donate-close-top">
+                        <div class="modal-close-wrapper donate-close-wrapper" id="donateExitBtn">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img no-save-img" draggable="false" oncontextmenu="return false;">
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:center;">
+                        <iframe src="https://yoomoney.ru/quickpay/fundraise/widget?billNumber=1J89N3B0BHE.260725&" style="width:100%;max-width:500px;height:600px;border:0;" allowtransparency="true" scrolling="no"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <!-- Модальное окно подтверждения сброса -->
     <div class="modal" id="confirmResetModal">
         <div class="modal-content" style="padding:40px 20px;">
@@ -1243,7 +1369,7 @@
         // --- Ссылки на ресурсы для предзагрузки ---
         const imageUrls = [
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png',
-            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster1.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/cursor.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png',
@@ -1302,6 +1428,8 @@
         const orientationLockOverlay = document.getElementById("orientationLockOverlay");
         const hardResetBtn = document.getElementById("hardResetBtn");
         const donateBtn = document.getElementById("donateBtn");
+        const donateModal = document.getElementById("donateModal");
+        const donateExitBtn = document.getElementById("donateExitBtn");
         const confirmResetModal = document.getElementById("confirmResetModal"); // confirmation modal for hard reset
         const confirmResetBtn = document.getElementById("confirmResetBtn");
         const cancelResetBtn = document.getElementById("cancelResetBtn");
@@ -2013,6 +2141,16 @@
                 }
                 return true;
             }
+
+            if (modalType === 'donate') {
+                if (donateModal) donateModal.classList.remove('active');
+                if (modalStack.length > 0) {
+                    if (tg && tg.BackButton) tg.BackButton.show();
+                } else {
+                    if (tg && tg.BackButton) tg.BackButton.hide();
+                }
+                return true;
+            }
             
             if (modalType === 'main') {
                 closeModal();
@@ -2058,7 +2196,7 @@
             sway.className = "boost-sway";
             
             const img = document.createElement("img");
-            img.src = "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/monsterwhite.png";
+            img.src = "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster1.png";
             img.className = "boost-image";
             img.draggable = false;
             
@@ -2258,10 +2396,27 @@
 
         if (donateBtn) {
             attachReleaseAction(donateBtn, e => {
-                // placeholder for future donate action
+                if (!donateModal) return;
+                triggerHaptic('light');
+                playSound(buffers.click, 0.5);
+                donateModal.classList.add('active');
+                pushModal('donate');
+                if (tg && tg.BackButton) tg.BackButton.show();
             });
             donateBtn.addEventListener("contextmenu", e => e.preventDefault());
         }
+
+        if (donateExitBtn) {
+            attachReleaseAction(donateExitBtn, e => {
+                triggerHaptic('light');
+                playSound(buffers.click, 0.5);
+                donateModal.classList.remove('active');
+                popModal();
+            });
+            donateExitBtn.addEventListener("contextmenu", e => e.preventDefault());
+        }
+
+        
 
         function toggleSound() {
             triggerHaptic('light');

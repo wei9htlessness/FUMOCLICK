@@ -1103,6 +1103,117 @@
             -webkit-touch-callout: none;
             user-select: none;
         }
+
+        /* --- Элементы Магазина --- */
+        .shop-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .shop-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 14px 18px;
+            background: rgba(250, 250, 250, 0.96);
+            border-radius: 20px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.08);
+            gap: 14px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            animation: shopFloat 4s ease-in-out infinite;
+            transition: transform 0.18s ease, opacity 0.3s ease;
+            position: relative;
+        }
+
+        .shop-item.purchased {
+            opacity: 0.5;
+        }
+
+        @keyframes shopFloat {
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            50% { transform: translate(0, -3px) scale(var(--press-scale)); }
+        }
+
+        .shop-item-left {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* width: 100px; */
+            height: 100px;
+            flex-shrink: 0;
+        }
+
+        .shop-item-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            animation: shopImgFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes shopImgFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .shop-item-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .shop-explanation {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .shop-expl-img {
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+            animation: shopExplFloat 3.5s ease-in-out infinite;
+        }
+
+        @keyframes shopExplFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(0, -2px); }
+        }
+
+        .shop-price-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .shop-price-digit {
+            height: 22px;
+            width: auto;
+            animation: shopExplFloat 3.5s ease-in-out infinite;
+        }
+
+        .shop-item-status {
+            display: none;
+            margin-left: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shop-item.purchased .shop-item-status {
+            display: flex;
+        }
+
+        .shop-stop-img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            animation: shopExplFloat 3.5s ease-in-out infinite;
+        }
     </style>
 </head>
 <body>
@@ -1110,26 +1221,22 @@
     <!-- Кэш ресурсов для удержания картинок в памяти -->
     <div id="assetCache"></div>
 
-    <!-- Экран загрузки -->
     <div id="loadingScreen">
         <div class="loader"></div>
         <div id="loadingText">ЗАГРУЗКА...</div>
     </div>
 
-    <!-- Игровая зона -->
     <div class="game" id="gameContainer">
-        <!-- Обертка для счетчика с абсолютным позиционированием индикаторов -->
         <div class="counter-wrapper" id="counterWrapper">
             <div id="counter"></div>
-            <!-- Индикаторы бонуса x2 и cursor - перекрывают fumo -->
             <div class="boost-indicators" id="boostIndicators">
-                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="boost-indicator-img x2-indicator" draggable="false">
-                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/cursor.png" class="boost-indicator-img cursor-indicator" draggable="false">
+                <img id="boostXIndicatorImg" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="boost-indicator-img x2-indicator no-save-img" draggable="false" oncontextmenu="return false;">
+                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/cursor.png" class="boost-indicator-img cursor-indicator no-save-img" draggable="false" oncontextmenu="return false;">
             </div>
         </div>
-        <!-- Область клика по fumo -->
-        <div id="clickArea">
-            <img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" draggable="false" alt="Click">
+
+    <div id="clickArea">
+            <img id="clickImage" src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png" class="no-save-img" draggable="false" oncontextmenu="return false;">
         </div>
     </div>
 
@@ -1213,12 +1320,33 @@
 
             <!-- Секция Магазин -->
             <div id="shopSection" class="modal-section">
-                <div style="color:#888;font-size:18px;">Скоро...</div>
+                <div class="shop-list">
+                    <div class="shop-item pressable" id="shopItemMonster2">
+                        <div class="shop-item-left">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster2.png" class="shop-item-img no-save-img" draggable="false" oncontextmenu="return false;">
+                        </div>
+                        <div class="shop-item-right">
+                            <div class="shop-explanation">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/next.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x3.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
+                            <div class="shop-price-wrapper">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/5.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/0.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/0.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
+                        </div>
+                        <div class="shop-item-status">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/stop.png" class="shop-stop-img no-save-img" draggable="false" oncontextmenu="return false;">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-close-wrapper" id="modalCloseWrapper">
-            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img" draggable="false">
-        </div>
+            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/exit.png" class="modal-close-img no-save-img" draggable="false" oncontextmenu="return false;">
+            </div>
     </div>
 
     <div class="modal" id="statsModal">
@@ -1381,7 +1509,9 @@
         const imageUrls = [
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster1.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster2.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x3.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/cursor.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/percent.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/minus.png',
@@ -1414,6 +1544,7 @@
             menuopen: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuopen.ogg',
             menuclose: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuclose.ogg',
             click: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/click.ogg',
+            error: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/error.ogg',
             hardresetloop: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/hardresetloop.ogg'
         };
 
@@ -1423,6 +1554,8 @@
         const clickArea = document.getElementById("clickArea");
         const image = document.getElementById("clickImage");
         const boostIndicators = document.getElementById("boostIndicators");
+        const boostXIndicatorImg = document.getElementById("boostXIndicatorImg");
+        const shopItemMonster2 = document.getElementById("shopItemMonster2");
         const loadingScreen = document.getElementById("loadingScreen");
         const gameContainer = document.getElementById("gameContainer");
         const assetCache = document.getElementById("assetCache");
@@ -1498,7 +1631,7 @@
         const defaultProgress = {
             score: 0,
             selectedCharacter: 1,
-            upgrades: { clickPower: 1, autoClick: 0, critChance: 0 },
+            upgrades: { clickPower: 1, autoClick: 0, critChance: 0, monster2Purchased: false },
             achievements: [],
             bonusesCollected: 0,
             timePlayedSeconds: 0,
@@ -1520,6 +1653,15 @@
             ...JSON.parse(JSON.stringify(defaultProgress)),
             settings: JSON.parse(JSON.stringify(defaultSettings))
         };
+
+        // Магазин
+        function updateShopUI() {
+            if (gameState.upgrades.monster2Purchased) {
+                if (shopItemMonster2) shopItemMonster2.classList.add('purchased');
+            } else {
+                if (shopItemMonster2) shopItemMonster2.classList.remove('purchased');
+            }
+        }
 
         // --- Аудио система ---
         function initAudioContext() {
@@ -1849,19 +1991,21 @@
                         tg.CloudStorage.getItem('gameData', (err, value) => err ? reject(err) : resolve(value))
                     );
                     if (dataStr) {
-                        const parsed = decodeGameData(dataStr); // Используем функцию дешифровки
+                        const parsed = decodeGameData(dataStr);
                         if (parsed) {
                             gameState = { ...gameState, ...parsed };
                             if (parsed.settings) gameState.settings = { ...defaultSettings, ...parsed.settings };
                             gameState.settings.radioEnabled = 0;
                             
-                            setClicks(gameState.score || 0); // Устанавливаем безопасные очки
+                            setClicks(gameState.score || 0);
                             bonusesCollected = gameState.bonusesCollected || 0;
                             timePlayedSeconds = gameState.timePlayedSeconds || 0;
                             shopPurchases = gameState.shopPurchases || 0;
                             criticalClicks = gameState.criticalClicks || 0;
                             abilityActivations = gameState.abilityActivations || 0;
                             achievements = gameState.achievementsCounter || 0;
+
+                            updateShopUI();
                         }
                     }
                 }
@@ -2255,7 +2399,7 @@
             image.style.transform = "scale(1) scaleY(1)";
         }
 
-        function spawnBoost() {
+         function spawnBoost() {
             const container = document.createElement("div");
             container.className = "boost-container";
             
@@ -2265,10 +2409,14 @@
             const sway = document.createElement("div");
             sway.className = "boost-sway";
             
+            const isMonster2 = gameState.upgrades.monster2Purchased;
             const img = document.createElement("img");
-            img.src = "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster1.png";
-            img.className = "boost-image";
+            img.src = isMonster2
+                ? "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster2.png"
+                : "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster1.png";
+            img.className = "boost-image no-save-img";
             img.draggable = false;
+            img.oncontextmenu = () => false;
             
             sway.appendChild(img);
             spring.appendChild(sway);
@@ -2294,7 +2442,16 @@
                 
                 playSound(buffers.monster, 0.5);
                 triggerHaptic('medium');
-                clickMultiplier = 2; // Бонус на клики
+                
+                // Изменение множителя и индикатора в зависимости от покупки
+                const multiplierValue = isMonster2 ? 3 : 2;
+                clickMultiplier = multiplierValue;
+                if (boostXIndicatorImg) {
+                    boostXIndicatorImg.src = isMonster2 
+                        ? "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x3.png"
+                        : "https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png";
+                }
+
                 bonusesCollected++;
                 
                 boostIndicators.classList.add("active");
@@ -2331,6 +2488,72 @@
             }, 5000);
         }
 
+        // --- Покупка Monster 2 в магазине ---
+        if (shopItemMonster2) {
+            attachReleaseAction(shopItemMonster2, e => {
+                // Если уже куплено или недостаточно очков — ошибка
+                if (gameState.upgrades.monster2Purchased || getClicks() < 500) {
+                    triggerHaptic('heavy');
+                    playSound(buffers.error, 0.5);
+                    return;
+                }
+
+                // Успешная покупка
+                triggerHaptic('medium');
+                playSound(buffers.click, 0.5);
+                
+                setClicks(getClicks() - 500);
+                gameState.upgrades.monster2Purchased = true;
+                shopPurchases++;
+                
+                updateShopUI();
+                updateCounterDisplay();
+                updateStatsPanel();
+                scheduleSave();
+            });
+            shopItemMonster2.addEventListener("contextmenu", e => e.preventDefault());
+        }
+
+        attachReleaseAction(confirmResetBtn, async e => {
+            triggerHaptic('medium');
+            playSound(buffers.click, 0.5);
+            stopHardResetLoop();
+            
+            // Безопасный сброс
+            setClicks(0);
+            clickMultiplier = 1;
+            bonusesCollected = 0;
+            timePlayedSeconds = 0;
+            shopPurchases = 0;
+            criticalClicks = 0;
+            abilityActivations = 0;
+            achievements = 0;
+            gameState = { ...JSON.parse(JSON.stringify(defaultProgress)), settings: gameState.settings };
+            
+            updateShopUI();
+            updateCounterDisplay();
+            
+            try {
+                if (tg && tg.CloudStorage) {
+                    const encodedData = encodeGameData(gameState);
+                    await new Promise((resolve, reject) => 
+                        tg.CloudStorage.setItem('gameData', encodedData, (err) => err ? reject(err) : resolve(true))
+                    );
+                }
+                const userKey = tgUserId;
+                    if (userKey) {
+                        await set(ref(db, 'leaderboard/' + userKey), { name: userName, score: 0, lastUpdated: Date.now() });
+                    }
+                } catch (err) {
+                    console.error("Hard reset error:", err);
+                }
+            
+            confirmResetModal.classList.remove('active');
+            closeModal();
+            modalStack.length = 0;
+            if (tg && tg.BackButton) tg.BackButton.hide();
+        });
+
         function scheduleNextBoost() {
             setTimeout(spawnBoost, Math.floor(Math.random() * (40000 - 15000 + 1)) + 15000);
         }
@@ -2359,13 +2582,15 @@
         }
 
         // --- Обработчики событий ---
-        clickArea.addEventListener("touchstart", processClick, { passive: false });
-        clickArea.addEventListener("touchend", resetClickAnimation, { passive: false });
-        clickArea.addEventListener("touchcancel", resetClickAnimation, { passive: false });
-        clickArea.addEventListener("mousedown", processClick);
-        clickArea.addEventListener("mouseup", resetClickAnimation);
-        clickArea.addEventListener("mouseleave", resetClickAnimation);
-        clickArea.addEventListener("contextmenu", e => e.preventDefault());
+        if (clickArea) {
+            clickArea.addEventListener("touchstart", processClick, { passive: false });
+            clickArea.addEventListener("touchend", resetClickAnimation, { passive: false });
+            clickArea.addEventListener("touchcancel", resetClickAnimation, { passive: false });
+            clickArea.addEventListener("mousedown", processClick);
+            clickArea.addEventListener("mouseup", resetClickAnimation);
+            clickArea.addEventListener("mouseleave", resetClickAnimation);
+            clickArea.addEventListener("contextmenu", e => e.preventDefault());
+        }
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' || e.keyCode === 27) {
@@ -2610,6 +2835,7 @@
         applyPressAnimation('.vol-btn-img');
         applyPressAnimation('.hard-reset-img');
         applyPressAnimation('.stats-img');
+        applyPressAnimation('.shop-item');
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -2671,6 +2897,7 @@ async function authTelegramUser() {
 async function preloadResources() {
     initAudioContext();
 
+    
     try {
         // ВМЕСТО signInAnonymously(auth) вызываем нашу умную авторизацию:
         await authTelegramUser();
@@ -2714,6 +2941,7 @@ async function preloadResources() {
             initGame();
             initRadio();
         }
+        
 
         function initGame() {
             for (let i = 0; i <= 9; i++) {

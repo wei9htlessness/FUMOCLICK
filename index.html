@@ -121,9 +121,9 @@
 
         #counter {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 3px;
+                justify-content: center;
+                align-items: center;
+                gap: 3px;
         }
 
         .digit-img {
@@ -470,6 +470,45 @@
 
         .modal-section.active {
             display: block;
+        }
+
+        /* --- Табы для окна Achv --- */
+        .achv-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 101;
+        }
+
+        .achv-tab-wrapper {
+            width: 70px;
+            height: 70px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            transition: transform .1s ease;
+            animation: tabFloat 3.5s ease-in-out infinite;
+        }
+
+        .achv-tab-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        @keyframes tabFloat {
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            50% { transform: translate(0, -3px) scale(var(--press-scale)); }
+        }
+
+        .achv-tab-wrapper.active {
+            transform: scale(1.15);
         }
 
         /* --- Лидерборд --- */
@@ -837,7 +876,7 @@
 
         .pressable {
             --press-scale: 1;
-            transition: transform .18s ease-out;
+            transition: transform .2s cubic-bezier(0.2, 0, 0.2, 1);
             transform: scale(var(--press-scale));
         }
 
@@ -876,6 +915,24 @@
             width: 100%;
             margin-top: 5px;
             margin-bottom: 24px;
+            position: relative;
+        }
+
+        .volume-background {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 58px; /* 50 + 4 + 4 */
+            top: -4px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 29px; /* 25 + 4 */
+            z-index: -1;
+            animation: volBgFloat 3.5s ease-in-out infinite;
+        }
+
+        @keyframes volBgFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
         }
 
         .vol-btn-wrapper {
@@ -1214,6 +1271,110 @@
             object-fit: contain;
             animation: shopExplFloat 3.5s ease-in-out infinite;
         }
+
+        /* --- Достижения --- */
+        .achv-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .achv-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px 18px; /* Уменьшено на 30% */
+            background: rgba(250, 250, 250, 0.96);
+            border-radius: 20px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.08);
+            gap: 14px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            animation: achvFloat 4s ease-in-out infinite;
+            transition: transform 0.18s ease, opacity 0.3s ease;
+            position: relative;
+        }
+
+        .achv-item.completed {
+            opacity: 0.5;
+        }
+
+        @keyframes achvFloat {
+            0%, 100% { transform: translate(0, 0) scale(var(--press-scale)); }
+            50% { transform: translate(0, -3px) scale(var(--press-scale)); }
+        }
+
+        .achv-item-left {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 70px; /* Уменьшено на 30% */
+            flex-shrink: 0;
+            gap: 7px; /* Отступ между цифрами и курсором */
+        }
+
+        .achv-item-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+            display: none; /* Скрыто по требованию */
+        }
+
+        .achv-status {
+            display: none;
+            margin-left: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .achv-item.completed .achv-status {
+            display: flex;
+        }
+
+        .achv-check-img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            animation: achvExplFloat 3.5s ease-in-out infinite;
+        }
+
+        @keyframes achvExplFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(0, -2px); }
+        }
+
+        .achv-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 18px;
+            padding: 12px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: achvNotifFloat 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes achvNotifFloat {
+            0%, 100% { transform: translate(-50%, 0) scale(var(--press-scale)); }
+            50% { transform: translate(-50%, -5px) scale(var(--press-scale)); }
+        }
+
+        .achv-notif-img {
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+            animation: achvExplFloat 3.5s ease-in-out infinite;
+        }
     </style>
 </head>
 <body>
@@ -1264,26 +1425,72 @@
         <div class="modal-content" id="modalContent">
             <!-- Секция Достижения / Лидерборд -->
             <div id="achvSection" class="modal-section">
-                <div class="leaderboard-wrapper">
-                    <div id="leaderboardLoading" class="leaderboard-loading">
-                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-loading-img" draggable="false">
+                <div class="achv-tabs">
+                    <div class="achv-tab-wrapper" data-tab="achv">
+                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/achv.png" class="achv-tab-img no-save-img" draggable="false" oncontextmenu="return false;">
                     </div>
-                    <div class="leaderboard-toolbar">
-                        <div id="leaderboardRefreshTop" class="leaderboard-refresh-top" style="display:none">
-                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-refresh-img" draggable="false">
+                    <div class="achv-tab-wrapper" data-tab="leaderboard">
+                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/leaderboard.png" class="achv-tab-img no-save-img" draggable="false" oncontextmenu="return false;">
+                    </div>
+                </div>
+                <div id="achvTabContent" class="modal-section active">
+                    <div class="achv-list">
+                        <div class="achv-item" id="achv123">
+                            <div class="achv-item-left">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/1.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/2.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/3.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/cursor.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
+                            <div class="achv-item-right">
+                                <div class="shop-explanation">
+                                    <div>Нажми 123 раза</div>
+                                </div>
+                            </div>
+                            <div class="achv-status">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png" class="achv-check-img no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
                         </div>
-                        <div id="leaderboardControls" class="leaderboard-controls" style="display:none">
-                            <button id="leaderboardPrevBtn" class="leaderboard-nav-btn" type="button" aria-label="Previous page">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/prev.png" class="leaderboard-nav-img" draggable="false">
-                            </button>
-                            <div id="leaderboardPageInfo" class="leaderboard-page-info"></div>
-                            <button id="leaderboardNextBtn" class="leaderboard-nav-btn" type="button" aria-label="Next page">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/next.png" class="leaderboard-nav-img" draggable="false">
-                            </button>
+                        <div class="achv-item" id="achv777">
+                            <div class="achv-item-left">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/7.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/7.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/7.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/cursor.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
+                            <div class="achv-item-right">
+                                <div class="shop-explanation">
+                                    <div>Нажми 777 раз</div>
+                                </div>
+                            </div>
+                            <div class="achv-status">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png" class="achv-check-img no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
                         </div>
                     </div>
-                    <div id="leaderboardList" class="leaderboard-list" style="display:none"></div>
-                    <div id="leaderboardUserRow" class="leaderboard-item leaderboard-user-row" style="display:none;"></div>
+                </div>
+                <div id="leaderboardTabContent" class="modal-section">
+                    <div class="leaderboard-wrapper">
+                        <div id="leaderboardLoading" class="leaderboard-loading">
+                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-loading-img no-save-img" draggable="false" oncontextmenu="return false;">
+                        </div>
+                        <div class="leaderboard-toolbar">
+                            <div id="leaderboardRefreshTop" class="leaderboard-refresh-top" style="display:none">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/refreshlb.png" class="leaderboard-refresh-img no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
+                            <div id="leaderboardControls" class="leaderboard-controls" style="display:none">
+                                <button id="leaderboardPrevBtn" class="leaderboard-nav-btn" type="button" aria-label="Previous page">
+                                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/prev.png" class="leaderboard-nav-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                </button>
+                                <div id="leaderboardPageInfo" class="leaderboard-page-info"></div>
+                                <button id="leaderboardNextBtn" class="leaderboard-nav-btn" type="button" aria-label="Next page">
+                                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/next.png" class="leaderboard-nav-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                </button>
+                            </div>
+                        </div>
+                        <div id="leaderboardList" class="leaderboard-list" style="display:none"></div>
+                        <div id="leaderboardUserRow" class="leaderboard-item leaderboard-user-row" style="display:none;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -1306,6 +1513,7 @@
                         <div class="vol-btn-wrapper plus-btn" id="volPlus">
                             <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/plus.png" class="vol-btn-img" draggable="false">
                         </div>
+                        <div class="volume-background"></div>
                     </div>
                     <div class="action-wrapper">
                         <div class="action-btn hard-reset-btn" id="hardResetBtn">
@@ -1320,25 +1528,56 @@
 
             <!-- Секция Магазин -->
             <div id="shopSection" class="modal-section">
-                <div class="shop-list">
-                    <div class="shop-item pressable" id="shopItemMonster2">
-                        <div class="shop-item-left">
-                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster2.png" class="shop-item-img no-save-img" draggable="false" oncontextmenu="return false;">
-                        </div>
-                        <div class="shop-item-right">
-                            <div class="shop-explanation">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/next.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x3.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
+                <div class="achv-tabs">
+                    <div class="achv-tab-wrapper" data-tab="shop">
+                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shop.png" class="achv-tab-img no-save-img" draggable="false" oncontextmenu="return false;">
+                    </div>
+                    <div class="achv-tab-wrapper" data-tab="shopfumo">
+                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shopfumo.png" class="achv-tab-img no-save-img" draggable="false" oncontextmenu="return false;">
+                    </div>
+                    <div class="achv-tab-wrapper" data-tab="shopbg">
+                        <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shopbg.png" class="achv-tab-img no-save-img" draggable="false" oncontextmenu="return false;">
+                    </div>
+                </div>
+                <div id="shopTabContent" class="modal-section active">
+                    <div class="shop-list">
+                        <div class="shop-item pressable" id="shopItemMonster2">
+                            <div class="shop-item-left">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster2.png" class="shop-item-img no-save-img" draggable="false" oncontextmenu="return false;">
                             </div>
-                            <div class="shop-price-wrapper">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/5.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/0.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
-                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/0.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
+                            <div class="shop-item-right">
+                                <div class="shop-explanation">
+                                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/next.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x3.png" class="shop-expl-img no-save-img" draggable="false" oncontextmenu="return false;">
+                                </div>
+                                <div class="shop-price-wrapper">
+                                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/5.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
+                                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/0.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
+                                    <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/0.png" class="shop-price-digit no-save-img" draggable="false" oncontextmenu="return false;">
+                                </div>
+                            </div>
+                            <div class="shop-item-status">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/stop.png" class="shop-stop-img no-save-img" draggable="false" oncontextmenu="return false;">
                             </div>
                         </div>
-                        <div class="shop-item-status">
-                            <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/stop.png" class="shop-stop-img no-save-img" draggable="false" oncontextmenu="return false;">
+                    </div>
+                </div>
+                <div id="shopfumoTabContent" class="modal-section">
+                    <div class="achv-list">
+                        <div class="achv-item">
+                            <div class="achv-item-left">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/2.png" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="shopbgTabContent" class="modal-section">
+                    <div class="achv-list">
+                        <div class="achv-item">
+                            <div class="achv-item-left">
+                                <img src="https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/bg/2.jpg" class="achv-notif-img no-save-img" draggable="false" oncontextmenu="return false;">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1508,6 +1747,7 @@
         // --- Ссылки на ресурсы для предзагрузки ---
         const imageUrls = [
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/fumo/1.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/bg/1.jpg',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster1.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/img/monster2.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/symbols/x2.png',
@@ -1532,6 +1772,10 @@
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/radiooff.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundson.png',
             'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/soundsoff.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/leaderboard.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/stop.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shopfumo.png',
+            'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/shopbg.png',
             ...Array.from({ length: 10 }, (_, i) => `https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/numbers/${i}.png`)
         ];
 
@@ -1545,7 +1789,9 @@
             menuclose: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/menuclose.ogg',
             click: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/click.ogg',
             error: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/error.ogg',
-            hardresetloop: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/hardresetloop.ogg'
+            hardresetloop: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/hardresetloop.ogg',
+            buy: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/buy.ogg',
+            achv: 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/sounds/achv.ogg'
         };
 
         // --- DOM Элементы ---
@@ -1586,6 +1832,8 @@
         const cancelResetBtn = document.getElementById("cancelResetBtn");
         const radioBtn = document.getElementById("radioBtn");
         const radioBtnImg = document.getElementById("radioBtnImg");
+        const achv123 = document.getElementById("achv123");
+        const achv777 = document.getElementById("achv777");
 
         document.querySelectorAll('.no-save-img').forEach(img => {
             img.addEventListener('contextmenu', e => e.preventDefault());
@@ -1601,12 +1849,14 @@
         let boostTimeout, multiplierTimeout; 
 
         // Stats counters
+        let totalClicksCounter = 0; // Общий счетчик кликов
         let bonusesCollected = 0; 
         let timePlayedSeconds = 0; 
         let shopPurchases = 0; 
         let criticalClicks = 0; 
         let abilityActivations = 0; 
         let achievements = 0; 
+        let unlockedAchievements = new Set();
 
         let statsTimer = null;
         let audioCtx = null;
@@ -1633,6 +1883,7 @@
             selectedCharacter: 1,
             upgrades: { clickPower: 1, autoClick: 0, critChance: 0, monster2Purchased: false },
             achievements: [],
+            totalClicksCounter: 0, // Добавляем в прогресс
             bonusesCollected: 0,
             timePlayedSeconds: 0,
             shopPurchases: 0,
@@ -1654,13 +1905,22 @@
             settings: JSON.parse(JSON.stringify(defaultSettings))
         };
 
-        // Магазин
-        function updateShopUI() {
-            if (gameState.upgrades.monster2Purchased) {
-                if (shopItemMonster2) shopItemMonster2.classList.add('purchased');
-            } else {
-                if (shopItemMonster2) shopItemMonster2.classList.remove('purchased');
-            }
+        // --- Функции фона ---
+        function setBackgroundImage(element, url) {
+            element.style.backgroundImage = `url('${url}')`;
+            element.style.backgroundSize = 'cover';
+            element.style.backgroundPosition = 'center';
+            element.style.backgroundRepeat = 'no-repeat';
+        }
+
+        function setMainBackground() {
+            setBackgroundImage(document.body, 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/bg/1.jpg');
+        }
+
+        function setModalBackground(modalElement) {
+            setBackgroundImage(modalElement, 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/bg/1.jpg');
+            modalElement.style.backdropFilter = 'blur(50%)';
+            modalElement.style.backgroundColor = 'rgba(0, 0, 0, 0.25)';
         }
 
         // --- Аудио система ---
@@ -1998,14 +2258,15 @@
                             gameState.settings.radioEnabled = 0;
                             
                             setClicks(gameState.score || 0);
+                            totalClicksCounter = gameState.totalClicksCounter || 0; // Загружаем общий счетчик
                             bonusesCollected = gameState.bonusesCollected || 0;
                             timePlayedSeconds = gameState.timePlayedSeconds || 0;
                             shopPurchases = gameState.shopPurchases || 0;
                             criticalClicks = gameState.criticalClicks || 0;
                             abilityActivations = gameState.abilityActivations || 0;
                             achievements = gameState.achievementsCounter || 0;
+                            unlockedAchievements = new Set(gameState.achievements || []);
 
-                            updateShopUI();
                         }
                     }
                 }
@@ -2016,6 +2277,7 @@
 
         async function saveLocalGame() {
             gameState.score = getClicks(); // Читаем безопасные очки
+            gameState.totalClicksCounter = totalClicksCounter; // Сохраняем общий счетчик
             
             gameState.bonusesCollected = bonusesCollected;
             gameState.timePlayedSeconds = timePlayedSeconds;
@@ -2023,6 +2285,7 @@
             gameState.criticalClicks = criticalClicks;
             gameState.abilityActivations = abilityActivations;
             gameState.achievementsCounter = achievements;
+            gameState.achievements = Array.from(unlockedAchievements);
 
             const saveState = {
                 ...gameState,
@@ -2345,7 +2608,7 @@
         }
 
         function updateStatsPanel() {
-            if (statsClicks) statsClicks.textContent = getClicks().toString();
+            if (statsClicks) statsClicks.textContent = totalClicksCounter.toString(); // Показываем общий счетчик
             if (statsBonuses) statsBonuses.textContent = bonusesCollected.toString();
             if (statsPurchases) statsPurchases.textContent = shopPurchases.toString();
             if (statsCrits) statsCrits.textContent = criticalClicks.toString();
@@ -2383,7 +2646,11 @@
             // Начисление очков с бонусами
             addClicks(1 * clickMultiplier * gameState.upgrades.clickPower);
             
+            // Увеличиваем общий счетчик кликов
+            totalClicksCounter += 1;
+            
             updateCounterDisplay();
+            updateStatsPanel(); // Обновляем статистику
             playSound(buffers.pop, 0.5);
             triggerHaptic('light');
             
@@ -2392,6 +2659,9 @@
             void counterWrapper.offsetWidth;
             counterWrapper.classList.add("pop");
             scheduleSave();
+
+            // Проверка достижений
+            checkAchievements();
         }
 
         function resetClickAnimation(e) {
@@ -2488,6 +2758,78 @@
             }, 5000);
         }
 
+        // --- Проверка достижений ---
+        function checkAchievements() {
+            const totalClicks = totalClicksCounter; // Используем общий счетчик кликов
+
+            if (totalClicks >= 123 && !unlockedAchievements.has('achv123')) {
+                unlockAchievement('achv123');
+            }
+
+            if (totalClicks >= 777 && !unlockedAchievements.has('achv777')) {
+                unlockAchievement('achv777');
+            }
+        }
+
+        function unlockAchievement(id) {
+            unlockedAchievements.add(id);
+            achievements++;
+            updateStatsPanel();
+            scheduleSave();
+
+            // Анимация и звук
+            playSound(buffers.achv, 0.5);
+            showAchievementNotification(id);
+
+            // Обновление UI
+            const achvItem = document.getElementById(id);
+            if (achvItem) {
+                achvItem.classList.add('completed');
+            }
+        }
+
+        function showAchievementNotification(id) {
+            const notif = document.createElement('div');
+            notif.className = 'achv-notification';
+            notif.id = 'achv-notification';
+
+            const title = document.createElement('div');
+            title.textContent = id === 'achv123' ? 'Достижение 123!' : 'Достижение 777!';
+            title.style.marginRight = '10px';
+            title.style.fontWeight = 'bold';
+
+            const icon = document.createElement('img');
+            icon.src = 'https://raw.githubusercontent.com/wei9htlessness/FUMOCLICK/main/ui/check.png';
+            icon.className = 'achv-notif-img no-save-img';
+            icon.draggable = false;
+            icon.oncontextmenu = () => false;
+
+            notif.appendChild(title);
+            notif.appendChild(icon);
+
+            document.body.appendChild(notif);
+
+            setTimeout(() => {
+                if (document.body.contains(notif)) {
+                    document.body.removeChild(notif);
+                }
+            }, 5000);
+        }
+
+        function updateAchievementsUI() {
+            if (unlockedAchievements.has('achv123')) {
+                achv123.classList.add('completed');
+            } else {
+                achv123.classList.remove('completed');
+            }
+
+            if (unlockedAchievements.has('achv777')) {
+                achv777.classList.add('completed');
+            } else {
+                achv777.classList.remove('completed');
+            }
+        }
+
         // --- Покупка Monster 2 в магазине ---
         if (shopItemMonster2) {
             attachReleaseAction(shopItemMonster2, e => {
@@ -2500,15 +2842,14 @@
 
                 // Успешная покупка
                 triggerHaptic('medium');
-                playSound(buffers.click, 0.5);
+                playSound(buffers.buy, 0.5); // Воспроизводим звук покупки
                 
                 setClicks(getClicks() - 500);
                 gameState.upgrades.monster2Purchased = true;
                 shopPurchases++;
                 
-                updateShopUI();
                 updateCounterDisplay();
-                updateStatsPanel();
+                updateStatsPanel(); // Обновляем статистику (клики не уменьшаются)
                 scheduleSave();
             });
             shopItemMonster2.addEventListener("contextmenu", e => e.preventDefault());
@@ -2521,6 +2862,7 @@
             
             // Безопасный сброс
             setClicks(0);
+            totalClicksCounter = 0; // Сбрасываем общий счетчик
             clickMultiplier = 1;
             bonusesCollected = 0;
             timePlayedSeconds = 0;
@@ -2528,10 +2870,11 @@
             criticalClicks = 0;
             abilityActivations = 0;
             achievements = 0;
+            unlockedAchievements.clear(); // Сбрасываем достижения
             gameState = { ...JSON.parse(JSON.stringify(defaultProgress)), settings: gameState.settings };
             
-            updateShopUI();
             updateCounterDisplay();
+            updateStatsPanel(); // Обновляем статистику
             
             try {
                 if (tg && tg.CloudStorage) {
@@ -2567,6 +2910,7 @@
             if (modal.classList.contains('active') || menuOpenPlaying) return;
             menuOpenPlaying = true;
             playSound(buffers.menuopen, 0.5);
+            setModalBackground(modal); // Устанавливаем фон для модального окна
             modal.classList.add('active');
             setTimeout(() => { menuOpenPlaying = false; }, 500);
         }
@@ -2614,11 +2958,14 @@
                     document.getElementById('achvSection').classList.add('active');
                     resetLeaderboardPagination();
                     loadLeaderboard();
+                    updateAchievementsUI(); // Обновляем UI достижений при открытии
+                    switchAchvTab('achv'); // Автоматически переключаемся на вкладку достижений
                 } else if (currentModalType === 'settings') {
                     document.getElementById('settingsSection').classList.add('active');
                     ensureHardResetAudio(); 
                 } else if (currentModalType === 'shop') {
                     document.getElementById('shopSection').classList.add('active');
+                    switchShopTab('shop'); // Автоматически переключаемся на вкладку shop
                 }
 
                 openModal();
@@ -2697,6 +3044,7 @@
                 if (!statsModal) return;
                 triggerHaptic('light');
                 playSound(buffers.click, 0.5);
+                setModalBackground(statsModal); // Устанавливаем фон для модального окна
                 updateStatsPanel();
                 statsModal.classList.add('active');
                 pushModal('stats');
@@ -2735,6 +3083,7 @@
         attachReleaseAction(hardResetBtn, e => {
             triggerHaptic('light');
             playSound(buffers.click, 0.5);
+            setModalBackground(confirmResetModal); // Устанавливаем фон для модального окна
             renderConfirmResetScore();
             playHardResetLoop();
             confirmResetModal.classList.add('active');
@@ -2749,6 +3098,7 @@
             
             // Безопасный сброс
             setClicks(0);
+            totalClicksCounter = 0; // Сбрасываем общий счетчик
             clickMultiplier = 1;
             bonusesCollected = 0;
             timePlayedSeconds = 0;
@@ -2756,9 +3106,11 @@
             criticalClicks = 0;
             abilityActivations = 0;
             achievements = 0;
+            unlockedAchievements.clear(); // Сбрасываем достижения
             gameState = { ...JSON.parse(JSON.stringify(defaultProgress)), settings: gameState.settings };
             
             updateCounterDisplay();
+            updateStatsPanel(); // Обновляем статистику
             
             try {
                 if (tg && tg.CloudStorage) {
@@ -2819,6 +3171,69 @@
             changeLeaderboardPage(1);
         });
         leaderboardNextBtn.addEventListener("contextmenu", e => e.preventDefault());
+
+        // --- Обработчики вкладок Achv ---
+        const achvTabWrappers = document.querySelectorAll('.achv-tab-wrapper');
+        const achvTabContents = document.querySelectorAll('#achvTabContent, #leaderboardTabContent, #shopTabContent, #shopfumoTabContent, #shopbgTabContent');
+
+        function switchAchvTab(tabName) {
+            achvTabWrappers.forEach(wrapper => {
+                if (wrapper.dataset.tab === tabName) {
+                    wrapper.classList.add('active');
+                } else {
+                    wrapper.classList.remove('active');
+                }
+            });
+
+            achvTabContents.forEach(content => {
+                if (content.id === `${tabName}TabContent`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+
+             // Загружаем лидерборд только при активации его вкладки
+            if (tabName === 'leaderboard' && !hasLoadedLeaderboardOnce) {
+                loadLeaderboard();
+            }
+        }
+
+        achvTabWrappers.forEach(wrapper => {
+            attachReleaseAction(wrapper, e => {
+                triggerHaptic('light');
+                playSound(buffers.click, 0.5);
+                const tabName = wrapper.dataset.tab;
+                switchAchvTab(tabName);
+            });
+            wrapper.addEventListener("contextmenu", e => e.preventDefault());
+        });
+
+        // --- Обработчики вкладок Shop ---
+        const shopTabWrappers = document.querySelectorAll('[data-tab="shop"], [data-tab="shopfumo"], [data-tab="shopbg"]');
+
+        function switchShopTab(tabName) {
+            shopTabWrappers.forEach(wrapper => {
+                if (wrapper.dataset.tab === tabName) {
+                    wrapper.classList.add('active');
+                } else {
+                    wrapper.classList.remove('active');
+                }
+            });
+
+            const shopTabContents = document.querySelectorAll('#shopTabContent, #shopfumoTabContent, #shopbgTabContent');
+            shopTabContents.forEach(content => {
+                if (content.id === `${tabName}TabContent`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // Устанавливаем начальные активные вкладки
+        switchAchvTab('achv');
+        switchShopTab('shop');
         
         applyPressAnimation('.ui-btn-wrapper');
         applyPressAnimation('.sound-toggle-wrapper');
@@ -2829,13 +3244,21 @@
         applyPressAnimation('.modal-close-wrapper');
         applyPressAnimation('.leaderboard-nav-btn');
         applyPressAnimation('.leaderboard-refresh-top');
-        applyPressAnimation('.leaderboard-nav-img');
         applyPressAnimation('.sound-toggle-img');
         applyPressAnimation('.radio-img');
         applyPressAnimation('.vol-btn-img');
         applyPressAnimation('.hard-reset-img');
         applyPressAnimation('.stats-img');
         applyPressAnimation('.shop-item');
+        applyPressAnimation('.achv-tab-wrapper');
+        applyPressAnimation('.achv-tab-img');
+        applyPressAnimation('.achv-item');
+
+// Применяем анимацию нажатия к элементам магазина и достижений
+        document.querySelectorAll('.shop-item, .achv-item').forEach(el => {
+            el.classList.add('stats-row');
+            applyPressAnimation('.stats-row');
+        });
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -2932,12 +3355,11 @@ async function preloadResources() {
                 new Promise(resolve => setTimeout(resolve, 5000))
             ]);
 
-            await loadLeaderboard();
-
             await new Promise(r => setTimeout(r, 300));
             loadingScreen.classList.add('hidden');
             gameContainer.classList.add('visible');
             
+            setMainBackground(); // Устанавливаем фон для основного экрана
             initGame();
             initRadio();
         }
@@ -2954,6 +3376,7 @@ async function preloadResources() {
             scheduleNextBoost();
             startStatsTimer();
             setInterval(() => { saveLocalGame(); updateFirebaseScore(); }, 10000);
+            updateAchievementsUI(); // Обновляем UI достижений после инициализации
         }
 
         preloadResources();
